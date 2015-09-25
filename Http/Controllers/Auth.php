@@ -1,11 +1,12 @@
 <?php namespace RabbitCMS\Backend\Http\Controllers;
 
-use DtKt\Http\Controllers\Controller as BaseController;
-use DtKt\Metronic;
+use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Http\Request;
+use RabbitCMS\Backend\Support\Metronic;
 
-class Auth extends BaseController
+class Auth extends Controller
 {
+    use ValidatesRequests;
     public function __construct()
     {
         Metronic::module('login');
