@@ -121,7 +121,7 @@ class Metronic
                 []
             ],
         ];
-    static protected $base = '/backend/assets/';
+    static protected $base = '/modules/backend/assets/';
     static protected $js = [];
     static protected $dr = [];
     static protected $css = [];
