@@ -1,0 +1,32 @@
+{
+  "name": "rabbitcms/backend",
+  "description": "Backend for RabbitCMS",
+  "require": {
+    "rabbitcms/carrot": "*",
+    "doctrine/annotations": "1.*"
+  },
+  "type": "october-module",
+  "authors": [
+    {
+      "name": "Kulyk Dmytro",
+      "email": "lnkvisitor.ts@gmail.com"
+    },
+    {
+      "name": "Dimon Zhurakovskiy",
+      "email": "dmytro.zhurakovsky@gmail.com"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "RabbitCMS\\Backend\\": "./"
+    }
+  },
+  "module": {
+    "namespace": "RabbitCMS\\Backend\\",
+    "title": "Site backend",
+    "route": {
+      "prefix": null,
+      "namespace": null
+    }
+  }
+}
