@@ -2,6 +2,7 @@
 
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controller;
 use RabbitCMS\Backend\Support\Metronic;
 
 class Auth extends Controller
