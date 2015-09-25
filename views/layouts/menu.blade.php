@@ -11,7 +11,7 @@
             @if (!empty($item['items']))
                 <ul class="sub-menu">
                     @foreach($item['items'] as $subitem)
-                        <li {!!\Dtkt\Metronic::isMenu($menu, $subitem['menu']) ? 'class="active"':''!!}>
+                        <li {!!\RabbitCMS\Backend\Support\Metronic::isMenu($menu, $subitem['menu']) ? 'class="active"':''!!}>
                             <a href="{{isset($subitem['link']) ? $subitem['link'] : 'javascript:;'}}">
                                 <i class="fa {{$subitem['icon']}}"></i>
                                 <span class="title">{{$subitem['label']}}</span>
