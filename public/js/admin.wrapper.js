@@ -459,7 +459,7 @@ var AdminWrapper = function () {
                 format: 'dd.mm.yyyy'
             }, options);
 
-            element.datepicker(options);
+            return element.datepicker(options);
         },
         dateTimePicker: function (element, options) {
             options = $.extend(true, {
