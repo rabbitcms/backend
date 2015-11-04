@@ -20,13 +20,5 @@
     "psr-4": {
       "RabbitCMS\\Backend\\": "./"
     }
-  },
-  "module": {
-    "namespace": "RabbitCMS\\Backend\\",
-    "title": "Site backend",
-    "route": {
-      "prefix": null,
-      "namespace": null
-    }
   }
 }
