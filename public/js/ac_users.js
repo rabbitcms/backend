@@ -51,7 +51,7 @@ var AutoCompleteUsers = function () {
                 },
                 select: function (event, ui) {
                     setTimeout(function () {
-                        $(options.acInput).change();
+                        $(options.acInput).blur();
                     }, 50);
                 }
             });
