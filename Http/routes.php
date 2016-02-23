@@ -13,7 +13,7 @@ Route::group(
             'type'   => 'r|c',
             'width'  => '(\d+|-)',
             'height' => '(\d+|-)',
-            'ext'    => 'jpg|png|pdf|doc|docx|xls|xlsx|rtf|zip'
+            'ext'    => 'jpg|png|pdf|doc|docx|xls|xlsx|rtf|zip',
         ],
     ],
     function (Router $router) {
@@ -30,25 +30,44 @@ if (array_key_exists('domain', $backendGroup)) {
     $backendGroup['domain'] = str_replace('{$domain}', $domain, $backendGroup['domain']);
 }
 $backendGroup['as'] = 'backend.';
-Route::group($backendGroup, function (Router $router) {
+Route::group(
+    $backendGroup, function (Router $router) {
 
-    $router->controller('auth', \RabbitCMS\Backend\Http\Controllers\Auth::class, [
-        'getLogin' => 'auth',
-        'postLogin' => 'auth.login',
-        'getLogout' => 'auth.logout'
-    ]);
+    $router->controller(
+        'auth', \RabbitCMS\Backend\Http\Controllers\Auth::class, [
+            'getLogin'  => 'auth',
+            'postLogin' => 'auth.login',
+            'getLogout' => 'auth.logout',
+        ]
+    );
 
-    $router->group(['middleware' => ['backend.auth']], function (Router $router) {
-        array_map(function (\Pingpong\Modules\Module $module) use ($router) {
-            if (file_exists($path = $module->getExtraPath('Http/backend.php'))) {
-                $group = [
-                    'prefix' => $module->getAlias(),
-                    'as' => $module->getAlias() . '.',
-                ];
-                $router->group($group, function (Router $router) use ($path) {
-                    require($path);
-                });
-            }
-        }, Module::getByStatus(1));
-    });
-});
+    $router->group(
+        ['middleware' => ['backend.auth']], function (Router $router) {
+        $router->get(
+            '',
+            [
+                'uses' => function () {
+                    return view('backend::layouts.master');
+                },
+                'as'   => 'index',
+            ]
+        );
+        array_map(
+            function (\Pingpong\Modules\Module $module) use ($router) {
+                if (file_exists($path = $module->getExtraPath('Http/backend.php'))) {
+                    $group = [
+                        'prefix' => $module->getAlias(),
+                        'as'     => $module->getAlias().'.',
+                    ];
+                    $router->group(
+                        $group, function (Router $router) use ($path) {
+                        require($path);
+                    }
+                    );
+                }
+            }, Module::getByStatus(1)
+        );
+    }
+    );
+}
+);
