@@ -25,7 +25,7 @@ Route::group(
 Route::middleware('backend.auth', \RabbitCMS\Backend\Http\Middleware\Authenticate::class);
 
 $backendGroup = \Config::get('cms.backend');
-if (array_key_exists('domain', $backendGroup)) {
+if (is_array($backendGroup) && array_key_exists('domain', $backendGroup)) {
     $domain = config('app.domain');
     $backendGroup['domain'] = str_replace('{$domain}', $domain, $backendGroup['domain']);
 }
