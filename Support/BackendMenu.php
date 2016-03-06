@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Auth;
 
 class BackendMenu
 {
-    protected $menu;
+    protected $menu = [];
 
     public function addMenu($name, $label, $link = '', $icon = '', $permissions = [])
     {

@@ -1,12 +1,13 @@
 <?php namespace RabbitCMS\Backend\Http\Middleware;
 
+use Illuminate\Auth\AuthManager;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Auth;
 use URL;
 use Closure;
 use ReflectionClass;
 use Doctrine\Common\Annotations\AnnotationReader;
-use DtKt\Models\User;
 use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Routing\Route;
 use RabbitCMS\Carrot\Annotation\Permissions as PermissionAnnotation;
@@ -19,16 +20,16 @@ class Authenticate
      *
      * @var Guard
      */
-    protected $auth;
+    protected $guard;
 
     /**
      * Create a new filter instance.
      *
-     * @param  Guard $auth
+     * @param  AuthManager $auth
      */
-    public function __construct(Guard $auth)
+    public function __construct(AuthManager $auth)
     {
-        $this->auth = $auth;
+        $this->guard = $auth->guard('backend');
     }
 
     /**
@@ -37,23 +38,25 @@ class Authenticate
      * @param  \Illuminate\Http\Request $request
      * @param  \Closure $next
      *
+     * @throws \InvalidArgumentException
+     * 
      * @return mixed
      * @todo Forbidden response template
      */
     public function handle($request, Closure $next)
     {
         /**
-         * @var User $user
+         * @var \RabbitCMS\Backend\Entities\User $user
          * @var Route $route
          */
-        if ($this->auth->guest()) {
+        if ($this->guard->guest()) {
             if ($request->ajax()) {
                 return response('Unauthorized.', 401);
             } else {
-                return redirect()->guest(URL::action('\RabbitCMS\Backend\Http\Controllers\Auth@getLogin'));
+                return redirect()->guest(URL::route('backend.auth'));
             }
         } else {
-            $user = $this->auth->user();
+            $user = $this->guard->user();
             if (count($user->getPermissions()) === 0) {
                 throw new AccessDeniedHttpException;
             } else {
