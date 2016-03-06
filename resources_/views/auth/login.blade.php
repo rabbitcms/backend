@@ -2,14 +2,14 @@
 @section('main')
     <body class="login">
     <div class="logo">
-        <a href="/"><img src="/backend/assets/admin/layout/img/logo-big.png" alt=""/></a></div>
+        <a href="/"><img src="{{asset_module('assets/admin/layout/img/logo-big.png','backend')}}" alt=""/></a></div>
     <div class="menu-toggler sidebar-toggler"></div>
     <div class="content">
         <form class="login-form" action="" method="post">
             <input type="hidden" name="_token" value="{{Session::token()}}">
 
             <h3 class="form-title text-center">Увійдіть в свій обліковий запис</h3>
-            @if (count($errors) > 0)
+            @if (isset($errors) && count($errors) > 0)
                 <div class="alert alert-danger">
                     <ul class="list-unstyled">
                         @foreach ($errors->all() as $error)

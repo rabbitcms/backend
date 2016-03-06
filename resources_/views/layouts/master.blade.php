@@ -5,7 +5,7 @@
         <div class="page-header-inner">
             <div class="page-logo">
                 <a href="/">
-                    <img src="/backend/assets/admin/layout/img/logo.png" alt="logo" class="logo-default"/></a>
+                    <img src="{{asset_module('assets/admin/layout/img/logo.png','backend')}}" alt="logo" class="logo-default"/></a>
                 <div class="menu-toggler sidebar-toggler"></div>
             </div>
             <a href="javascript:;" class="menu-toggler responsive-toggler" data-toggle="collapse" data-target=".navbar-collapse"></a>
@@ -13,11 +13,11 @@
                 <ul class="nav navbar-nav pull-right">
                     <li class="dropdown dropdown-user">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" data-hover="dropdown" data-close-others="true">
-                            <img alt="" class="img-circle hide1" src="/backend/assets/admin/layout/img/avatar3_small.jpg"/>
+                            <img alt="" class="img-circle hide1" src="{{asset_module('assets/admin/layout/img/avatar3_small.jpg','backend')}}"/>
                             <span class="username username-hide-on-mobile">{{--{{\Auth::user()->name()}}--}}</span>
                             <i class="fa fa-angle-down"></i></a>
                         <ul class="dropdown-menu">
-                            <li><a href="/auth/logout"><i class="icon-key"></i> Вийти </a></li>
+                            <li><a href="{{route('backend.auth.logout')}}"><i class="icon-key"></i> Вийти </a></li>
                         </ul>
                     </li>
                 </ul>
