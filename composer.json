@@ -1,24 +1,30 @@
 {
-  "name": "rabbitcms/backend",
-  "description": "Backend for RabbitCMS",
-  "require": {
-    "rabbitcms/carrot": "*",
-    "doctrine/annotations": "1.*"
-  },
-  "type": "october-module",
-  "authors": [
-    {
-      "name": "Kulyk Dmytro",
-      "email": "lnkvisitor.ts@gmail.com"
+    "name": "rabbitcms/backend",
+    "description": "Backend for RabbitCMS",
+    "require": {
+        "rabbitcms/carrot": "*",
+        "doctrine/annotations": "1.*",
+        "fxp/composer-asset-plugin": "~1.1",
+        "bower-asset/jquery": "2.2.*@stable | 2.1.*@stable | 1.11.*@stable",
+        "bower-asset/bootstrap": "~3.0",
+        "bower-asset/jquery-validation": "^1.15",
+        "bower-asset/tinymce": "^4.3",
+        "bower-asset/requirejs": "^2.1"
     },
-    {
-      "name": "Dimon Zhurakovskiy",
-      "email": "dmytro.zhurakovsky@gmail.com"
+    "type": "october-module",
+    "authors": [
+        {
+            "name": "Kulyk Dmytro",
+            "email": "lnkvisitor.ts@gmail.com"
+        },
+        {
+            "name": "Dimon Zhurakovskiy",
+            "email": "dmytro.zhurakovsky@gmail.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "RabbitCMS\\Backend\\": "./"
+        }
     }
-  ],
-  "autoload": {
-    "psr-4": {
-      "RabbitCMS\\Backend\\": "./"
-    }
-  }
 }
