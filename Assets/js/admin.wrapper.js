@@ -12,6 +12,42 @@ var AdminWrapper = function () {
             aWrapper = this;
         },
 
+        /* 07.03.2016 */
+        backToPortlet: function (button, portlet, callback) {
+            _Body.on('click', button, function (e) {
+                e.preventDefault();
+                aWrapper.blockPage();
+                $.ajax({
+                    url: $(this).attr('href'),
+                    success: function (data) {
+                        if (_FormPortlet) {
+                            _FormPortlet.remove();
+                        }
+                        _FormPortlet = $(data);
+                        _FormPortlet.insertAfter('[data-form="' + globalOptions.listPortlet + '"]');
+
+                        if ($.isFunction(callback)) {
+                            callback();
+                        }
+
+                        aWrapper.unblockPage();
+                        aWrapper.showPortlet(portlet);
+                    },
+                    error: function (jqXHR) {
+                        aWrapper.unblockPage();
+                        var container = $(button).parents('.portlet').find('.portlet-body');
+
+                        switch (jqXHR.status) {
+                            case 403:
+                                aWrapper.showMessage(container, 'danger', 'Доступ заборонено. Зверніться до адміністратора');
+                                break;
+                            default:
+                                aWrapper.showMessage(container, 'danger', 'Помилка завантаження даних');
+                        }
+                    }
+                });
+            });
+        },
         /* 09.09.2015 */
         ShowAjaxModal: function (button, callback) {
             _Body.on('click', button, function (e) {
