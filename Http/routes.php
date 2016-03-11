@@ -22,15 +22,6 @@ Route::group(
     }
 );
 
-Route::middlewareGroup('backend', [
-    \RabbitCMS\Carrot\Http\Middleware\EncryptCookies::class,
-    \Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
-    \Illuminate\Session\Middleware\StartSession::class,
-    \Illuminate\View\Middleware\ShareErrorsFromSession::class,
-   // \RabbitCMS\Carrot\Http\Middleware\VerifyCsrfToken::class,
-    //\RabbitCMS\Backend\Http\Middleware\Authenticate::class,
-]);
-Route::middleware('backend.auth', \RabbitCMS\Backend\Http\Middleware\Authenticate::class);
 
 $backendGroup = \Config::get('cms.backend');
 if (is_array($backendGroup) && array_key_exists('domain', $backendGroup)) {
@@ -69,12 +60,14 @@ Route::group(
                         'as'     => $module->getAlias().'.',
                     ];
                     $router->group(
-                        $group, function (Router $router) use ($path) {
-                        require($path);
-                    }
+                        $group,
+                        function (Router $router) use ($path) {
+                            require($path);
+                        }
                     );
                 }
-            }, Module::getByStatus(1)
+            },
+            Module::enabled()
         );
     }
     );

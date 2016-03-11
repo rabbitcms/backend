@@ -3,6 +3,7 @@
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model as Eloquent;
 use Illuminate\Auth\Passwords\CanResetPassword;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\Access\Authorizable;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
@@ -23,15 +24,22 @@ use RabbitCMS\Carrot\Support\PermissionsTrait;
 class User extends Eloquent implements AuthenticatableContract, AuthorizableContract, CanResetPasswordContract
 {
     use Authenticatable, Authorizable, CanResetPassword, PermissionsTrait;
+    use SoftDeletes;
 
+    /**
+     * {@inheritdoc}
+     */
     protected $table = 'backend_users';
 
-    protected $fillable
-        = [
-            'email',
-            'active',
-            'password',
-        ];
+    /**
+     * {@inheritdoc}
+     */
+    protected $fillable = ['email', 'active', 'password',];
+
+    /**
+     * {@inheritdoc}
+     */
+    protected $hidden = ['password', 'remember_token'];
 
     /**
      * Merged permissions
@@ -55,7 +63,7 @@ class User extends Eloquent implements AuthenticatableContract, AuthorizableCont
      */
     public function groups()
     {
-        return $this->belongsToMany(Group::class, 'backend_users_groups', 'user_id','group_id');
+        return $this->belongsToMany(Group::class, 'backend_users_groups', 'user_id', 'group_id');
     }
 
     /**

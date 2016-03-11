@@ -1,6 +1,6 @@
-<?php namespace RabbitCMS\Backend\Support;
+<?php
 
-use Illuminate\Support\Facades\Auth;
+namespace RabbitCMS\Backend\Support;
 
 class BackendMenu
 {
@@ -12,7 +12,7 @@ class BackendMenu
             'label'       => $label,
             'link'        => $link,
             'icon'        => $icon,
-            'permissions' => $permissions
+            'permissions' => $permissions,
         ];
     }
 
@@ -23,20 +23,21 @@ class BackendMenu
             'label'       => $label,
             'link'        => $link,
             'icon'        => $icon,
-            'permissions' => $permissions
+            'permissions' => $permissions,
         ];
     }
 
     public function getMenu()
     {
-        $user = Auth::user();
+        /* @var \RabbitCMS\Backend\Entities\User $user */
+        $user = \Auth::guard('backend')->user();
         $menu = [];
         foreach ($this->menu as $name => $item) {
             if (empty($item['permissions']) || $user->hasAccess($item['permissions'])) {
                 $menu[$name] = $item;
                 if (!empty($item['items'])) {
                     $menu[$name]['items'] = [];
-                    foreach($item['items'] as $subItem) {
+                    foreach ($item['items'] as $subItem) {
                         if (empty($subItem['permissions']) || $user->hasAccess($subItem['permissions'])) {
                             $menu[$name]['items'][] = $subItem;
                         }
@@ -44,6 +45,7 @@ class BackendMenu
                 }
             }
         }
+
         return $menu;
     }
 }

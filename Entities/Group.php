@@ -1,6 +1,7 @@
 <?php namespace RabbitCMS\Backend\Entities;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * Class Group
@@ -12,6 +13,8 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Group extends Model
 {
+    use SoftDeletes;
+    
     protected $table = 'backend_groups';
     protected $fillable
         = [

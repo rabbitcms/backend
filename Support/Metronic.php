@@ -2,7 +2,7 @@
 
 class Metronic
 {
-    static $paths
+    protected static $paths
         = [
             'awesome'                  => [[], ['global/plugins/font-awesome/css/font-awesome.min.css']],
             'components'               => [[], ['global/css/components.css']],
@@ -13,68 +13,68 @@ class Metronic
                 [
                     'admin/layout/css/layout.css',
                     'admin/layout/css/themes/default.css',
-                    'admin/layout/css/custom.css'
+                    'admin/layout/css/custom.css',
                 ],
-                'Layout.init();'
+                'Layout.init();',
             ],
             'simple-line-icons'        => [[], ['global/plugins/simple-line-icons/simple-line-icons.min.css']],
             'jquery'                   => [['global/plugins/jquery-1.11.0.min.js'], []],
             'jquery-migrate'           => [['global/plugins/jquery-migrate-1.2.1.min.js'], []],
             'jquery-ui'                => [
                 ['global/plugins/jquery-ui/jquery-ui-1.10.3.custom.min.js'],
-                ['global/plugins/jquery-ui/jquery-ui-1.10.3.custom.min.css']
+                ['global/plugins/jquery-ui/jquery-ui-1.10.3.custom.min.css'],
             ],
             'bootstrap'                => [
                 ['global/plugins/bootstrap/js/bootstrap.min.js'],
-                ['global/plugins/bootstrap/css/bootstrap.min.css']
+                ['global/plugins/bootstrap/css/bootstrap.min.css'],
             ],
             'bootstrap-hover-dropdown' => [
                 ['global/plugins/bootstrap-hover-dropdown/bootstrap-hover-dropdown.min.js'],
-                []
+                [],
             ],
             'jquery.slimscroll'        => [['global/plugins/jquery-slimscroll/jquery.slimscroll.min.js'], []],
             'jquery.blockui'           => [['global/plugins/jquery.blockui.min.js'], []],
             'jquery.cokie'             => [['global/plugins/jquery.cokie.min.js'], []],
             'jquery.uniform'           => [
                 ['global/plugins/uniform/jquery.uniform.min.js'],
-                ['global/plugins/uniform/css/uniform.default.css']
+                ['global/plugins/uniform/css/uniform.default.css'],
             ],
             'bootstrap-switch'         => [
                 ['global/plugins/bootstrap-switch/js/bootstrap-switch.min.js'],
-                ['global/plugins/bootstrap-switch/css/bootstrap-switch.min.css']
+                ['global/plugins/bootstrap-switch/css/bootstrap-switch.min.css'],
             ],
             'metronic'                 => [['global/scripts/metronic.js'], [], 'Metronic.init();'],
             'select2'                  => [
                 ['global/plugins/select2/select2.min.js'],
-                ['global/plugins/select2/select2.css']
+                ['global/plugins/select2/select2.css'],
             ],
             'dataTables.bootstrap'     => [
                 ['global/plugins/datatables/plugins/bootstrap/dataTables.bootstrap.js'],
-                ['global/plugins/datatables/plugins/bootstrap/dataTables.bootstrap.css']
+                ['global/plugins/datatables/plugins/bootstrap/dataTables.bootstrap.css'],
             ],
             'dataTables.scroller'      => [
                 ['global/plugins/datatables/extensions/Scroller/js/dataTables.scroller.min.js'],
-                ['global/plugins/datatables/extensions/Scroller/css/dataTables.scroller.min.css']
+                ['global/plugins/datatables/extensions/Scroller/css/dataTables.scroller.min.css'],
             ],
             'dataTables.colReorder'    => [
                 ['global/plugins/datatables/extensions/ColReorder/js/dataTables.colReorder.min.js'],
-                ['global/plugins/datatables/extensions/ColReorder/css/dataTables.colReorder.min.css']
+                ['global/plugins/datatables/extensions/ColReorder/css/dataTables.colReorder.min.css'],
             ],
             'dataTables.tableTools'    => [
                 ['global/plugins/datatables/extensions/TableTools/js/dataTables.tableTools.min.js'],
-                []
+                [],
             ],
             'jquery.dataTables'        => [['global/plugins/datatables/media/js/jquery.dataTables.min.js'], []],
             'jquery.validate'          => [['global/plugins/jquery-validation/js/jquery.validate.min.js'], []],
             'jquery.backstretch'       => [
                 ['global/plugins/backstretch/jquery.backstretch.min.js'],
                 [],
-                '$.backstretch(["/backend/assets/admin/pages/media/bg/1.jpg","/backend/assets/admin/pages/media/bg/2.jpg","/backend/assets/admin/pages/media/bg/3.jpg","/backend/assets/admin/pages/media/bg/4.jpg"], {fade: 1000,duration: 8000});'
+                '$.backstretch(["/backend/assets/admin/pages/media/bg/1.jpg","/backend/assets/admin/pages/media/bg/2.jpg","/backend/assets/admin/pages/media/bg/3.jpg","/backend/assets/admin/pages/media/bg/4.jpg"], {fade: 1000,duration: 8000});',
             ],
             'login'                    => [
                 ['admin/pages/scripts/login.js'],
                 ['admin/pages/css/login.css'],
-                'Login.init();'
+                'Login.init();',
             ],
             'lock'                     => [['admin/pages/scripts/lock.js'], ['admin/pages/css/lock.css']],
             'spinner'                  => [['global/plugins/fuelux/js/spinner.min.js'], []],
@@ -82,8 +82,8 @@ class Metronic
                 ['global/plugins/ion.rangeslider/js/ion-rangeSlider/ion.rangeSlider.min.js'],
                 [
                     'global/plugins/ion.rangeslider/css/ion.rangeSlider.css',
-                    'global/plugins/ion.rangeslider/css/ion.rangeSlider.Metronic.css'
-                ]
+                    'global/plugins/ion.rangeslider/css/ion.rangeSlider.Metronic.css',
+                ],
             ],
             'bootstrap.touchspin'      => [['global/plugins/bootstrap-touchspin/bootstrap.touchspin.js'], []],
             'bootbox'                  => [['global/plugins/bootbox/bootbox.min.js'], []],
@@ -91,41 +91,41 @@ class Metronic
             'modal'                    => [
                 [
                     'global/plugins/bootstrap-modal/js/bootstrap-modalmanager.js',
-                    'global/plugins/bootstrap-modal/js/bootstrap-modal.js'
+                    'global/plugins/bootstrap-modal/js/bootstrap-modal.js',
                 ],
                 [
                     'global/plugins/bootstrap-modal/css/bootstrap-modal-bs3patch.css',
-                    'global/plugins/bootstrap-modal/css/bootstrap-modal.css'
-                ]
+                    'global/plugins/bootstrap-modal/css/bootstrap-modal.css',
+                ],
             ],
             'validate'                 => [
                 [
                     'global/plugins/jquery-validation/js/jquery.validate.min.js',
-                    'global/plugins/jquery-validation/js/additional-methods.min.js'
+                    'global/plugins/jquery-validation/js/additional-methods.min.js',
                 ],
-                []
+                [],
             ],
             'datepicker'               => [
                 ['global/plugins/bootstrap-datepicker/js/bootstrap-datepicker.js'],
-                ['global/plugins/bootstrap-datepicker/css/datepicker3.css']
+                ['global/plugins/bootstrap-datepicker/css/datepicker3.css'],
             ],
             'datetimepicker'           => [
                 ['global/plugins/bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js'],
-                ['global/plugins/bootstrap-datetimepicker/css/datetimepicker.css']
+                ['global/plugins/bootstrap-datetimepicker/css/datetimepicker.css'],
             ],
             'tinymce'                  => [
                 [
                     'global/plugins/tinymce/tinymce.min.js',
-                    'global/plugins/tinymce/jquery.tinymce.min.js'
+                    'global/plugins/tinymce/jquery.tinymce.min.js',
                 ],
-                []
+                [],
             ],
         ];
-    static protected $base = '/modules/backend/assets/';
-    static protected $js = [];
-    static protected $dr = [];
-    static protected $css = [];
-    static protected $req
+    protected static $base = '/modules/backend/assets/';
+    protected static $js = [];
+    protected static $dr = [];
+    protected static $css = [];
+    protected static $req
         = [
             'login'                    => ['jquery.backstretch', 'jquery.validate'],
             'lock'                     => ['jquery.backstretch', 'jquery.validate'],
@@ -136,7 +136,7 @@ class Metronic
                 'dataTables.scroller',
                 'dataTables.colReorder',
                 'dataTables.tableTools',
-                'select2'
+                'select2',
             ],
             'datatable'                => ['table'],
             'dataTables.bootstrap'     => ['jquery.dataTables'],
@@ -155,7 +155,7 @@ class Metronic
                 'bootstrap-switch',
                 'jquery.slimscroll',
                 'jquery.cokie',
-                'jquery.uniform'
+                'jquery.uniform',
             ],
             'theme'                    => ['components', 'plugins', 'quick-sidebar', 'metronic'],
             'bootstrap-hover-dropdown' => ['bootstrap'],
@@ -171,9 +171,9 @@ class Metronic
 
         ];
 
-    static protected $modules = [];
+    protected static $modules = [];
 
-    static function module($module)
+    public static function module($module)
     {
         if (is_array($module)) {
             array_map([__CLASS__, __METHOD__], $module);
@@ -197,66 +197,66 @@ class Metronic
         }
     }
 
-    static function addDR($js)
+    public static function addDR($js)
     {
         self::$dr[] = $js;
     }
 
-    static function base()
+    public static function base()
     {
         self::module('theme');
 
         return self::$base;
     }
 
-    static function js()
+    public static function js()
     {
         self::module('theme');
 
         return self::$js;
     }
 
-    static function css()
+    public static function css()
     {
         self::module('theme');
 
         return self::$css;
     }
 
-    static function dr()
+    public static function dr()
     {
         self::module('theme');
 
-        return join(PHP_EOL, self::$dr);
+        return implode(PHP_EOL, self::$dr);
     }
 
-    static function init()
+    public static function init()
     {
         self::module('metronic');
     }
 
     /* ADMIN DASHBOARD MENU ITEM */
-    static protected $menu = [null, null];
+    protected static $menu = [null, null];
 
-    static function menu($menu = null, $subItem = null)
+    public static function menu($menu = null, $subItem = null)
     {
         self::$menu = [$menu, $subItem];
     }
 
-    static function isMenu($menu, $subItem = null)
+    public static function isMenu($menu, $subItem = null)
     {
-        return self::$menu[0] == $menu && ($subItem === null || self::$menu[1] == $subItem);
+        return self::$menu[0] === $menu && ($subItem === null || self::$menu[1] === $subItem);
     }
 
     /* ADMIN DASHBOARD BREADCRUMBS */
-    static protected $breadcrumbs = [];
+    protected static $breadcrumbs = [];
 
-    static function addPath($title, $url = null, array $attributes = [])
+    public static function addPath($title, $url = null, array $attributes = [])
     {
         self::$breadcrumbs[] = [$title, $url, $attributes];
     }
 
-    static function breadcrumbs()
+    public static function breadcrumbs()
     {
         return self::$breadcrumbs;
     }

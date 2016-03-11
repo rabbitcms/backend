@@ -1,9 +1,9 @@
 <?php namespace RabbitCMS\Backend\Http\Middleware;
 
-use Illuminate\Auth\AuthManager;
+use Illuminate\Contracts\Auth\Factory as AuthFactory;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Auth;
+
 use URL;
 use Closure;
 use ReflectionClass;
@@ -25,9 +25,9 @@ class Authenticate
     /**
      * Create a new filter instance.
      *
-     * @param  AuthManager $auth
+     * @param  AuthFactory $auth
      */
-    public function __construct(AuthManager $auth)
+    public function __construct(AuthFactory $auth)
     {
         $this->guard = $auth->guard('backend');
     }
@@ -68,7 +68,7 @@ class Authenticate
                     $reader = new AnnotationReader();
                     $class = new ReflectionClass($class);
                     $annotation = $reader->getClassAnnotation($class, PermissionAnnotation::class);
-                    if ($annotation !== null && !$user->hasAccess($annotation->permissions, $annotation->all)) {
+                    if ($annotation instanceof PermissionAnnotation && !$user->hasAccess($annotation->permissions, $annotation->all)) {
                         if ($request->ajax()) {
                             return new JsonResponse([], Response::HTTP_FORBIDDEN);
                         } else {
@@ -78,7 +78,7 @@ class Authenticate
 
                     if ($method = $class->getMethod($method)) {
                         $annotation = $reader->getMethodAnnotation($method, PermissionAnnotation::class);
-                        if ($annotation !== null && !$user->hasAccess($annotation->permissions, $annotation->all)) {
+                        if ($annotation instanceof PermissionAnnotation && !$user->hasAccess($annotation->permissions, $annotation->all)) {
                             if ($request->ajax()) {
                                 return new JsonResponse([], Response::HTTP_FORBIDDEN);
                             } else {
