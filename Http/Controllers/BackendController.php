@@ -7,8 +7,8 @@ use RabbitCMS\Carrot\Http\ModuleController;
 
 class BackendController extends ModuleController
 {
-    public function __construct(Container $container)
+    public function __construct(Container $app)
     {
-        parent::__construct($container);
+        parent::__construct($app);
     }
 }

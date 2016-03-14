@@ -8,14 +8,13 @@
     <meta name="description" content=""/>
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700&subset=all" rel="stylesheet"
           type="text/css"/>
-    <script data-main="{{asset_module('config.js','backend')}}"
-            src="{{asset('bower/requirejs/require.js','backend')}}"></script>
-    {{--@foreach(\RabbitCMS\Backend\Support\Metronic::css() as $css)--}}
-        {{--<link href="{{\RabbitCMS\Backend\Support\Metronic::base()}}{{$css}}" rel="stylesheet" type="text/css"/>--}}
-    {{--@endforeach--}}
-    {{--@foreach(\RabbitCMS\Backend\Support\Metronic::js() as $js)--}}
-        {{--<script src="{{\RabbitCMS\Backend\Support\Metronic::base()}}{{$js}}" type="text/javascript"></script>--}}
-    {{--@endforeach--}}
+    <script src="{{asset('bower/requirejs/require.js','backend')}}"></script>
+    @foreach(\RabbitCMS\Backend\Support\Metronic::css() as $css)
+        <link href="{{\RabbitCMS\Backend\Support\Metronic::base()}}{{$css}}" rel="stylesheet" type="text/css"/>
+    @endforeach
+    @foreach(\RabbitCMS\Backend\Support\Metronic::js() as $js)
+        <script src="{{\RabbitCMS\Backend\Support\Metronic::base()}}{{$js}}" type="text/javascript"></script>
+    @endforeach
     <script>
         jQuery(document).ready(function () {
             {!!\RabbitCMS\Backend\Support\Metronic::dr()!!}

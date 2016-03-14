@@ -12,9 +12,9 @@ class Users extends ModuleController
 {
     protected $module = 'backend';
     
-    public function __construct(Container $container)
+    public function __construct(Container $app)
     {
-        parent::__construct($container);
+        parent::__construct($app);
         Metronic::module(['datatable', 'validate', 'spinner']);
 
         Metronic::addPath(trans('Home'), '/');
