@@ -227,11 +227,22 @@ var AdminWrapper = function () {
                     var _result = '';
                     try {
                         var _data = $.parseJSON(jqXHR.responseText);
-                        _result = '<ul>';
+
+                        /*_result = '<ul>';
                         $.each(_data, function (key, value) {
                             _result += '<li>' + value + '</li>';
                         });
-                        _result += '</ul>';
+                        _result += '</ul>';*/
+
+                        $.map(_data, function (value, key) {
+                            var _input = key.split('.').reduce(function (result, element, index){
+                                return result + (index ? '[' + element + ']': element);
+                            }, '');
+
+                            $('[name="' + _input + '"]', form).parents('.form-group').addClass('has-error');
+                        });
+
+                        _result = 'Помилка збереження даних';
                     } catch (message) {
                         _result = 'Помилка збереження даних';
                     }
