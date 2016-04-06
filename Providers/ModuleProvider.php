@@ -37,10 +37,21 @@ class ModuleProvider extends CarrotModuleProvider
             'model'  => UserEntity::class,
         ]);
 
-        \BackendMenu::addMenu('system', trans('System'), '', '', ['system.*']);
-        \BackendMenu::addItem('system', 'users', trans('Users'), route('backend.backend.users'), 'fa-users', ['system.users']);
+        \BackendAcl::addAcl('system.*', trans('backend::common.system'));
+        \BackendAcl::addAcl('system.users.*', trans('backend::common.users'));
+        \BackendAcl::addAcl('system.users.read', trans('backend::common.rules.read'));
+        \BackendAcl::addAcl('system.users.write', trans('backend::common.rules.write'));
+        \BackendAcl::addAcl('system.groups.*', trans('backend::common.groups'));
+        \BackendAcl::addAcl('system.groups.read', trans('backend::common.rules.read'));
+        \BackendAcl::addAcl('system.groups.write', trans('backend::common.rules.write'));
 
-        \BackendAcl::addAcl('system.users', trans('Backend users'));
+        $all = \BackendAcl::getModulePermissions('system');
+        $users = \BackendAcl::getModulePermissions('system', 'users');
+        $groups = \BackendAcl::getModulePermissions('system', 'groups');
+
+        \BackendMenu::addMenu('system', trans('backend::common.system'), '', 'fa-gears', $all);
+        \BackendMenu::addItem('system', 'users', trans('backend::common.users'), route('backend.backend.users'), 'fa-angle-double-right', $users);
+        \BackendMenu::addItem('system', 'groups', trans('backend::common.groups'), route('backend.backend.groups'), 'fa-angle-double-right', $groups);
     }
 
     /**

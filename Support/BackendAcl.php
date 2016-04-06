@@ -42,4 +42,27 @@ class BackendAcl
     {
         return $this->acl;
     }
+
+    /**
+     * Get ACL rules for module or its section.
+     *
+     * @param      $module
+     * @param null $section
+     * @return array
+     */
+    public function getModulePermissions($module, $section = null)
+    {
+        $permissions = $this->acl[$module];
+
+        $list = ($section !== null) ? array_dot($permissions[$section], $module . '.' . $section . '.')
+            : array_dot($permissions, $module . '.');
+
+        $result = [];
+        foreach ($list as $key => $value) {
+            if (!ends_with($key, '*'))
+                $result[] = $key;
+        }
+
+        return $result;
+    }
 }

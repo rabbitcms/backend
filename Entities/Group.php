@@ -16,16 +16,8 @@ class Group extends Model
     use SoftDeletes;
     
     protected $table = 'backend_groups';
-    protected $fillable
-        = [
-            'caption',
-            'permissions',
-        ];
-
-    protected $casts
-        = [
-            'permissions' => 'array',
-        ];
+    protected $fillable = ['caption', 'permissions'];
+    protected $casts = ['permissions' => 'array'];
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany

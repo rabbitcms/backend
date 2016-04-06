@@ -33,12 +33,12 @@ class BackendMenu
         $user = \Auth::guard('backend')->user();
         $menu = [];
         foreach ($this->menu as $name => $item) {
-            if (empty($item['permissions']) || $user->hasAccess($item['permissions'])) {
+            if (empty($item['permissions']) || $user->hasAccess($item['permissions'], false)) {
                 $menu[$name] = $item;
                 if (!empty($item['items'])) {
                     $menu[$name]['items'] = [];
                     foreach ($item['items'] as $subItem) {
-                        if (empty($subItem['permissions']) || $user->hasAccess($subItem['permissions'])) {
+                        if (empty($subItem['permissions']) || $user->hasAccess($subItem['permissions'], false)) {
                             $menu[$name]['items'][] = $subItem;
                         }
                     }
