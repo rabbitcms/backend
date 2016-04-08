@@ -8,7 +8,7 @@
     <meta name="description" content=""/>
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700&subset=all" rel="stylesheet"
           type="text/css"/>
-    <script src="{{asset('bower/requirejs/require.js','backend')}}"></script>
+    {{--<script src="{{asset('bower/requirejs/require.js','backend')}}"></script>--}}
     @foreach(\RabbitCMS\Backend\Support\Metronic::css() as $css)
         <link href="{{\RabbitCMS\Backend\Support\Metronic::base()}}{{$css}}" rel="stylesheet" type="text/css"/>
     @endforeach
