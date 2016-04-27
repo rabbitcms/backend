@@ -3,16 +3,7 @@
     "description": "Backend for RabbitCMS",
     "require": {
         "rabbitcms/carrot": "*",
-        "doctrine/annotations": "1.*",
-        "fxp/composer-asset-plugin": "~1.1",
-        "bower-asset/requirejs": "^2.1",
-        "bower-asset/bootstrap": "~3.0",
-        "bower-asset/jquery-validation": "^1.15",
-        "bower-asset/tinymce": "^4.3",
-        "bower-asset/bootbox": "^4.4",
-        "bower-asset/mjolnic-bootstrap-colorpicker": "^2.3",
-        "bower-asset/bootstrap-datepicker": "^1.6",
-        "bower-asset/bootstrap-daterangepicker": "^2.1"
+        "doctrine/annotations": "1.*"
     },
     "type": "october-module",
     "authors": [

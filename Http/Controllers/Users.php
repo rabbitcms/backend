@@ -19,7 +19,6 @@ class Users extends ModuleController
         parent::__construct($app);
         Metronic::module(['datatable', 'validate', 'spinner']);
 
-        Metronic::addPath(trans('Home'), '/');
         Metronic::addPath(trans('System'), null);
     }
 
@@ -70,7 +69,7 @@ class Users extends ModuleController
                 $item->id,
                 $item->email,
                 array_key_exists($item->active, $status) ? $status[$item->active] : $item->active,
-                '<a href="' . route('backend.backend.users.edit', ['id' => $item->id]) . '" rel="edit-portlet" class="btn btn-sm green" title="' . trans('backend::common.buttons.edit') . '"><i class="fa fa-pencil"></i></a> ' .
+                '<a href="' . route('backend.backend.users.edit', ['id' => $item->id]) . '" rel="ajax-portlet" class="btn btn-sm green" title="' . trans('backend::common.buttons.edit') . '"><i class="fa fa-pencil"></i></a> ' .
                 '<a href="' . route('backend.backend.users.destroy', ['id' => $item->id]) . '" rel="destroy" class="btn btn-sm red" title="' . trans('backend::common.buttons.destroy') . '"><i class="fa fa-trash-o"></i></a>'
             ];
         }

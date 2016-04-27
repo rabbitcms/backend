@@ -16,9 +16,6 @@ class Groups extends ModuleController
     {
         parent::__construct($app);
 
-        Metronic::module(['datatable', 'validate']);
-
-        Metronic::addPath(trans('Home'), '/');
         Metronic::addPath(trans('System'), null);
     }
 
@@ -53,7 +50,7 @@ class Groups extends ModuleController
             $data[] = [
                 $item->id,
                 $item->caption,
-                '<a href="' . route('backend.backend.groups.edit', ['id' => $item->id]) . '" rel="edit-portlet" class="btn btn-sm green" title="' . trans('backend::common.buttons.edit') . '"><i class="fa fa-pencil"></i></a> ' .
+                '<a href="' . route('backend.backend.groups.edit', ['id' => $item->id]) . '" rel="ajax-portlet" class="btn btn-sm green" title="' . trans('backend::common.buttons.edit') . '"><i class="fa fa-pencil"></i></a> ' .
                 '<a href="' . route('backend.backend.groups.destroy', ['id' => $item->id]) . '" rel="destroy" class="btn btn-sm red" title="' . trans('backend::common.buttons.destroy') . '"><i class="fa fa-trash-o"></i></a>'
             ];
         }

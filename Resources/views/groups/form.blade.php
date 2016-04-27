@@ -1,18 +1,18 @@
 @extends(\Request::ajax() ? 'backend::layouts.empty' : 'backend::layouts.master')
 @section('content')
-    <div class="portlet box blue-hoki ajaxbox show" data-form="form-portlet">
+    <div class="portlet box blue-hoki ajax-portlet" data-require="rabbitcms.users.groups:form">
         <div class="portlet-title">
             <div class="caption">
                 {{$model->exists ? trans('backend::common.edit_group') : trans('backend::common.create_group')}}</div>
             <div class="actions">
-                <a class="btn btn-default btn-sm" rel="to-list" href="{{route('backend.backend.groups')}}">
+                <a class="btn btn-default btn-sm" rel="back" href="{{relative_route('backend.backend.groups')}}">
                     <i class="fa fa-arrow-left"></i> {{trans('backend::common.buttons.back')}}</a>
             </div>
         </div>
 
         <div class="portlet-body">
             <form id="groups-form" method="post" class="form"
-                  action="{{$model->exists ? route('backend.backend.groups.update', ['id' => $model->id]) : route('backend.backend.groups.store')}}">
+                  action="{{$model->exists ? relative_route('backend.backend.groups.update', ['id' => $model->id]) : relative_route('backend.backend.groups.store')}}">
                 <input type="hidden" name="_token" value="{{csrf_token()}}">
 
                 <div class="form-body">
@@ -80,7 +80,7 @@
 
                 <div class="form-actions">
                     <div class="pull-right">
-                        <a class="btn red" rel="to-list" href="{{route('backend.backend.groups')}}">
+                        <a class="btn red" rel="back" href="{{relative_route('backend.backend.groups')}}">
                             <i class="fa fa-close"></i> {{trans('backend::common.buttons.cancel')}}</a>
                         <button type="submit" class="btn green"><i class="fa fa-check"></i> {{trans('backend::common.buttons.save')}}</button>
                     </div>

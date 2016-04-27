@@ -1,4 +1,6 @@
-<?php namespace RabbitCMS\Backend\Providers;
+<?php
+
+namespace RabbitCMS\Backend\Providers;
 
 use Illuminate\Auth\SessionGuard;
 use RabbitCMS\Backend\Entities\User as UserEntity;
@@ -50,8 +52,8 @@ class ModuleProvider extends CarrotModuleProvider
         $groups = \BackendAcl::getModulePermissions('system', 'groups');
 
         \BackendMenu::addMenu('system', trans('backend::common.system'), '', 'fa-gears', $all);
-        \BackendMenu::addItem('system', 'users', trans('backend::common.users'), route('backend.backend.users'), 'fa-angle-double-right', $users);
-        \BackendMenu::addItem('system', 'groups', trans('backend::common.groups'), route('backend.backend.groups'), 'fa-angle-double-right', $groups);
+        \BackendMenu::addItem('system', 'users', trans('backend::common.users'), relative_route('backend.backend.users'), 'fa-angle-double-right', $users);
+        \BackendMenu::addItem('system', 'groups', trans('backend::common.groups'), relative_route('backend.backend.groups'), 'fa-angle-double-right', $groups);
     }
 
     /**
@@ -104,13 +106,6 @@ class ModuleProvider extends CarrotModuleProvider
         $this->app->bind('backend.menu', function () {
             return new BackendMenu();
         }, true);
-
-        $bower = $this->app->make('rabbitcms.bower');
-        $bower->define('jquery', [], 'dist/dist/jquery.min.js');
-        $bower->define('bootstrap', ['jquery'], 'js/bootstrap.min', ['css/bootstrap.css']);
-        $bower->define('jquery.validate', ['jquery'], '../jquery-validation/dist/jquery.validate');
-        $bower->define('jquery.validate.methods', ['jquery.validate'], '../jquery-validation/dist/additional-methods');
-        $bower->define('tinymce', ['jquery'], 'tinymce.jquery.min');
     }
 
     /**

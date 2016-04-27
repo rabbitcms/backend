@@ -47,7 +47,7 @@ Route::group(
             '',
             [
                 'uses' => function () {
-                    return view('backend::layouts.master');
+                    return view('backend::index');
                 },
                 'as'   => 'index',
             ]

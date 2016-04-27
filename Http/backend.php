@@ -1,18 +1,10 @@
 <?php
-/*Route::controller('users',\RabbitCMS\Backend\Http\Controllers\Users::class, [
-    'getIndex'=>'users'
-]);*/
-//Route::group(['prefix' => 'users','as'=>'users'], function (\Illuminate\Routing\Router $router) {
-//    $router->controller('', \RabbitCMS\Backend\Http\Controllers\Users::class, [
-//        //'postUsers'=>''
-//    ]);
-//});
 
 Route::group(['namespace' => '\\RabbitCMS\\Backend\\Http\\Controllers'], function (\Illuminate\Routing\Router $router) {
 
     $router->group(['prefix' => 'users'], function (\Illuminate\Routing\Router $router) {
         $router->get('', ['as' => 'users', 'uses' => 'Users@getIndex']);
-        $router->post('', ['as' => 'users', 'uses' => 'Users@postIndex']);
+        $router->post('', ['as' => 'users.list', 'uses' => 'Users@postIndex']);
 
         $router->get('create', ['as' => 'users.create', 'uses' => 'Users@getCreate']);
         $router->post('create', ['as' => 'users.store', 'uses' => 'Users@postCreate']);
@@ -25,7 +17,7 @@ Route::group(['namespace' => '\\RabbitCMS\\Backend\\Http\\Controllers'], functio
 
     $router->group(['prefix' => 'groups'], function (\Illuminate\Routing\Router $router) {
         $router->get('', ['as' => 'groups', 'uses' => 'Groups@getIndex']);
-        $router->post('', ['as' => 'groups', 'uses' => 'Groups@postIndex']);
+        $router->post('', ['as' => 'groups.list', 'uses' => 'Groups@postIndex']);
 
         $router->get('create', ['as' => 'groups.create', 'uses' => 'Groups@getCreate']);
         $router->post('create', ['as' => 'groups.store', 'uses' => 'Groups@postCreate']);

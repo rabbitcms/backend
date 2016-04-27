@@ -1,23 +1,25 @@
 @extends('backend::layouts.base')
 @section('main')
-    <body class="page-header-fixed page-quick-sidebar-over-content">
+    <body class="page-header-fixed page-quick-sidebar-over-content loading">
     <div class="page-header navbar navbar-fixed-top">
         <div class="page-header-inner">
             <div class="page-logo">
-                <a href="/">
-                    <img src="{{asset_module('assets/admin/layout/img/logo.png','backend')}}" alt="logo" class="logo-default"/></a>
+                <a href="{{relative_route('backend.index')}}" rel="ajax-portlet">
+                    <img src="{{asset_module('img/logo.png','backend')}}" alt="logo" class="logo-default"></a>
                 <div class="menu-toggler sidebar-toggler"></div>
             </div>
-            <a href="javascript:;" class="menu-toggler responsive-toggler" data-toggle="collapse" data-target=".navbar-collapse"></a>
+            <a href="javascript:void(0);" class="menu-toggler responsive-toggler" data-toggle="collapse" data-target=".navbar-collapse"></a>
             <div class="top-menu">
                 <ul class="nav navbar-nav pull-right">
                     <li class="dropdown dropdown-user">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" data-hover="dropdown" data-close-others="true">
-                            <img alt="" class="img-circle hide1" src="{{asset_module('assets/admin/layout/img/avatar3_small.jpg','backend')}}"/>
-                            <span class="username username-hide-on-mobile">{{--{{\Auth::user()->name()}}--}}</span>
+                            <img class="img-circle hide1" src="{{asset_module('img/avatar.png','backend')}}" alt="">
+                            <span class="username username-hide-on-mobile">
+                                {{Auth::guard('backend')->user()->email}}</span>
                             <i class="fa fa-angle-down"></i></a>
                         <ul class="dropdown-menu">
-                            <li><a href="{{route('backend.auth.logout')}}"><i class="icon-key"></i> Вийти </a></li>
+                            <li><a href="{{route('backend.auth.logout')}}">
+                                    <i class="fa fa-sign-out"></i> Вийти</a></li>
                         </ul>
                     </li>
                 </ul>
@@ -34,26 +36,23 @@
         <div class="page-content-wrapper">
             <div class="page-content">
                 <div class="page-bar">
-                    <ul class="page-breadcrumb">
+                    {{--<ul class="page-breadcrumb">
+                        <li>
+                            <i class="fa fa-home"></i>
+                            <a rel="ajax-portlet" href="{{relative_route('backend.index')}}">Головна</a></li>
                         @foreach(\RabbitCMS\Backend\Support\Metronic::breadcrumbs() as $k => $item)
-                            @if ($k == 0)
-                                <li>
-                                    <i class="fa fa-home"></i>
-                                    <a href="{{$item[1]}}">{{$item[0]}}</a></li>
-                            @else
-                                <li>
-                                    <i class="fa fa-angle-right"></i>
-                                    <a href="{{$item[1]}}">{{$item[0]}}</a></li>
-                            @endif
+                            <li>
+                                <i class="fa fa-angle-right"></i>
+                                <a rel="ajax-portlet" href="{{$item[1]}}">{{$item[0]}}</a></li>
                         @endforeach
-                    </ul>
+                    </ul>--}}
                 </div>
                 @yield('content')
             </div>
         </div>
     </div>
     <div class="page-footer">
-        <div class="page-footer-inner">2015 &copy;</div>
+        <div class="page-footer-inner">{{date('Y')}} &copy; DK</div>
         <div class="scroll-to-top"><i class="icon-arrow-up"></i></div>
     </div>
     </body>
