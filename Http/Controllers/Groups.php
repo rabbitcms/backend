@@ -2,20 +2,14 @@
 
 namespace RabbitCMS\Backend\Http\Controllers;
 
-use Illuminate\Contracts\Container\Container;
 use Illuminate\Http\Request;
 use RabbitCMS\Backend\Entities\Group as GroupModel;
 use RabbitCMS\Backend\Support\Metronic;
-use RabbitCMS\Carrot\Http\ModuleController;
 
-class Groups extends ModuleController
+class Groups extends Controller
 {
-    protected $module = 'backend';
-
-    public function __construct(Container $app)
+    public function init()
     {
-        parent::__construct($app);
-
         Metronic::addPath(trans('System'), null);
     }
 
@@ -31,6 +25,7 @@ class Groups extends ModuleController
 
     /**
      * @param Request $request
+     *
      * @return array
      */
     public function postIndex(Request $request)
@@ -50,8 +45,10 @@ class Groups extends ModuleController
             $data[] = [
                 $item->id,
                 $item->caption,
-                '<a href="' . route('backend.backend.groups.edit', ['id' => $item->id]) . '" rel="ajax-portlet" class="btn btn-sm green" title="' . trans('backend::common.buttons.edit') . '"><i class="fa fa-pencil"></i></a> ' .
-                '<a href="' . route('backend.backend.groups.destroy', ['id' => $item->id]) . '" rel="destroy" class="btn btn-sm red" title="' . trans('backend::common.buttons.destroy') . '"><i class="fa fa-trash-o"></i></a>'
+                '<a href="' . route('backend.backend.groups.edit', ['id' => $item->id]) . '" rel="ajax-portlet" class="btn btn-sm green" title="'
+                . trans('backend::common.buttons.edit') . '"><i class="fa fa-pencil"></i></a> ' .
+                '<a href="' . route('backend.backend.groups.destroy', ['id' => $item->id]) . '" rel="destroy" class="btn btn-sm red" title="'
+                . trans('backend::common.buttons.destroy') . '"><i class="fa fa-trash-o"></i></a>'
             ];
         }
 
@@ -76,6 +73,7 @@ class Groups extends ModuleController
 
     /**
      * @param Request $request
+     *
      * @return array|\Illuminate\Http\RedirectResponse
      */
     public function postCreate(Request $request)
@@ -86,52 +84,9 @@ class Groups extends ModuleController
     }
 
     /**
-     * @param $id
-     * @return \Illuminate\View\View
-     */
-    public function getEdit($id)
-    {
-        $model = GroupModel::query()
-            ->findOrFail($id);
-
-        $rules = \BackendAcl::getAcl();
-
-        return $this->view('groups.form', ['model' => $model, 'rules' => $rules]);
-    }
-
-    /**
-     * @param              $id
-     * @param Request $request
-     * @return array|\Illuminate\Http\RedirectResponse
-     */
-    public function postEdit($id, Request $request)
-    {
-        /**
-         * @var GroupModel $model
-         */
-        $model = GroupModel::query()
-            ->findOrFail($id);
-
-        return $this->save($model, $request);
-    }
-
-    /**
-     * @param $id
-     * @return array
-     * @throws \Exception
-     */
-    public function anyDelete($id)
-    {
-        $result = GroupModel::query()
-            ->findOrFail($id)
-            ->delete();
-
-        return ['result' => $result];
-    }
-
-    /**
-     * @param GroupModel    $model
-     * @param Request $request
+     * @param GroupModel $model
+     * @param Request    $request
+     *
      * @return array|\Illuminate\Http\RedirectResponse
      */
     private function save(GroupModel $model, Request $request)
@@ -148,6 +103,53 @@ class Groups extends ModuleController
         }
 
         return \Redirect::route('backend.backend.groups');
+    }
+
+    /**
+     * @param $id
+     *
+     * @return \Illuminate\View\View
+     */
+    public function getEdit($id)
+    {
+        $model = GroupModel::query()
+            ->findOrFail($id);
+
+        $rules = \BackendAcl::getAcl();
+
+        return $this->view('groups.form', ['model' => $model, 'rules' => $rules]);
+    }
+
+    /**
+     * @param              $id
+     * @param Request      $request
+     *
+     * @return array|\Illuminate\Http\RedirectResponse
+     */
+    public function postEdit($id, Request $request)
+    {
+        /**
+         * @var GroupModel $model
+         */
+        $model = GroupModel::query()
+            ->findOrFail($id);
+
+        return $this->save($model, $request);
+    }
+
+    /**
+     * @param $id
+     *
+     * @return array
+     * @throws \Exception
+     */
+    public function anyDelete($id)
+    {
+        $result = GroupModel::query()
+            ->findOrFail($id)
+            ->delete();
+
+        return ['result' => $result];
     }
 
 }

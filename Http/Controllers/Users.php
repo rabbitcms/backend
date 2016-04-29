@@ -14,11 +14,9 @@ class Users extends ModuleController
 {
     protected $module = 'backend';
 
-    public function __construct(Container $app)
+    public function init()
     {
-        parent::__construct($app);
         Metronic::module(['datatable', 'validate', 'spinner']);
-
         Metronic::addPath(trans('System'), null);
     }
 

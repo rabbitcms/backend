@@ -3,7 +3,7 @@
 use Illuminate\Auth\AuthManager;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Http\Request;
-use Illuminate\Routing\Controller;
+
 use RabbitCMS\Backend\Support\Metronic;
 
 class Auth extends Controller
@@ -15,7 +15,7 @@ class Auth extends Controller
      */
     protected $guard;
 
-    public function __construct(AuthManager $auth)
+    public function init(AuthManager $auth)
     {
         $this->guard = $auth->guard('backend');
         Metronic::module('login');
