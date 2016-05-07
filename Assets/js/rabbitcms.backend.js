@@ -434,6 +434,9 @@ define(['jquery', 'bootbox'], function ($, bootbox) {
                     case 403:
                         _this.dangerMessage('Доступ заборонено. Зверніться до адміністратора');
                         break;
+                    case 401:
+                        location.reload(true);
+                        break;
                     default:
                         _this.dangerMessage('Помилка ' + jqXHR.status + '. ' + jqXHR.statusText);
                 }

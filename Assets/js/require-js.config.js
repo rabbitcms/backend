@@ -14,8 +14,12 @@ require.config({
     "paths": {
         "rabbitcms.backend": "backend/js/rabbitcms.backend",
         "rabbitcms.backend.login": "backend/js/rabbitcms.backend.login",
+
         "rabbitcms.backend.users": "users/backend/js/rabbitcms.backend.users",
         "rabbitcms.backend.users.autocomplete": "users/backend/js/rabbitcms.backend.users.autocomplete",
+        "dtkt.backend.users.agencies": "users/backend/js/dtkt.backend.users.agencies",
+        "dtkt.backend.users.managers": "users/backend/js/dtkt.backend.users.managers",
+
         "rabbitcms.backend.orders": "subscribe/backend/js/rabbitcms.backend.orders",
         "rabbitcms.backend.details": "subscribe/backend/js/rabbitcms.backend.details",
         "rabbitcms.backend.templates": "subscribe/backend/js/rabbitcms.backend.templates",
