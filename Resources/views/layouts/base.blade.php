@@ -53,6 +53,7 @@
     <script src="{{asset_module('plugins/tinymce/tinymce.min.js', 'backend')}}" type="text/javascript"></script>
     <script src="{{asset_module('plugins/tinymce/jquery.tinymce.min.js', 'backend')}}" type="text/javascript"></script>
     <script src="{{asset_module('plugins/tinymce/langs/uk_UA.js', 'backend')}}" type="text/javascript"></script>
+    <script src="{{asset_module('plugins/jquery.inputmask.js', 'backend')}}" type="text/javascript"></script>
 
     <script src="{{asset_module('js/metronic.js', 'backend')}}" type="text/javascript"></script>
     <script src="{{asset_module('js/datatable.js', 'backend')}}" type="text/javascript"></script>
