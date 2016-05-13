@@ -43,6 +43,7 @@ require.config({
         "rabbitcms.backend.dates": "blanks/backend/js/rabbitcms.backend.dates",
         "rabbitcms.backend.rubrics": "blanks/backend/js/rabbitcms.backend.rubrics",
 
+        "dtkt.subscribe.sampling.backend": "subscribe/backend/js/dtkt.subscribe.sampling.backend",
         "dtkt.subscribe.abilities": "subscribe/backend/js/dtkt.subscribe.abilities",
         "dtkt.subscribe.packages": "subscribe/backend/js/dtkt.subscribe.packages",
         "dtkt.subscribe.item": "subscribe/backend/js/dtkt.subscribe.item",
