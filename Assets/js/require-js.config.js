@@ -19,6 +19,7 @@ require.config({
         "rabbitcms.backend.users.autocomplete": "users/backend/js/rabbitcms.backend.users.autocomplete",
         "dtkt.backend.users.agencies": "users/backend/js/dtkt.backend.users.agencies",
         "dtkt.backend.users.managers": "users/backend/js/dtkt.backend.users.managers",
+        "dtkt.backend.users.firms": "users/backend/js/dtkt.backend.users.firms",
 
         "rabbitcms.backend.orders": "subscribe/backend/js/rabbitcms.backend.orders",
         "rabbitcms.backend.details": "subscribe/backend/js/rabbitcms.backend.details",
@@ -49,7 +50,7 @@ require.config({
         "dtkt.subscribe.item": "subscribe/backend/js/dtkt.subscribe.item",
         "dtkt.luna": "backend/js/dtkt.luna"
     },
-    "urlArgs": "1461155244"
+    "urlArgs": "1461155245"
 });
 
 define('jquery', [], function() { return jQuery; });
