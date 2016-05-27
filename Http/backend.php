@@ -26,6 +26,9 @@ Route::group(['namespace' => '\\RabbitCMS\\Backend\\Http\\Controllers'], functio
         $router->post('edit/{id}', ['as' => 'groups.update', 'uses' => 'Groups@postEdit']);
 
         $router->any('delete/{id}', ['as' => 'groups.destroy', 'uses' => 'Groups@anyDelete']);
+
+        $router->post('users/{group_id}/destroy/{user_id}', ['as' => 'groups.users.destroy', 'uses' => 'Groups@destroyUser']);
+        $router->post('users/{id}', ['as' => 'groups.users', 'uses' => 'Groups@getUsers']);
     });
 
 });

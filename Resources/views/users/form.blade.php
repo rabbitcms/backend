@@ -55,6 +55,14 @@
                             </div>
                         </div>
                     </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="control-label">{{trans('backend::common.form.name')}}</label>
+                                <input class="form-control" name="user[name]" value="{{$model->name}}">
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="form-actions">

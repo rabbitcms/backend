@@ -100,6 +100,33 @@ define(["jquery"], function ($) {
 
             Metronic.updateUniform();
         });
+
+        if (form.data('type') == 'update') {
+            var dataTable = new Datatable();
+            var tableSelector = $('.data-table', portlet);
+
+            dataTable.setAjaxParam('_token', _TOKEN);
+            dataTable.init({
+                src: tableSelector,
+                dataTable: {
+                    ajax: {
+                        url: tableSelector.data('link')
+                    },
+                    ordering: false
+                }
+            });
+
+            portlet.on('click', '[rel="destroy"]', function () {
+                var self = $(this);
+                var link = self.attr('href');
+
+                RabbitCMS.Dialogs.onDelete(link, function () {
+                    dataTable.getDataTable().ajax.reload();
+                });
+
+                return false;
+            });
+        }
     }
 
     var MicroEvent = new RabbitCMS.MicroEvent({table: table, form: form});

@@ -31,7 +31,8 @@ return [
         'id'      => 'ID',
         'email'   => 'E-mail',
         'status'  => 'Статус',
-        'select'  => 'Выберите...'
+        'select'  => 'Выберите...',
+        'name'    => 'Имя'
     ],
     'form'         => [
         'caption'         => 'Название',
@@ -40,6 +41,7 @@ return [
         'change_password' => 'Для смены пароля - введите новый пароль',
         'status'          => 'Статус',
         'active'          => 'Активен',
-        'non_active'      => 'Не активен'
+        'non_active'      => 'Не активен',
+        'name'            => 'Имя'
     ]
 ];

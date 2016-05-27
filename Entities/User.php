@@ -34,7 +34,7 @@ class User extends Eloquent implements AuthenticatableContract, AuthorizableCont
     /**
      * {@inheritdoc}
      */
-    protected $fillable = ['email', 'active', 'password',];
+    protected $fillable = ['email', 'active', 'password', 'name'];
 
     /**
      * {@inheritdoc}

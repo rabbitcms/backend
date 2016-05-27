@@ -2,7 +2,6 @@
 
 namespace RabbitCMS\Backend\Http\Controllers;
 
-use Illuminate\Contracts\Container\Container;
 use Illuminate\Http\Request;
 use RabbitCMS\Backend\Entities\Group as GroupModel;
 use RabbitCMS\Backend\Entities\User as UserModel;
@@ -65,6 +64,7 @@ class Users extends ModuleController
         foreach ($collection as $item) {
             $data[] = [
                 $item->id,
+                $item->name,
                 $item->email,
                 array_key_exists($item->active, $status) ? $status[$item->active] : $item->active,
                 '<a href="' . route('backend.backend.users.edit', ['id' => $item->id]) . '" rel="ajax-portlet" class="btn btn-sm green" title="' . trans('backend::common.buttons.edit') . '"><i class="fa fa-pencil"></i></a> ' .

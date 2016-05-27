@@ -15,6 +15,7 @@
                     <thead>
                     <tr role="row" class="heading">
                         <th style="width: 100px;">{{trans('backend::common.table.id')}}</th>
+                        <th>{{trans('backend::common.table.name')}}</th>
                         <th>{{trans('backend::common.table.email')}}</th>
                         <th style="width: 200px;">{{trans('backend::common.table.status')}}</th>
                         <th style="width: 110px;">{{trans('backend::common.table.actions')}}</th>
@@ -23,6 +24,7 @@
                         <td>
                             <input type="text" class="form-control form-filter input-sm" name="filter[id]">
                         </td>
+                        <td></td>
                         <td>
                             <input type="text" class="form-control form-filter input-sm" name="filter[email]"
                                    placeholder="E-mail">

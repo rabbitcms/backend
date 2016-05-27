@@ -8,6 +8,9 @@ class BackendMenu
 
     public function addMenu($name, $label, $link = '', $icon = '', $permissions = [])
     {
+        if (array_key_exists($name, $this->menu))
+            return;
+
         $this->menu[$name] = [
             'label'       => $label,
             'link'        => $link,

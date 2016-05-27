@@ -33,6 +33,9 @@ require.config({
         "rabbitcms.backend.authors": "dtkt/backend/js/rabbitcms.backend.authors",
         "rabbitcms.backend.footer": "dtkt/backend/js/rabbitcms.backend.footer",
 
+        "dtkt.backend.localization": "dtkt/backend/js/dtkt.backend.localization",
+        "dtkt.backend.comments": "dtkt/backend/js/dtkt.backend.comments",
+
         "rabbitcms.backend.consulting": "consulting/backend/js/rabbitcms.backend.consulting",
         "rabbitcms.backend.questions": "consulting/backend/js/rabbitcms.backend.questions",
         "rabbitcms.backend.subscribers": "consulting/backend/js/rabbitcms.backend.subscribers",
@@ -50,7 +53,7 @@ require.config({
         "dtkt.subscribe.item": "subscribe/backend/js/dtkt.subscribe.item",
         "dtkt.luna": "backend/js/dtkt.luna"
     },
-    "urlArgs": "1461155245"
+    "urlArgs": "0000000007"
 });
 
 define('jquery', [], function() { return jQuery; });

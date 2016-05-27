@@ -10,6 +10,7 @@ class Groups extends Controller
 {
     public function init()
     {
+        Metronic::menu('system', 'groups');
         Metronic::addPath(trans('System'), null);
     }
 
@@ -18,8 +19,6 @@ class Groups extends Controller
      */
     public function getIndex()
     {
-        Metronic::menu('system', 'groups');
-
         return $this->view('groups.index');
     }
 
@@ -150,6 +149,56 @@ class Groups extends Controller
             ->delete();
 
         return ['result' => $result];
+    }
+
+    public function getUsers($id, Request $request)
+    {
+        $limit = $request->input('length', 25);
+        $offset = $request->input('start', 0);
+
+        /**
+         * @var GroupModel $group
+         */
+        $group = GroupModel::query()
+            ->findOrFail($id);
+
+        $query = $group->users();
+        $recordsFiltered = $recordsTotal = $query->count();
+
+        $query->limit($limit)
+            ->offset($offset);
+
+        $query->orderBy('id', 'desc');
+
+        $collection = $query->get();
+
+        $data = [];
+        foreach ($collection as $item) {
+            $data[] = [
+                $item->id,
+                empty($item->name) ? $item->email : $item->name,
+                '<a href="' . relative_route('backend.backend.groups.users.destroy', ['group_id' => $id, 'user_id' => $item->id]) . '" rel="destroy" class="btn btn-sm red" title="'
+                . trans('backend::common.buttons.destroy') . '"><i class="fa fa-trash-o"></i></a>'
+            ];
+        }
+
+        return [
+            'data'            => $data,
+            'recordsTotal'    => $recordsTotal,
+            'recordsFiltered' => $recordsFiltered
+        ];
+    }
+
+    public function destroyUser($group_id, $user_id)
+    {
+        /**
+         * @var GroupModel $group
+         */
+        $group = GroupModel::query()
+            ->findOrFail($group_id);
+
+        $group->users()
+            ->detach($user_id);
     }
 
 }

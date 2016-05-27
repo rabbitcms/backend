@@ -11,70 +11,102 @@
         </div>
 
         <div class="portlet-body">
-            <form id="groups-form" method="post" class="form"
+            <form id="groups-form" method="post" class="form" data-type="{{$model->exists ? 'update' : 'create'}}"
                   action="{{$model->exists ? relative_route('backend.backend.groups.update', ['id' => $model->id]) : relative_route('backend.backend.groups.store')}}">
                 <input type="hidden" name="_token" value="{{csrf_token()}}">
 
-                <div class="form-body">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label class="control-label">{{trans('backend::common.form.caption')}}</label>
-                                <input class="form-control" name="groups[caption]" value="{{$model->caption}}">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="table-container">
-                                <table class="table table-striped table-bordered table-hover">
-                                    <thead>
-                                    <tr role="row" class="heading">
-                                        <th colspan="2">{{trans('backend::common.section')}}</th>
-                                        <th style="width: 100px;">{{trans('backend::common.rules.read')}}</th>
-                                        <th style="width: 100px;">{{trans('backend::common.rules.write')}}</th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    @foreach($rules as $module => $sections)
-                                        <tr>
-                                            <td colspan="2" style="font-weight: bold; font-style: italic; background-color: #eee !important;">
-                                                {{array_key_exists('*', $sections) ? $sections['*'] : $module}}
-                                            </td>
-                                            <td style="background-color: #eee !important;">
-                                                <input class="module-read-rule" type="checkbox" data-module="{{$module}}">
-                                            </td>
-                                            <td style="background-color: #eee !important;">
-                                                <input class="module-write-rule" type="checkbox" data-module="{{$module}}">
-                                            </td>
-                                        </tr>
-                                        @foreach($sections as $section => $list)
-                                            @if(is_array($list))
-                                                @foreach($list as $key => $val)
-                                                    @if($key === '*')
-                                                        <tr>
-                                                            <td></td>
-                                                            <td>{{$val}}</td>
-                                                            <td>
-                                                                <input class="{{$module}} read-rule" type="checkbox"
-                                                                       @if($model->exists && array_key_exists($module . '.' . $section . '.read', $model->permissions)) checked="checked" @endif
-                                                                       name="permissions[{{$module . '.' . $section . '.read'}}]" value="1">
-                                                            </td>
-                                                            <td>
-                                                                <input class="{{$module}} write-rule" type="checkbox"
-                                                                       @if($model->exists && array_key_exists($module . '.' . $section . '.write', $model->permissions)) checked="checked" @endif
-                                                                       name="permissions[{{$module . '.' . $section . '.write'}}]" value="1">
-                                                            </td>
-                                                        </tr>
-                                                    @endif
+                <div class="tabbable-custom">
+                    <ul class="nav nav-tabs">
+                        <li class="active">
+                            <a href="#tab_1" data-toggle="tab"> Дані</a></li>
+                        @if($model->exists)
+                            <li>
+                                <a href="#tab_2" data-toggle="tab"> Користувачі</a></li>
+                        @endif
+                    </ul>
+                    <div class="tab-content">
+                        <div class="tab-pane active" id="tab_1">
+                            <div class="form-body">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="control-label">{{trans('backend::common.form.caption')}}</label>
+                                            <input class="form-control" name="groups[caption]" value="{{$model->caption}}">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="table-container">
+                                            <table class="table table-striped table-bordered table-hover">
+                                                <thead>
+                                                <tr role="row" class="heading">
+                                                    <th colspan="2">{{trans('backend::common.section')}}</th>
+                                                    <th style="width: 100px;">{{trans('backend::common.rules.read')}}</th>
+                                                    <th style="width: 100px;">{{trans('backend::common.rules.write')}}</th>
+                                                </tr>
+                                                </thead>
+                                                <tbody>
+                                                @foreach($rules as $module => $sections)
+                                                    <tr>
+                                                        <td colspan="2" style="font-weight: bold; font-style: italic; background-color: #eee !important;">
+                                                            {{array_key_exists('*', $sections) ? $sections['*'] : $module}}
+                                                        </td>
+                                                        <td style="background-color: #eee !important;">
+                                                            <input class="module-read-rule" type="checkbox" data-module="{{$module}}">
+                                                        </td>
+                                                        <td style="background-color: #eee !important;">
+                                                            <input class="module-write-rule" type="checkbox" data-module="{{$module}}">
+                                                        </td>
+                                                    </tr>
+                                                    @foreach($sections as $section => $list)
+                                                        @if(is_array($list))
+                                                            @foreach($list as $key => $val)
+                                                                @if($key === '*')
+                                                                    <tr>
+                                                                        <td></td>
+                                                                        <td>{{$val}}</td>
+                                                                        <td>
+                                                                            <input class="{{$module}} read-rule" type="checkbox"
+                                                                                   @if($model->exists && array_key_exists($module . '.' . $section . '.read', $model->permissions)) checked="checked" @endif
+                                                                                   name="permissions[{{$module . '.' . $section . '.read'}}]" value="1">
+                                                                        </td>
+                                                                        <td>
+                                                                            <input class="{{$module}} write-rule" type="checkbox"
+                                                                                   @if($model->exists && array_key_exists($module . '.' . $section . '.write', $model->permissions)) checked="checked" @endif
+                                                                                   name="permissions[{{$module . '.' . $section . '.write'}}]" value="1">
+                                                                        </td>
+                                                                    </tr>
+                                                                @endif
+                                                            @endforeach
+                                                        @endif
+                                                    @endforeach
                                                 @endforeach
-                                            @endif
-                                        @endforeach
-                                    @endforeach
-                                    </tbody>
-                                </table>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
+                        @if($model->exists)
+                            <div class="tab-pane" id="tab_2">
+                                <div class="form-body">
+                                    <div class="table-container">
+                                        <table class="table table-striped table-bordered table-hover data-table" data-link="{{relative_route('backend.backend.groups.users', ['id' => $model->id])}}">
+                                            <thead>
+                                            <tr role="row" class="heading">
+                                                <th style="width: 100px;">{{trans('backend::common.table.id')}}</th>
+                                                <th>{{trans('backend::common.table.name')}}</th>
+                                                <th style="width: 45px;">{{trans('backend::common.table.actions')}}</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody></tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        @endif
                     </div>
                 </div>
 
