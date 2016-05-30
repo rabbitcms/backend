@@ -176,7 +176,7 @@ class Groups extends Controller
         foreach ($collection as $item) {
             $data[] = [
                 $item->id,
-                empty($item->name) ? $item->email : $item->name,
+                $item->email . (empty($item->name) ? '' : ' - ' . $item->name),
                 '<a href="' . relative_route('backend.backend.groups.users.destroy', ['group_id' => $id, 'user_id' => $item->id]) . '" rel="destroy" class="btn btn-sm red" title="'
                 . trans('backend::common.buttons.destroy') . '"><i class="fa fa-trash-o"></i></a>'
             ];
