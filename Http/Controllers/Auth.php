@@ -37,6 +37,7 @@ class Auth extends Controller
         );
 
         $credentials = $request->only('email', 'password');
+        $credentials['active'] = 1;
         if ($this->guard->attempt($credentials, $request->has('remember'))) {
             return \Redirect::intended();
         }
