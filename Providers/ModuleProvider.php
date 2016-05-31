@@ -89,10 +89,9 @@ class ModuleProvider extends CarrotModuleProvider
         });
 
         $this->app->make('router')->middlewareGroup('backend', [
-            \RabbitCMS\Carrot\Http\Middleware\EncryptCookies::class,
-            \Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
-            \Illuminate\Session\Middleware\StartSession::class,
-            \Illuminate\View\Middleware\ShareErrorsFromSession::class,
+            //\Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
+            //\Illuminate\Session\Middleware\StartSession::class,
+            //\Illuminate\View\Middleware\ShareErrorsFromSession::class,
             // \RabbitCMS\Carrot\Http\Middleware\VerifyCsrfToken::class,
             //\RabbitCMS\Backend\Http\Middleware\Authenticate::class,
         ]);

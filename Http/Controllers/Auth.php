@@ -42,13 +42,9 @@ class Auth extends Controller
             return \Redirect::intended();
         }
 
-        return redirect()->route('backend.auth')
+        return \Redirect::route('backend.auth')
             ->withInput($request->only('email'))
-            ->withErrors(
-                [
-                    'email' => 'Введено невірний логін або пароль',
-                ]
-            );
+            ->withErrors(['email' => 'Введено невірний логін або пароль']);
     }
 
     public function getLogout()
