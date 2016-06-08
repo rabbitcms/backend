@@ -51,13 +51,18 @@ require.config({
         "dtkt.subscribe.abilities": "subscribe/backend/js/dtkt.subscribe.abilities",
         "dtkt.subscribe.packages": "subscribe/backend/js/dtkt.subscribe.packages",
         "dtkt.subscribe.item": "subscribe/backend/js/dtkt.subscribe.item",
-        "dtkt.luna": "backend/js/dtkt.luna"
+        "dtkt.luna": "backend/js/dtkt.luna",
+
+        "dtkt.backend.documents": "documents/backend/js/dtkt.backend.documents",
+        "dtkt.backend.documents.arrivals": "documents/backend/js/dtkt.backend.documents.arrivals",
+        "dtkt.backend.documents.statistics": "documents/backend/js/dtkt.backend.documents.statistics"
     },
-    "urlArgs": "0000000007"
+    "urlArgs": "0000000013"
 });
 
 define('jquery', [], function() { return jQuery; });
 define('bootbox', [], function() { return bootbox; });
+define('Highcharts', [], function() { return Highcharts; });
 require(["jquery", "rabbitcms.backend"], function ($, RabbitCMS) {
     window.RabbitCMS = new RabbitCMS();
 
