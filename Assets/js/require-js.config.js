@@ -58,7 +58,7 @@ require.config({
         "dtkt.backend.documents.statistics": "documents/backend/js/dtkt.backend.documents.statistics",
         "dtkt.backend.callcenter.users": "callcenter/backend/js/dtkt.backend.callcenter.users"
     },
-    "urlArgs": "0000000016"
+    "urlArgs": "0000000017"
 });
 
 define('jquery', [], function() { return jQuery; });

@@ -8,10 +8,6 @@
   "providers": [
     "RabbitCMS\\Backend\\Providers\\ModuleProvider"
   ],
-  "aliases": {
-    "BackendAcl": "\\RabbitCMS\\Backend\\Facades\\BackendAcl",
-    "BackendMenu":"\\RabbitCMS\\Backend\\Facades\\BackendMenu"
-  },
   "files": [
     "Http/routes.php"
   ]

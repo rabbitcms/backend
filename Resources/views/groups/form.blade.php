@@ -11,8 +11,7 @@
         </div>
 
         <div class="portlet-body">
-            <form id="groups-form" method="post" class="form" data-type="{{$model->exists ? 'update' : 'create'}}"
-                  action="{{$model->exists ? relative_route('backend.backend.groups.update', ['id' => $model->id]) : relative_route('backend.backend.groups.store')}}">
+            <form method="post" class="form" data-type="{{$model->exists ? 'update' : 'create'}}" action="{{$model->exists ? relative_route('backend.backend.groups.update', ['id' => $model->id]) : relative_route('backend.backend.groups.store')}}">
                 <input type="hidden" name="_token" value="{{csrf_token()}}">
 
                 <div class="tabbable-custom">
@@ -41,26 +40,31 @@
                                             <table class="table table-striped table-bordered table-hover">
                                                 <thead>
                                                 <tr role="row" class="heading">
-                                                    <th colspan="2">{{trans('backend::common.section')}}</th>
-                                                    <th style="width: 100px;">{{trans('backend::common.rules.read')}}</th>
-                                                    <th style="width: 100px;">{{trans('backend::common.rules.write')}}</th>
+                                                    <th>{{trans('backend::common.section')}}</th>
+                                                    <th>Можливості</th>
                                                 </tr>
                                                 </thead>
                                                 <tbody>
-                                                @foreach($rules as $module => $sections)
+                                                @foreach($rules as $group => $caption)
                                                     <tr>
-                                                        <td colspan="2" style="font-weight: bold; font-style: italic; background-color: #eee !important;">
-                                                            {{array_key_exists('*', $sections) ? $sections['*'] : $module}}
-                                                        </td>
-                                                        <td style="background-color: #eee !important;">
-                                                            <input class="module-read-rule" type="checkbox" data-module="{{$module}}">
-                                                        </td>
-                                                        <td style="background-color: #eee !important;">
-                                                            <input class="module-write-rule" type="checkbox" data-module="{{$module}}">
-                                                        </td>
-                                                    </tr>
-                                                    @foreach($sections as $section => $list)
-                                                        @if(is_array($list))
+                                                        <td style="font-weight: bold; font-style: italic;">{{$caption}}</td>
+                                                        <td>
+                                                        @foreach(\BackendAcl::getGroupPermissions($group) as $rule => $caption)
+                                                            <label>
+                                                                <input class="{{$rule}} read-rule" type="checkbox"
+                                                                       @if($model->exists && array_key_exists($rule, $model->permissions)) checked="checked" @endif
+                                                                       name="permissions[{{$rule}}]" value="1"> {{$caption}}</label><br>
+                                                            {{--<td>
+                                                                <input class="{{$module}} read-rule" type="checkbox"
+                                                                       @if($model->exists && array_key_exists($module . '.' . $section . '.read', $model->permissions)) checked="checked" @endif
+                                                                       name="permissions[{{$module . '.' . $section . '.read'}}]" value="1">
+                                                            </td>
+                                                            <td>
+                                                                <input class="{{$module}} write-rule" type="checkbox"
+                                                                       @if($model->exists && array_key_exists($module . '.' . $section . '.write', $model->permissions)) checked="checked" @endif
+                                                                       name="permissions[{{$module . '.' . $section . '.write'}}]" value="1">
+                                                            </td>--}}
+                                                        {{--@if(is_array($list))
                                                             @foreach($list as $key => $val)
                                                                 @if($key === '*')
                                                                     <tr>
@@ -79,8 +83,10 @@
                                                                     </tr>
                                                                 @endif
                                                             @endforeach
-                                                        @endif
-                                                    @endforeach
+                                                        @endif--}}
+                                                        @endforeach
+                                                        </td>
+                                                    </tr>
                                                 @endforeach
                                                 </tbody>
                                             </table>

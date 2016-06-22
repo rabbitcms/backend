@@ -9,6 +9,7 @@ use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
 use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
 use Illuminate\Support\Facades\Hash;
+use RabbitCMS\Carrot\Contracts\HasAccessEntity;
 use RabbitCMS\Carrot\Support\PermissionsTrait;
 
 /**
@@ -17,11 +18,12 @@ use RabbitCMS\Carrot\Support\PermissionsTrait;
  * @property-read int     $id
  * @property string       $email
  * @property boolean      $active
+ * @property string       $name
  * @property-write string $password
  *
  * @property-read Group[] $groups
  */
-class User extends Eloquent implements AuthenticatableContract, AuthorizableContract, CanResetPasswordContract
+class User extends Eloquent implements AuthenticatableContract, AuthorizableContract, CanResetPasswordContract, HasAccessEntity
 {
     use Authenticatable, Authorizable, CanResetPassword, PermissionsTrait;
     use SoftDeletes;

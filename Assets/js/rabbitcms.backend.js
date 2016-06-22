@@ -437,6 +437,15 @@ define(['jquery', 'bootbox'], function ($, bootbox) {
                     case 401:
                         location.reload(true);
                         break;
+                    case 500:
+                        var responseText = {};
+                        try {
+                            responseText = $.parseJSON(jqXHR.responseText);
+                        } catch (message) {
+                            responseText.message = message;
+                        }
+                        _this.dangerMessage('Помилка ' + jqXHR.status + '. ' + responseText.message);
+                        break;
                     default:
                         _this.dangerMessage('Помилка ' + jqXHR.status + '. ' + jqXHR.statusText);
                 }

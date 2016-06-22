@@ -6,17 +6,12 @@ use Illuminate\Http\Request;
 use RabbitCMS\Backend\Entities\Group as GroupModel;
 use RabbitCMS\Backend\Entities\User as UserModel;
 use RabbitCMS\Backend\Http\Requests\UsersRequest;
-use RabbitCMS\Backend\Support\Metronic;
-use RabbitCMS\Carrot\Http\ModuleController;
 
-class Users extends ModuleController
+class Users extends Controller
 {
-    protected $module = 'backend';
-
     public function init()
     {
-        Metronic::module(['datatable', 'validate', 'spinner']);
-        Metronic::addPath(trans('System'), null);
+        \BackendMenu::setActive('system.users');
     }
 
     /**
@@ -24,14 +19,12 @@ class Users extends ModuleController
      */
     public function getIndex()
     {
-        Metronic::menu('system', 'users');
-
-        return $this->view('users/index');
+        return $this->view('users.index');
     }
 
     /**
      * @param Request $request
-     * @return array
+     * @return \Illuminate\Http\JsonResponse
      */
     public function postIndex(Request $request)
     {
@@ -44,7 +37,7 @@ class Users extends ModuleController
         if (!empty($filters['id'])) {
             $query->where('id', '=', $filters['id']);
         }
-        if (isset($filters['active']) && $filters['active'] !== '') {
+        if (array_key_exists('active', $filters) && $filters['active'] !== '') {
             $query->where('active', '=', $filters['active']);
         }
         if (!empty($filters['email'])) {
@@ -60,23 +53,31 @@ class Users extends ModuleController
 
         $collection = $query->get();
 
-        $data = [];
+        $result = [];
         foreach ($collection as $item) {
-            $data[] = [
+            $edit_link = relative_route('backend.backend.users.edit', ['id' => $item->id]);
+            $edit_link_html = html_link($edit_link, '<i class="fa fa-pencil"></i>', ['rel' => 'ajax-portlet', 'class' => 'btn btn-sm green', 'title' => trans('backend::common.buttons.edit')]);
+
+            $destroy_link = relative_route('backend.backend.users.destroy', ['id' => $item->id]);
+            $destroy_link_html = html_link($destroy_link, '<i class="fa fa-trash-o"></i>', ['rel' => 'destroy', 'class' => 'btn btn-sm red', 'title' => trans('backend::common.buttons.destroy')]);
+
+            $result[] = [
                 $item->id,
                 $item->name,
                 $item->email,
                 array_key_exists($item->active, $status) ? $status[$item->active] : $item->active,
-                '<a href="' . route('backend.backend.users.edit', ['id' => $item->id]) . '" rel="ajax-portlet" class="btn btn-sm green" title="' . trans('backend::common.buttons.edit') . '"><i class="fa fa-pencil"></i></a> ' .
-                '<a href="' . route('backend.backend.users.destroy', ['id' => $item->id]) . '" rel="destroy" class="btn btn-sm red" title="' . trans('backend::common.buttons.destroy') . '"><i class="fa fa-trash-o"></i></a>'
+                $edit_link_html . $destroy_link_html
             ];
         }
 
-        return [
-            'data'            => $data,
+        $data = [
+            'data'            => $result,
             'recordsTotal'    => $recordsTotal,
-            'recordsFiltered' => $recordsFiltered
+            'recordsFiltered' => $recordsFiltered,
+            'draw'            => $request->input('draw')
         ];
+
+        return \Response::json($data, 200, [], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
     }
 
     /**
@@ -84,12 +85,9 @@ class Users extends ModuleController
      */
     public function getCreate()
     {
-        $model = new UserModel;
+        $data['model'] = new UserModel;
 
-        $groups = GroupModel::query()
-            ->get();
-
-        return $this->view('users.form', ['model' => $model, 'groups' => $groups]);
+        return $this->form($data);
     }
 
     /**
@@ -109,13 +107,10 @@ class Users extends ModuleController
      */
     public function getEdit($id)
     {
-        $model = UserModel::query()
+        $data['model'] = UserModel::query()
             ->findOrFail($id);
 
-        $groups = GroupModel::query()
-            ->get();
-
-        return $this->view('users.form', ['model' => $model, 'groups' => $groups]);
+        return $this->form($data);
     }
 
     /**
@@ -149,7 +144,7 @@ class Users extends ModuleController
     }
 
     /**
-     * @param UserModel    $model
+     * @param UserModel $model
      * @param UsersRequest $request
      * @return array|\Illuminate\Http\RedirectResponse
      */
@@ -175,6 +170,18 @@ class Users extends ModuleController
 
             return \Redirect::route('backend.backend.users');
         });
+    }
+
+    /**
+     * @param array $data
+     * @return \Illuminate\View\View
+     */
+    private function form(array $data = [])
+    {
+        $data['groups'] = GroupModel::query()
+            ->get();
+
+        return $this->view('users.form', $data);
     }
 
 }

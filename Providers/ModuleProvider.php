@@ -4,9 +4,9 @@ namespace RabbitCMS\Backend\Providers;
 
 use Illuminate\Auth\SessionGuard;
 use RabbitCMS\Backend\Entities\User as UserEntity;
-use RabbitCMS\Backend\Support\BackendAcl;
-use RabbitCMS\Backend\Support\BackendMenu;
 use RabbitCMS\Carrot\Providers\ModuleProvider as CarrotModuleProvider;
+use RabbitCMS\Carrot\Repository\BackendAcl;
+use RabbitCMS\Carrot\Repository\BackendMenu;
 
 class ModuleProvider extends CarrotModuleProvider
 {
@@ -39,21 +39,23 @@ class ModuleProvider extends CarrotModuleProvider
             'model'  => UserEntity::class,
         ]);
 
-        \BackendAcl::addAcl('system.*', trans('backend::common.system'));
-        \BackendAcl::addAcl('system.users.*', trans('backend::common.users'));
-        \BackendAcl::addAcl('system.users.read', trans('backend::common.rules.read'));
-        \BackendAcl::addAcl('system.users.write', trans('backend::common.rules.write'));
-        \BackendAcl::addAcl('system.groups.*', trans('backend::common.groups'));
-        \BackendAcl::addAcl('system.groups.read', trans('backend::common.rules.read'));
-        \BackendAcl::addAcl('system.groups.write', trans('backend::common.rules.write'));
+        \BackendAcl::addAclResolver(
+            function (BackendAcl $acl) {
+                $acl->addGroup('system', trans('backend::acl.system.title'));
+                $acl->addAcl('system', 'users.read', trans('backend::acl.users.read'));
+                $acl->addAcl('system', 'users.write', trans('backend::acl.users.write'));
+                $acl->addAcl('system', 'groups.read', trans('backend::acl.groups.read'));
+                $acl->addAcl('system', 'groups.write', trans('backend::acl.groups.write'));
+            }
+        );
 
-        $all = \BackendAcl::getModulePermissions('system');
-        $users = \BackendAcl::getModulePermissions('system', 'users');
-        $groups = \BackendAcl::getModulePermissions('system', 'groups');
-
-        \BackendMenu::addMenu('system', trans('backend::common.system'), '', 'fa-gears', $all);
-        \BackendMenu::addItem('system', 'users', trans('backend::common.users'), relative_route('backend.backend.users'), 'fa-angle-double-right', $users);
-        \BackendMenu::addItem('system', 'groups', trans('backend::common.groups'), relative_route('backend.backend.groups'), 'fa-angle-double-right', $groups);
+        \BackendMenu::addMenuResolver(
+            function (BackendMenu $menu) {
+                $menu->addItem(null, 'system', trans('backend::menu.system'), null, 'icon-settings', null, 100000);
+                $menu->addItem('system', 'users', trans('backend::menu.users'), relative_route('backend.backend.users'), 'fa-angle-double-right', ['system.users.read'], 10);
+                $menu->addItem('system', 'groups', trans('backend::menu.groups'), relative_route('backend.backend.groups'), 'fa-angle-double-right', ['system.groups.read'], 20);
+            }
+        );
     }
 
     /**
@@ -97,14 +99,6 @@ class ModuleProvider extends CarrotModuleProvider
         ]);
         $this->app->make('router')->middleware('backend.auth', \RabbitCMS\Backend\Http\Middleware\Authenticate::class);
         $this->app->make('router')->middleware('backend.auth.base', \RabbitCMS\Backend\Http\Middleware\AuthenticateWithBasicAuth::class);
-
-        $this->app->bind('backend.acl', function () {
-            return new BackendAcl();
-        }, true);
-
-        $this->app->bind('backend.menu', function () {
-            return new BackendMenu();
-        }, true);
     }
 
     /**
@@ -114,7 +108,7 @@ class ModuleProvider extends CarrotModuleProvider
      */
     public function provides()
     {
-        return ['backend.acl', 'backend.menu'];
+        return [];
     }
 
 }

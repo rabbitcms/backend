@@ -28,11 +28,7 @@
     </div>
     <div class="clearfix"></div>
     <div class="page-container">
-        <div class="page-sidebar-wrapper">
-            <div class="page-sidebar navbar-collapse collapse">
-                @include('backend::layouts.menu')
-            </div>
-        </div>
+        @include('backend::layouts.sidebar')
         <div class="page-content-wrapper">
             <div class="page-content">
                 <div class="page-bar">
