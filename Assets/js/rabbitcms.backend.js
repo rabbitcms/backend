@@ -437,7 +437,7 @@ define(['jquery', 'bootbox'], function ($, bootbox) {
                     case 401:
                         location.reload(true);
                         break;
-                    case 500:
+                    case 503:
                         var responseText = {};
                         try {
                             responseText = $.parseJSON(jqXHR.responseText);

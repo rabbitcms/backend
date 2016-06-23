@@ -56,9 +56,10 @@ require.config({
         "dtkt.backend.documents": "documents/backend/js/dtkt.backend.documents",
         "dtkt.backend.documents.arrivals": "documents/backend/js/dtkt.backend.documents.arrivals",
         "dtkt.backend.documents.statistics": "documents/backend/js/dtkt.backend.documents.statistics",
-        "dtkt.backend.callcenter.users": "callcenter/backend/js/dtkt.backend.callcenter.users"
+        "dtkt.backend.callcenter.users": "callcenter/backend/js/dtkt.backend.callcenter.users",
+        "dtkt.backend.callcenter.orders": "callcenter/backend/js/dtkt.backend.callcenter.orders"
     },
-    "urlArgs": "0000000017"
+    "urlArgs": "0000000018"
 });
 
 define('jquery', [], function() { return jQuery; });
