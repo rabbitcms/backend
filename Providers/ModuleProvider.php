@@ -3,59 +3,89 @@
 namespace RabbitCMS\Backend\Providers;
 
 use Illuminate\Auth\SessionGuard;
+use Illuminate\Config\Repository as ConfigRepository;
+use Illuminate\Routing\Router;
+use Pingpong\Modules\Module;
+use Pingpong\Modules\Repository as ModulesRepository;
 use RabbitCMS\Backend\Entities\User as UserEntity;
+use RabbitCMS\Backend\Http\Controllers\Auth as AuthController;
 use RabbitCMS\Carrot\Providers\ModuleProvider as CarrotModuleProvider;
-use RabbitCMS\Carrot\Repository\BackendAcl;
-use RabbitCMS\Carrot\Repository\BackendMenu;
 
 class ModuleProvider extends CarrotModuleProvider
 {
-    protected function name()
-    {
-        return 'backend';
-    }
-
-    /**
-     * Indicates if loading of the provider is deferred.
-     *
-     * @var bool
-     */
-    protected $defer = false;
-
     /**
      * Boot the application events.
      *
      * @return void
      */
-    public function boot()
+    public function boot(ConfigRepository $config, Router $router, ModulesRepository $modules)
     {
         $this->app->make('config')->set('auth.guards.backend', [
-            'driver'   => 'session',
+            'driver' => 'session',
             'provider' => 'backend',
         ]);
 
         $this->app->make('config')->set('auth.providers.backend', [
             'driver' => 'eloquent',
-            'model'  => UserEntity::class,
+            'model' => UserEntity::class,
         ]);
 
-        \BackendAcl::addAclResolver(
-            function (BackendAcl $acl) {
-                $acl->addGroup('system', trans('backend::acl.system.title'));
-                $acl->addAcl('system', 'users.read', trans('backend::acl.users.read'));
-                $acl->addAcl('system', 'users.write', trans('backend::acl.users.write'));
-                $acl->addAcl('system', 'groups.read', trans('backend::acl.groups.read'));
-                $acl->addAcl('system', 'groups.write', trans('backend::acl.groups.write'));
-            }
+        array_map(
+            function (Module $module) use ($router) {
+                $path = $module->getExtraPath('Config/backend.php');
+                if (file_exists($path)) {
+                    $value = require_once($path);
+                    if (is_callable($value)) {
+                        $this->app->call($value);
+                    } elseif (is_array($value)) {
+                        if (array_key_exists('boot', $value) && is_callable($value['boot'])) {
+                            $this->app->call($value['boot']);
+                        }
+                    }
+                }
+            }, $modules->enabled()
         );
 
-        \BackendMenu::addMenuResolver(
-            function (BackendMenu $menu) {
-                $menu->addItem(null, 'system', trans('backend::menu.system'), null, 'icon-settings', null, 100000);
-                $menu->addItem('system', 'users', trans('backend::menu.users'), relative_route('backend.backend.users'), 'fa-angle-double-right', ['system.users.read'], 10);
-                $menu->addItem('system', 'groups', trans('backend::menu.groups'), relative_route('backend.backend.groups'), 'fa-angle-double-right', ['system.groups.read'], 20);
-            }
-        );
+        $router->group([
+            'as' => 'backend.',
+            'prefix' => $config->get('module.backend.path'),
+            'domain' => $config->get('module.backend.domain'),
+            'middleware' => ['backend']
+        ], function (Router $router) use ($modules) {
+
+            $router->get('auth/login', ['uses' => AuthController::class . '@getLogin', 'as' => 'auth']);
+            $router->post('auth/login', ['uses' => AuthController::class . '@postLogin', 'as' => 'auth.login']);
+            $router->get('auth/logout', ['uses' => AuthController::class . '@getLogout', 'as' => 'auth.logout']);
+
+            $router->group(['middleware' => ['backend.auth']], function (Router $router) use ($modules) {
+
+                $router->get('', ['uses' => function () {
+                    return view('backend::index');
+                }, 'as' => 'index']);
+
+                array_map(
+                    function (Module $module) use ($router) {
+                        $path = $module->getExtraPath('Config/backend.php');
+                        if (file_exists($path)) {
+                            $router->group(
+                                [
+                                    'prefix' => $module->getAlias(),
+                                    'as' => $module->getAlias() . '.',
+                                ],
+                                function (Router $router) use ($path) {
+                                    $value = require($path); //todo cache module backend config
+                                    if (is_array($value)) {
+                                        if (array_key_exists('routes', $value) && is_callable($value['routes'])) {
+                                            $this->app->call($value['routes'], ['router' => $router]);
+                                        }
+                                    }
+                                }
+                            );
+                        }
+                    }, $modules->enabled()
+                );
+            });
+        });
     }
 
     /**
@@ -109,6 +139,14 @@ class ModuleProvider extends CarrotModuleProvider
     public function provides()
     {
         return [];
+    }
+
+    /**
+     * @inheritdoc
+     */
+    protected function name()
+    {
+        return 'backend';
     }
 
 }

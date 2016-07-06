@@ -3,10 +3,10 @@
 namespace RabbitCMS\Backend\Http\Controllers;
 
 use DtKt\Models\Media as MediaModel;
-use Illuminate\Routing\Controller;
+use Illuminate\Routing\Controller as LaravelController;
 use Illuminate\Routing\Route;
 
-class MediaController extends Controller
+class MediaController extends LaravelController
 {
 
     public function image(Route $route)
