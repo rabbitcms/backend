@@ -23,7 +23,7 @@ class Auth extends Controller
 
     public function getLogin()
     {
-        return \View::make('backend::auth.login');
+        return $this->view('auth.login');
     }
 
     public function postLogin(Request $request)
