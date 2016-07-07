@@ -1,19 +1,19 @@
 <?php
 
-use \Illuminate\Routing\Router;
+use Illuminate\Routing\Router;
 
 Route::group(
     [
         'prefix' => 'media',
-        'where'  => [
-            'h'      => '[a-f0-9]{2}',
-            'h2'     => '[a-f0-9]{2}',
-            'hash'   => '[a-f0-9]{32}',
-            'id'     => '\d+',
-            'type'   => 'r|c',
-            'width'  => '(\d+|-)',
+        'where' => [
+            'h' => '[a-f0-9]{2}',
+            'h2' => '[a-f0-9]{2}',
+            'hash' => '[a-f0-9]{32}',
+            'id' => '\d+',
+            'type' => 'r|c',
+            'width' => '(\d+|-)',
             'height' => '(\d+|-)',
-            'ext'    => 'jpg|png|pdf|doc|docx|xls|xlsx|rtf|zip',
+            'ext' => 'jpg|png|pdf|doc|docx|xls|xlsx|rtf|zip',
         ],
     ],
     function (Router $router) {
@@ -22,54 +22,22 @@ Route::group(
     }
 );
 
-
-$backendGroup = \Config::get('cms.backend');
-if (is_array($backendGroup) && array_key_exists('domain', $backendGroup)) {
-    $domain = config('app.domain');
-    $backendGroup['domain'] = str_replace('{$domain}', $domain, $backendGroup['domain']);
-}
-$backendGroup['as'] = 'backend.';
-$backendGroup['middleware'] = ['backend'];
-Route::group(
-    $backendGroup, function (Router $router) {
-
-    $router->controller(
-        'auth', \RabbitCMS\Backend\Http\Controllers\Auth::class, [
-            'getLogin'  => 'auth',
-            'postLogin' => 'auth.login',
-            'getLogout' => 'auth.logout',
-        ]
+Route::group([
+    'as' => 'backend.',
+    'prefix' => config('module.backend.path'),
+    'domain' => config('module.backend.domain'),
+    'middleware' => ['backend','backend.auth']
+], function (Router $router) {
+    array_map(
+        function (\Pingpong\Modules\Module $module) use ($router) {
+            if (file_exists($path = $module->getExtraPath('Http/backend.php'))) {
+                $router->group([
+                    'prefix' => $module->getAlias(),
+                    'as' => $module->getAlias() . '.',
+                ], function (Router $router) use ($path) {
+                    require($path);
+                });
+            }
+        }, Module::enabled()
     );
-
-    $router->group(
-        ['middleware' => ['backend.auth']], function (Router $router) {
-        $router->get(
-            '',
-            [
-                'uses' => function () {
-                    return view('backend::index');
-                },
-                'as'   => 'index',
-            ]
-        );
-        array_map(
-            function (\Pingpong\Modules\Module $module) use ($router) {
-                if (file_exists($path = $module->getExtraPath('Http/backend.php'))) {
-                    $group = [
-                        'prefix' => $module->getAlias(),
-                        'as'     => $module->getAlias().'.',
-                    ];
-                    $router->group(
-                        $group,
-                        function (Router $router) use ($path) {
-                            require($path);
-                        }
-                    );
-                }
-            },
-            Module::enabled()
-        );
-    }
-    );
-}
-);
+});
