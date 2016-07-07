@@ -4,11 +4,14 @@ namespace RabbitCMS\Backend\Providers;
 
 use Illuminate\Auth\SessionGuard;
 use Illuminate\Config\Repository as ConfigRepository;
+use Illuminate\Foundation\AliasLoader;
 use Illuminate\Routing\Router;
 use Pingpong\Modules\Module;
 use Pingpong\Modules\Repository as ModulesRepository;
 use RabbitCMS\Backend\Entities\User as UserEntity;
+use RabbitCMS\Backend\Facades\Backend as BackendFacase;
 use RabbitCMS\Backend\Http\Controllers\Auth as AuthController;
+use RabbitCMS\Backend\Support\Backend;
 use RabbitCMS\Carrot\Providers\ModuleProvider as CarrotModuleProvider;
 
 class ModuleProvider extends CarrotModuleProvider
@@ -16,7 +19,9 @@ class ModuleProvider extends CarrotModuleProvider
     /**
      * Boot the application events.
      *
-     * @return void
+     * @param ConfigRepository $config
+     * @param Router $router
+     * @param ModulesRepository $modules
      */
     public function boot(ConfigRepository $config, Router $router, ModulesRepository $modules)
     {
@@ -97,6 +102,10 @@ class ModuleProvider extends CarrotModuleProvider
     {
         parent::register();
 
+        $this->app->singleton(Backend::class, function () {
+            return new Backend($this->app);
+        });
+
         $this->app->make('auth')->extend('backend', function () {
             $provider = $this->app->make('auth')->createUserProvider('backend');
 
@@ -129,6 +138,10 @@ class ModuleProvider extends CarrotModuleProvider
         ]);
         $this->app->make('router')->middleware('backend.auth', \RabbitCMS\Backend\Http\Middleware\Authenticate::class);
         $this->app->make('router')->middleware('backend.auth.base', \RabbitCMS\Backend\Http\Middleware\AuthenticateWithBasicAuth::class);
+
+
+        $loader = AliasLoader::getInstance();
+        $loader->alias('Backend', BackendFacase::class);
     }
 
     /**

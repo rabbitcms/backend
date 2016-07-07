@@ -1,4 +1,6 @@
-<?php namespace RabbitCMS\Backend\Support;
+<?php 
+
+namespace RabbitCMS\Backend\Support;
 
 class Metronic
 {
