@@ -1,14 +1,13 @@
 <?php
 
 use Illuminate\Routing\Router;
-use RabbitCMS\Carrot\Repository\BackendAcl;
-use RabbitCMS\Carrot\Repository\BackendMenu;
+use RabbitCMS\Backend\Support\Backend;
 
 return [
-    'boot' => function (BackendAcl $acl, BackendMenu $menu) {
-        $acl->addAclResolver(
-            function (BackendAcl $acl) {
-                $acl->addGroup('system', trans('backend::acl.system.title'));
+    'boot' => function (Backend $backend) {
+        $backend->addAclResolver(
+            function (Backend $acl) {
+                $acl->addAclGroup('system', trans('backend::acl.system.title'));
                 $acl->addAcl('system', 'users.read', trans('backend::acl.users.read'));
                 $acl->addAcl('system', 'users.write', trans('backend::acl.users.write'));
                 $acl->addAcl('system', 'groups.read', trans('backend::acl.groups.read'));
@@ -16,12 +15,12 @@ return [
             }
         );
 
-        $menu->addMenuResolver(
-            function (BackendMenu $menu) {
-                $menu->addItem(null, 'system', trans('backend::menu.system'), null, 'icon-settings', null, 100000);
-                $menu->addItem('system', 'users', trans('backend::menu.users'), relative_route('backend.backend.users'), 'fa-angle-double-right', ['system.users.read'], 10);
-                $menu->addItem('system', 'groups', trans('backend::menu.groups'), relative_route('backend.backend.groups'), 'fa-angle-double-right', ['system.groups.read'], 20);
-            }
+        $backend->addMenuResolver(
+            function (Backend $menu) {
+                $menu->addMenu(null, 'system', trans('backend::menu.system'), null, 'icon-settings', null, 100000);
+                $menu->addMenu('system', 'users', trans('backend::menu.users'), relative_route('backend.backend.users'), 'fa-angle-double-right', ['system.users.read'], 10);
+                $menu->addMenu('system', 'groups', trans('backend::menu.groups'), relative_route('backend.backend.groups'), 'fa-angle-double-right', ['system.groups.read'], 20);
+            }, Backend::MENU_PRIORITY_MENU
         );
     },
     'routes' => function (Router $router) {
