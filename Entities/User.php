@@ -1,35 +1,33 @@
-<?php 
+<?php
 
 namespace RabbitCMS\Backend\Entities;
 
 use Illuminate\Auth\Authenticatable;
-use Illuminate\Database\Eloquent\Model as Eloquent;
 use Illuminate\Auth\Passwords\CanResetPassword;
+use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
+use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
+use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
+use Illuminate\Database\Eloquent\Model as Eloquent;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\Access\Authorizable;
-use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
-use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
-use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
 use Illuminate\Support\Facades\Hash;
 use RabbitCMS\Backend\Contracts\HasAccessEntity;
-use RabbitCMS\Backend\Support\PermissionsTrait;
 
 
 /**
  * Class User
  *
- * @property-read int     $id
- * @property string       $email
- * @property boolean      $active
- * @property string       $name
+ * @property-read int $id
+ * @property string $email
+ * @property boolean $active
+ * @property string $name
  * @property-write string $password
  *
  * @property-read Group[] $groups
  */
 class User extends Eloquent implements AuthenticatableContract, AuthorizableContract, CanResetPasswordContract, HasAccessEntity
 {
-    use Authenticatable, Authorizable, CanResetPassword, PermissionsTrait;
-    use SoftDeletes;
+    use Authenticatable, Authorizable, CanResetPassword, SoftDeletes;
 
     /**
      * {@inheritdoc}
@@ -72,9 +70,55 @@ class User extends Eloquent implements AuthenticatableContract, AuthorizableCont
     }
 
     /**
-     * Returns an array of merged permissions for each group the user is in.
+     * Returns if the user has access to any of the given permissions.
      *
-     * @return array
+     * @param  array $permissions
+     *
+     * @return bool
+     */
+    public function hasAnyAccess(array $permissions)
+    {
+        return $this->hasAccess($permissions, false);
+    }
+
+    /**
+     * See if a user has access to the passed permission(s).
+     * Permissions are merged from all groups the user belongs to
+     * and then are checked against the passed permission(s).
+     *
+     * If multiple permissions are passed, the user must
+     * have access to all permissions passed through, unless the
+     * "all" flag is set to false.
+     *
+     * @param  string|array $permissions
+     * @param  bool $all
+     *
+     * @return bool
+     */
+    public function hasAccess($permissions, $all = true)
+    {
+        $allPermissions = $this->getPermissions();
+
+        if (!is_array($permissions)) {
+            $permissions = [$permissions];
+        }
+
+        $match = false;
+
+        foreach ($permissions as $permission) {
+            //todo temporary check key(old permissions)
+            if (array_key_exists($permission,$allPermissions) || in_array($permission, $allPermissions)) {
+                $match = true;
+            } elseif ($all) {
+                return false;
+            }
+        }
+
+        return $match;
+    }
+
+    /**
+     * @inheritdoc
      */
     public function getPermissions()
     {

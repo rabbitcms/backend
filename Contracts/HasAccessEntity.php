@@ -23,7 +23,7 @@ interface HasAccessEntity
     /**
      * Returns an array of merged permissions for each group the user is in.
      *
-     * @return array
+     * @return string[]
      */
     public function getPermissions();
 }

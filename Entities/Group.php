@@ -9,7 +9,7 @@ use RabbitCMS\Carrot\Eloquent\PrintableJson;
  *
  * @property-read int $id
  * @property string $caption
- * @property array $permissions
+ * @property string[] $permissions
  * @property-read User[] $users
  */
 class Group extends Model
