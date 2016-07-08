@@ -8,7 +8,5 @@
   "providers": [
     "RabbitCMS\\Backend\\Providers\\ModuleProvider"
   ],
-  "files": [
-    "Http/routes.php"
-  ]
+  "files": []
 }
