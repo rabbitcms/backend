@@ -1,13 +1,12 @@
-@inject(menu, RabbitCMS\Carrot\Repository\BackendMenu)
 @foreach($items as $item)
-    <li class="nav-item @if($menu->isActive($item)) active open @endif">
+    <li class="nav-item @if($menu->isActiveMenu($item)) active open @endif">
         <a href="{{$item['url'] ?: 'javascript:;'}}" class="nav-link nav-toggle" @if(count($item['items']) === 0) rel="ajax-portlet" @endif>
             @if($item['icon'])
                 <i class="fa {{$item['icon']}}"></i>
             @endif
                 <span class="title">{{$item['caption']}}</span>
             @if(count($item['items']))
-                <span class="arrow @if($menu->isActive($item)) open @endif"></span>
+                <span class="arrow @if($menu->isActiveMenu($item)) open @endif"></span>
             @endif
             @if($menu->isActive($item))
                 <span class="selected"></span>

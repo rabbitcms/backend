@@ -17,6 +17,9 @@
         }
     ],
     "autoload": {
+        "classmap": [
+            "Database"
+        ],
         "psr-4": {
             "RabbitCMS\\Backend\\": "./"
         },
