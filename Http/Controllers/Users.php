@@ -3,15 +3,32 @@
 namespace RabbitCMS\Backend\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\View\Factory as ViewFactory;
+use Illuminate\View\View;
+use RabbitCMS\Backend\Annotation\Permissions;
 use RabbitCMS\Backend\Entities\Group as GroupModel;
 use RabbitCMS\Backend\Entities\User as UserModel;
 use RabbitCMS\Backend\Http\Requests\UsersRequest;
+use RabbitCMS\Backend\Support\Backend;
 
+/**
+ * Class Users.
+ * @Permissions("system.users.read")
+ */
 class Users extends Controller
 {
-    public function init()
+    /**
+     * Controller init.
+     * @param Backend $backend
+     * @param ViewFactory $view
+     */
+    public function init(Backend $backend, ViewFactory $view)
     {
-        \BackendMenu::setActive('system.users');
+        $backend->setActiveMenu('system.users');
+
+        $view->composer($this->viewName('users.form'), function (View $view) {
+            $view->with('groups', GroupModel::query()->get());
+        });
     }
 
     /**
@@ -56,10 +73,15 @@ class Users extends Controller
         $result = [];
         foreach ($collection as $item) {
             $edit_link = relative_route('backend.backend.users.edit', ['id' => $item->id]);
-            $edit_link_html = html_link($edit_link, '<i class="fa fa-pencil"></i>', ['rel' => 'ajax-portlet', 'class' => 'btn btn-sm green', 'title' => trans('backend::common.buttons.edit')]);
+            $edit_link_html = html_link($edit_link, '<i class="fa fa-pencil"></i>', [
+                'rel' => 'ajax-portlet',
+                'class' => 'btn btn-sm green',
+                'title' => trans('backend::common.buttons.edit')
+            ]);
 
             $destroy_link = relative_route('backend.backend.users.destroy', ['id' => $item->id]);
-            $destroy_link_html = html_link($destroy_link, '<i class="fa fa-trash-o"></i>', ['rel' => 'destroy', 'class' => 'btn btn-sm red', 'title' => trans('backend::common.buttons.destroy')]);
+            $destroy_link_html = html_link($destroy_link, '<i class="fa fa-trash-o"></i>',
+                ['rel' => 'destroy', 'class' => 'btn btn-sm red', 'title' => trans('backend::common.buttons.destroy')]);
 
             $result[] = [
                 $item->id,
@@ -71,10 +93,10 @@ class Users extends Controller
         }
 
         $data = [
-            'data'            => $result,
-            'recordsTotal'    => $recordsTotal,
+            'data' => $result,
+            'recordsTotal' => $recordsTotal,
             'recordsFiltered' => $recordsFiltered,
-            'draw'            => $request->input('draw')
+            'draw' => $request->input('draw')
         ];
 
         return \Response::json($data, 200, [], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
@@ -82,65 +104,25 @@ class Users extends Controller
 
     /**
      * @return \Illuminate\View\View
+     * @Permissions("system.users.write")
      */
     public function getCreate()
     {
-        $data['model'] = new UserModel;
-
-        return $this->form($data);
+        return $this->view('users.form', [
+            'model' => new UserModel
+        ]);
     }
 
     /**
      * @param UsersRequest $request
      * @return array|\Illuminate\Http\RedirectResponse
+     * @Permissions("system.users.write")
      */
     public function postCreate(UsersRequest $request)
     {
         $model = new UserModel;
 
         return $this->save($model, $request);
-    }
-
-    /**
-     * @param $id
-     * @return \Illuminate\View\View
-     */
-    public function getEdit($id)
-    {
-        $data['model'] = UserModel::query()
-            ->findOrFail($id);
-
-        return $this->form($data);
-    }
-
-    /**
-     * @param              $id
-     * @param UsersRequest $request
-     * @return array|\Illuminate\Http\RedirectResponse
-     */
-    public function postEdit($id, UsersRequest $request)
-    {
-        /**
-         * @var UserModel $model
-         */
-        $model = UserModel::query()
-            ->findOrFail($id);
-
-        return $this->save($model, $request);
-    }
-
-    /**
-     * @param $id
-     * @return array
-     * @throws \Exception
-     */
-    public function anyDelete($id)
-    {
-        $result = UserModel::query()
-            ->findOrFail($id)
-            ->delete();
-
-        return ['result' => $result];
     }
 
     /**
@@ -173,15 +155,46 @@ class Users extends Controller
     }
 
     /**
-     * @param array $data
+     * @param $id
      * @return \Illuminate\View\View
+     * @Permissions("system.users.write")
      */
-    private function form(array $data = [])
+    public function getEdit($id)
     {
-        $data['groups'] = GroupModel::query()
-            ->get();
-
-        return $this->view('users.form', $data);
+        return $this->view('users.form', [
+            'model' => UserModel::query()->findOrFail($id)
+        ]);
     }
 
+    /**
+     * @param              $id
+     * @param UsersRequest $request
+     * @return array|\Illuminate\Http\RedirectResponse
+     * @Permissions("system.users.write")
+     */
+    public function postEdit($id, UsersRequest $request)
+    {
+        /**
+         * @var UserModel $model
+         */
+        $model = UserModel::query()
+            ->findOrFail($id);
+
+        return $this->save($model, $request);
+    }
+
+    /**
+     * @param $id
+     * @return array
+     * @throws \Exception
+     * @Permissions("system.users.write")
+     */
+    public function anyDelete($id)
+    {
+        $result = UserModel::query()
+            ->findOrFail($id)
+            ->delete();
+
+        return ['result' => $result];
+    }
 }

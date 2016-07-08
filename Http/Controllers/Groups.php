@@ -3,13 +3,29 @@
 namespace RabbitCMS\Backend\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\View\Factory as ViewFactory;
+use Illuminate\View\View;
+use RabbitCMS\Backend\Annotation\Permissions;
 use RabbitCMS\Backend\Entities\Group as GroupModel;
+use RabbitCMS\Backend\Support\Backend;
 
+/**
+ * Class Groups.
+ * @Permissions("system.groups.read")
+ */
 class Groups extends Controller
 {
-    public function init()
+    /**
+     * Init controller.
+     * @param Backend $backend
+     * @param ViewFactory $view
+     */
+    public function init(Backend $backend, ViewFactory $view)
     {
-        \BackendMenu::setActive('system.groups');
+        $backend->setActiveMenu('system.groups');
+        $view->composer($this->viewName('groups.form'), function (View $view) use ($backend) {
+            $view->with('rules', $backend->getAclGroups());
+        });
     }
 
     /**
@@ -23,6 +39,7 @@ class Groups extends Controller
     /**
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
+     * @Permissions("groups.write")
      */
     public function postIndex(Request $request)
     {
@@ -39,10 +56,15 @@ class Groups extends Controller
         $result = [];
         foreach ($collection as $item) {
             $edit_link = relative_route('backend.backend.groups.edit', ['id' => $item->id]);
-            $edit_link_html = html_link($edit_link, '<i class="fa fa-pencil"></i>', ['rel' => 'ajax-portlet', 'class' => 'btn btn-sm green', 'title' => trans('backend::common.buttons.edit')]);
+            $edit_link_html = html_link($edit_link, '<i class="fa fa-pencil"></i>', [
+                'rel' => 'ajax-portlet',
+                'class' => 'btn btn-sm green',
+                'title' => trans('backend::common.buttons.edit')
+            ]);
 
             $destroy_link = relative_route('backend.backend.groups.destroy', ['id' => $item->id]);
-            $destroy_link_html = html_link($destroy_link, '<i class="fa fa-trash-o"></i>', ['rel' => 'destroy', 'class' => 'btn btn-sm red', 'title' => trans('backend::common.buttons.destroy')]);
+            $destroy_link_html = html_link($destroy_link, '<i class="fa fa-trash-o"></i>',
+                ['rel' => 'destroy', 'class' => 'btn btn-sm red', 'title' => trans('backend::common.buttons.destroy')]);
 
             $result[] = [
                 $item->id,
@@ -52,10 +74,10 @@ class Groups extends Controller
         }
 
         $data = [
-            'data'            => $result,
-            'recordsTotal'    => $recordsTotal,
+            'data' => $result,
+            'recordsTotal' => $recordsTotal,
             'recordsFiltered' => $recordsFiltered,
-            'draw'            => $request->input('draw')
+            'draw' => $request->input('draw')
         ];
 
         return \Response::json($data, 200, [], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
@@ -63,69 +85,26 @@ class Groups extends Controller
 
     /**
      * @return \Illuminate\View\View
+     * @Permissions("system.groups.write")
      */
     public function getCreate()
     {
-        $data['model'] = new GroupModel;
-
-        return $this->form($data);
+        return $this->view('groups.form', [
+            'model' => new GroupModel
+        ]);
     }
 
     /**
      * @param Request $request
      *
      * @return array|\Illuminate\Http\RedirectResponse
+     * @Permissions("system.groups.write")
      */
     public function postCreate(Request $request)
     {
         $model = new GroupModel;
 
         return $this->save($model, $request);
-    }
-
-    /**
-     * @param $id
-     *
-     * @return \Illuminate\View\View
-     */
-    public function getEdit($id)
-    {
-        $data['model'] = GroupModel::query()
-            ->findOrFail($id);
-
-        return $this->form($data);
-    }
-
-    /**
-     * @param              $id
-     * @param Request $request
-     *
-     * @return array|\Illuminate\Http\RedirectResponse
-     */
-    public function postEdit($id, Request $request)
-    {
-        /**
-         * @var GroupModel $model
-         */
-        $model = GroupModel::query()
-            ->findOrFail($id);
-
-        return $this->save($model, $request);
-    }
-
-    /**
-     * @param $id
-     *
-     * @return array
-     * @throws \Exception
-     */
-    public function anyDelete($id)
-    {
-        $result = GroupModel::query()
-            ->findOrFail($id)
-            ->delete();
-
-        return ['result' => $result];
     }
 
     /**
@@ -151,14 +130,50 @@ class Groups extends Controller
     }
 
     /**
-     * @param array $data
+     * @param $id
+     *
      * @return \Illuminate\View\View
+     * @Permissions("system.groups.write")
      */
-    private function form(array $data = [])
+    public function getEdit($id)
     {
-        $data['rules'] = \BackendAcl::getGroups();
+        return $this->view('groups.form', [
+            'model' => GroupModel::query()->findOrFail($id)
+        ]);
+    }
 
-        return $this->view('groups.form', $data);
+    /**
+     * @param              $id
+     * @param Request $request
+     *
+     * @return array|\Illuminate\Http\RedirectResponse
+     * @Permissions("system.groups.write")
+     */
+    public function postEdit($id, Request $request)
+    {
+        /**
+         * @var GroupModel $model
+         */
+        $model = GroupModel::query()
+            ->findOrFail($id);
+
+        return $this->save($model, $request);
+    }
+
+    /**
+     * @param $id
+     *
+     * @return array
+     * @throws \Exception
+     * @Permissions("system.groups.read")
+     */
+    public function anyDelete($id)
+    {
+        $result = GroupModel::query()
+            ->findOrFail($id)
+            ->delete();
+
+        return ['result' => $result];
     }
 
     /**
@@ -186,8 +201,10 @@ class Groups extends Controller
 
         $result = [];
         foreach ($collection as $item) {
-            $destroy_link = relative_route('backend.backend.groups.users.destroy', ['group_id' => $group->id, 'user_id' => $item->id]);
-            $destroy_link_html = html_link($destroy_link, '<i class="fa fa-trash-o"></i>', ['rel' => 'destroy', 'class' => 'btn btn-sm red', 'title' => trans('backend::common.buttons.destroy')]);
+            $destroy_link = relative_route('backend.backend.groups.users.destroy',
+                ['group_id' => $group->id, 'user_id' => $item->id]);
+            $destroy_link_html = html_link($destroy_link, '<i class="fa fa-trash-o"></i>',
+                ['rel' => 'destroy', 'class' => 'btn btn-sm red', 'title' => trans('backend::common.buttons.destroy')]);
 
             $result[] = [
                 $item->id,
@@ -197,15 +214,20 @@ class Groups extends Controller
         }
 
         $data = [
-            'data'            => $result,
-            'recordsTotal'    => $recordsTotal,
+            'data' => $result,
+            'recordsTotal' => $recordsTotal,
             'recordsFiltered' => $recordsFiltered,
-            'draw'            => $request->input('draw')
+            'draw' => $request->input('draw')
         ];
 
         return \Response::json($data, 200, [], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
     }
 
+    /**
+     * @param $group_id
+     * @param $user_id
+     * @Permissions("system.users.write")
+     */
     public function destroyUser($group_id, $user_id)
     {
         /**
@@ -217,5 +239,4 @@ class Groups extends Controller
         $group->users()
             ->detach($user_id);
     }
-
 }

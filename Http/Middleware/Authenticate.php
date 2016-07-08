@@ -6,8 +6,9 @@ use Illuminate\Contracts\Auth\Factory as AuthFactory;
 use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
+use Illuminate\Routing\Route;
+use RabbitCMS\Backend\Annotation\Permissions as PermissionAnnotation;
 use RabbitCMS\Backend\Contracts\HasAccessEntity;
-use RabbitCMS\Carrot\Annotation\Permissions as PermissionAnnotation;
 use ReflectionClass;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use URL;
@@ -52,6 +53,7 @@ class Authenticate
             throw new AccessDeniedHttpException;
         } else {
             $routeResolver = $request->getRouteResolver();
+            /* @var Route $route */
             $route = $routeResolver();
             $action = $route->getAction();
             if (is_string($action['uses'])) {
@@ -65,7 +67,7 @@ class Authenticate
                     if ($request->ajax()) {
                         return new JsonResponse([], Response::HTTP_FORBIDDEN);
                     } else {
-                        return new Response('', Response::HTTP_FORBIDDEN);
+                        return $this->forbiddenRequest();
                     }
                 }
 
@@ -77,12 +79,20 @@ class Authenticate
                         if ($request->ajax()) {
                             return new JsonResponse([], Response::HTTP_FORBIDDEN);
                         } else {
-                            return new Response('', Response::HTTP_FORBIDDEN);
+                            return $this->forbiddenRequest();
                         }
                     }
                 }
             }
         }
         return $next($request);
+    }
+
+    /**
+     * @return Response
+     */
+    protected function forbiddenRequest()
+    {
+        return \Response::view('backend::deny', [], Response::HTTP_FORBIDDEN);
     }
 }
