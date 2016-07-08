@@ -12,7 +12,8 @@ use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
 use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
 use Illuminate\Support\Facades\Hash;
 use RabbitCMS\Backend\Contracts\HasAccessEntity;
-use RabbitCMS\Carrot\Support\PermissionsTrait;
+use RabbitCMS\Backend\Support\PermissionsTrait;
+
 
 /**
  * Class User
