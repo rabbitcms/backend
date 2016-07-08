@@ -8,7 +8,7 @@
             @if(count($item['items']))
                 <span class="arrow @if($menu->isActiveMenu($item)) open @endif"></span>
             @endif
-            @if($menu->isActive($item))
+            @if($menu->isActiveMenu($item))
                 <span class="selected"></span>
             @endif
         </a>
