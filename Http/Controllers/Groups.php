@@ -39,7 +39,6 @@ class Groups extends Controller
     /**
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
-     * @Permissions("groups.write")
      */
     public function postIndex(Request $request)
     {
