@@ -1,6 +1,6 @@
 <?php
 
-namespace RabbitCMS\Backend\Support;
+namespace RabbitCMS\Backend\Annotation;
 
 /**
  * Trait Permissions
