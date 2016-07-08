@@ -222,7 +222,7 @@ class Backend
         }
 
         $items = [];
-        
+
         $menu['items'][$name] = compact('caption', 'url', 'permissions', 'icon', 'name', 'position', 'path', 'items');
     }
 
@@ -329,12 +329,11 @@ class Backend
 
     /**
      * Set active path.
-     *
-     * @param $path
+     * @param string[] ...$path
      */
-    public function setActiveMenu($path)
+    public function setActiveMenu(...$path)
     {
-        $this->active = $path;
+        $this->active = implode('.',$path);
     }
 
     /**
