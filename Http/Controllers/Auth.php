@@ -1,23 +1,15 @@
 <?php namespace RabbitCMS\Backend\Http\Controllers;
 
-use Illuminate\Auth\AuthManager;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Http\Request;
-
 use RabbitCMS\Backend\Support\Metronic;
 
 class Auth extends Controller
 {
     use ValidatesRequests;
 
-    /**
-     * @var \Illuminate\Contracts\Auth\Guard|\Illuminate\Contracts\Auth\StatefulGuard
-     */
-    protected $guard;
-
-    public function init(AuthManager $auth)
+    public function init()
     {
-        $this->guard = $auth->guard('backend');
         Metronic::module('login');
     }
 
@@ -31,14 +23,14 @@ class Auth extends Controller
         $this->validate(
             $request,
             [
-                'email'    => 'required',
+                'email' => 'required|email',
                 'password' => 'required',
             ]
         );
 
         $credentials = $request->only('email', 'password');
         $credentials['active'] = 1;
-        if ($this->guard->attempt($credentials, $request->has('remember'))) {
+        if ($this->auth->attempt($credentials, $request->has('remember'))) {
             return \Redirect::intended();
         }
 
@@ -49,7 +41,7 @@ class Auth extends Controller
 
     public function getLogout()
     {
-        $this->guard->logout();
+        $this->auth->logout();
 
         return redirect()->route('backend.index');
     }

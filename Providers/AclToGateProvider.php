@@ -4,8 +4,8 @@ namespace RabbitCMS\Backend\Providers;
 
 use Illuminate\Contracts\Auth\Access\Gate;
 use Illuminate\Support\ServiceProvider as LaravelServiceProvider;
+use RabbitCMS\Backend\Entities\User;
 use RabbitCMS\Backend\Support\Backend;
-use RabbitCMS\Carrot\Contracts\HasAccessEntity;
 
 class AclToGateProvider extends LaravelServiceProvider
 {
@@ -24,15 +24,12 @@ class AclToGateProvider extends LaravelServiceProvider
      */
     public function boot(Gate $gate, Backend $backend)
     {
-        \App::booted(
+        $this->app->booted(
             function () use ($gate, $backend) {
                 foreach ($backend->getAllAcl() as $acl => $label) {
-                    $gate->define(
-                        $acl,
-                        function (HasAccessEntity $user) use ($acl) {
-                            return $user->hasAccess($acl);
-                        }
-                    );
+                    $gate->define($acl, function ($user) use ($acl) {
+                        return $user instanceof User ? $user->hasAccess($acl) : false;
+                    });
                 }
             }
         );

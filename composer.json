@@ -19,6 +19,9 @@
     "autoload": {
         "psr-4": {
             "RabbitCMS\\Backend\\": "./"
-        }
+        },
+        "files": [
+            "Support/Annotations.php"
+        ]
     }
 }

@@ -1,4 +1,6 @@
-<?php namespace RabbitCMS\Backend\Entities;
+<?php 
+
+namespace RabbitCMS\Backend\Entities;
 
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model as Eloquent;
@@ -9,7 +11,7 @@ use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
 use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
 use Illuminate\Support\Facades\Hash;
-use RabbitCMS\Carrot\Contracts\HasAccessEntity;
+use RabbitCMS\Backend\Contracts\HasAccessEntity;
 use RabbitCMS\Carrot\Support\PermissionsTrait;
 
 /**

@@ -2,21 +2,39 @@
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use RabbitCMS\Carrot\Eloquent\PrintableJson;
 
 /**
  * Class Group
  *
- * @property-read int    $id
- * @property string      $caption
- * @property array       $permissions
+ * @property-read int $id
+ * @property string $caption
+ * @property array $permissions
  * @property-read User[] $users
  */
 class Group extends Model
 {
-    use SoftDeletes;
-    
+    use SoftDeletes, PrintableJson;
+
+    /**
+     * The table associated with the model.
+     *
+     * @var string
+     */
     protected $table = 'backend_groups';
+
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
     protected $fillable = ['caption', 'permissions'];
+
+    /**
+     * The attributes that should be cast to native types.
+     *
+     * @var array
+     */
     protected $casts = ['permissions' => 'array'];
 
     /**

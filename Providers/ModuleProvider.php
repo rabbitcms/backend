@@ -4,13 +4,20 @@ namespace RabbitCMS\Backend\Providers;
 
 use Illuminate\Auth\SessionGuard;
 use Illuminate\Config\Repository as ConfigRepository;
+use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
+use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\AliasLoader;
+use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Routing\Router;
+use Illuminate\View\Middleware\ShareErrorsFromSession;
 use Pingpong\Modules\Module;
 use Pingpong\Modules\Repository as ModulesRepository;
 use RabbitCMS\Backend\Entities\User as UserEntity;
 use RabbitCMS\Backend\Facades\Backend as BackendFacase;
 use RabbitCMS\Backend\Http\Controllers\Auth as AuthController;
+use RabbitCMS\Backend\Http\Middleware\Authenticate;
+use RabbitCMS\Backend\Http\Middleware\AuthenticateWithBasicAuth;
+use RabbitCMS\Backend\Http\Middleware\StartSession;
 use RabbitCMS\Backend\Support\Backend;
 use RabbitCMS\Carrot\Providers\ModuleProvider as CarrotModuleProvider;
 
@@ -129,15 +136,19 @@ class ModuleProvider extends CarrotModuleProvider
             return $guard;
         });
 
+        // Register the middleware with the container using the container's singleton method.
+        $this->app->singleton(StartSession::class);
+
         $this->app->make('router')->middlewareGroup('backend', [
-            //\Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
-            //\Illuminate\Session\Middleware\StartSession::class,
-            //\Illuminate\View\Middleware\ShareErrorsFromSession::class,
-            // \RabbitCMS\Carrot\Http\Middleware\VerifyCsrfToken::class,
-            //\RabbitCMS\Backend\Http\Middleware\Authenticate::class,
+            EncryptCookies::class,
+            AddQueuedCookiesToResponse::class,
+            StartSession::class,
+            ShareErrorsFromSession::class,
+            VerifyCsrfToken::class
         ]);
-        $this->app->make('router')->middleware('backend.auth', \RabbitCMS\Backend\Http\Middleware\Authenticate::class);
-        $this->app->make('router')->middleware('backend.auth.base', \RabbitCMS\Backend\Http\Middleware\AuthenticateWithBasicAuth::class);
+        
+        $this->app->make('router')->middleware('backend.auth', Authenticate::class);
+        $this->app->make('router')->middleware('backend.auth.base', AuthenticateWithBasicAuth::class);
 
 
         $loader = AliasLoader::getInstance();
