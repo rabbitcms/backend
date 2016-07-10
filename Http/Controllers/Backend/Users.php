@@ -1,6 +1,6 @@
 <?php
 
-namespace RabbitCMS\Backend\Http\Controllers;
+namespace RabbitCMS\Backend\Http\Controllers\Backend;
 
 use Illuminate\Http\Request;
 use Illuminate\View\Factory as ViewFactory;

@@ -79,10 +79,12 @@ class ModuleProvider extends CarrotModuleProvider
                     function (Module $module) use ($router) {
                         $path = $module->getExtraPath('Config/backend.php');
                         if (file_exists($path)) {
+                            $namespace = $module->get('namespace');
                             $router->group(
                                 [
                                     'prefix' => $module->getAlias(),
                                     'as' => $module->getAlias() . '.',
+                                    'namespace' => $namespace === null ? '': trim($namespace,'\\').'\\Http\\Controllers\\Backend'
                                 ],
                                 function (Router $router) use ($path) {
                                     $value = require($path); //todo cache module backend config

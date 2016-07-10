@@ -24,7 +24,7 @@ return [
         );
     },
     'routes' => function (Router $router) {
-        $router->group(['namespace' => '\\RabbitCMS\\Backend\\Http\\Controllers'], function (\Illuminate\Routing\Router $router) {
+        //$router->group(['namespace' => '\\RabbitCMS\\Backend\\Http\\Controllers'], function (\Illuminate\Routing\Router $router) {
 
             $router->group(['prefix' => 'users'], function (\Illuminate\Routing\Router $router) {
                 $router->get('', ['as' => 'users', 'uses' => 'Users@getIndex']);
@@ -55,6 +55,6 @@ return [
                 $router->post('users/{id}', ['as' => 'groups.users', 'uses' => 'Groups@getUsers']);
             });
 
-        });
+        //});
     }
 ];

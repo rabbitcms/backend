@@ -1,4 +1,4 @@
-<?php namespace RabbitCMS\Backend\Http\Controllers;
+<?php namespace RabbitCMS\Backend\Http\Controllers\Backend;
 
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Http\Request;
