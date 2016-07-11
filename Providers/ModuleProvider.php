@@ -12,6 +12,7 @@ use Illuminate\Routing\Router;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 use Pingpong\Modules\Module;
 use Pingpong\Modules\Repository as ModulesRepository;
+use RabbitCMS\Backend\Console\Commands\MakeConfigCommand;
 use RabbitCMS\Backend\Entities\User as UserEntity;
 use RabbitCMS\Backend\Facades\Backend as BackendFacade;
 use RabbitCMS\Backend\Http\Controllers\Backend\Auth as AuthController;
@@ -114,6 +115,8 @@ class ModuleProvider extends CarrotModuleProvider
         $this->app->singleton(Backend::class, function () {
             return new Backend($this->app);
         });
+
+        $this->commands(MakeConfigCommand::class);
 
         $this->app->make('auth')->extend('backend', function () {
             $provider = $this->app->make('auth')->createUserProvider('backend');

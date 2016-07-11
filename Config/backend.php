@@ -18,8 +18,10 @@ return [
         $backend->addMenuResolver(
             function (Backend $menu) {
                 $menu->addMenu(null, 'system', trans('backend::menu.system'), null, 'icon-settings', null, 100000);
-                $menu->addMenu('system', 'users', trans('backend::menu.users'), relative_route('backend.backend.users'), 'fa-angle-double-right', ['system.users.read'], 10);
-                $menu->addMenu('system', 'groups', trans('backend::menu.groups'), relative_route('backend.backend.groups'), 'fa-angle-double-right', ['system.groups.read'], 20);
+                $menu->addMenu('system', 'users', trans('backend::menu.users'), relative_route('backend.backend.users'),
+                    'fa-angle-double-right', ['system.users.read'], 10);
+                $menu->addMenu('system', 'groups', trans('backend::menu.groups'),
+                    relative_route('backend.backend.groups'), 'fa-angle-double-right', ['system.groups.read'], 20);
             }, Backend::MENU_PRIORITY_MENU
         );
     },
@@ -49,8 +51,15 @@ return [
 
             $router->any('delete/{id}', ['as' => 'groups.destroy', 'uses' => 'Groups@anyDelete']);
 
-            $router->post('users/{group_id}/destroy/{user_id}', ['as' => 'groups.users.destroy', 'uses' => 'Groups@destroyUser']);
+            $router->post('users/{group_id}/destroy/{user_id}',
+                ['as' => 'groups.users.destroy', 'uses' => 'Groups@destroyUser']);
             $router->post('users/{id}', ['as' => 'groups.users', 'uses' => 'Groups@getUsers']);
         });
-    }
+    },
+    'requirejs' => [
+        "rabbitcms.backend" => "js/rabbitcms.backend",
+        "rabbitcms.backend.login" => "js/rabbitcms.backend.login",
+        "rabbitcms.users" => "js/rabbitcms.users",
+        "rabbitcms.users.groups" => "js/rabbitcms.users.groups",
+    ]
 ];
