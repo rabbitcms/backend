@@ -58,7 +58,10 @@ return [
     },
     'requirejs' => [
         "rabbitcms.backend" => "js/rabbitcms.backend",
-        "rabbitcms.backend.login" => "js/rabbitcms.backend.login",
+        "rabbitcms.backend.login" => [
+            "path" => "js/rabbitcms.backend.login",
+            "deps" => "rabbitcms.backend"
+        ],
         "rabbitcms.users" => "js/rabbitcms.users",
         "rabbitcms.users.groups" => "js/rabbitcms.users.groups",
     ]

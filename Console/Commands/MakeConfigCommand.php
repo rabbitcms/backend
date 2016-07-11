@@ -54,7 +54,7 @@ class MakeConfigCommand extends Command
                                 $config['paths'][$m] = $module->getLowerName() . '/' . ltrim($c['path'], '/');
                             }
                             if (array_key_exists('deps', $c)) {
-                                $config['deps'][$m] = $c['deps'];
+                                $config['shim'][$m] = ['deps'=>(array)$c['deps']];
                             }
                         }
                     }
