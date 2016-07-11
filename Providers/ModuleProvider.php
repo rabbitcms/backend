@@ -13,8 +13,8 @@ use Illuminate\View\Middleware\ShareErrorsFromSession;
 use Pingpong\Modules\Module;
 use Pingpong\Modules\Repository as ModulesRepository;
 use RabbitCMS\Backend\Entities\User as UserEntity;
-use RabbitCMS\Backend\Facades\Backend as BackendFacase;
-use RabbitCMS\Backend\Http\Controllers\Auth as AuthController;
+use RabbitCMS\Backend\Facades\Backend as BackendFacade;
+use RabbitCMS\Backend\Http\Controllers\Backend\Auth as AuthController;
 use RabbitCMS\Backend\Http\Middleware\Authenticate;
 use RabbitCMS\Backend\Http\Middleware\AuthenticateWithBasicAuth;
 use RabbitCMS\Backend\Http\Middleware\StartSession;
@@ -154,7 +154,7 @@ class ModuleProvider extends CarrotModuleProvider
 
 
         $loader = AliasLoader::getInstance();
-        $loader->alias('Backend', BackendFacase::class);
+        $loader->alias('Backend', BackendFacade::class);
     }
 
     /**
