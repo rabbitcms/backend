@@ -57,6 +57,7 @@ return [
         });
     },
     'requirejs' => [
+        "css" => "plugins/require-css",
         "rabbitcms.backend" => "js/rabbitcms.backend",
         "rabbitcms.backend.login" => [
             "path" => "js/rabbitcms.backend.login",
@@ -64,5 +65,11 @@ return [
         ],
         "rabbitcms.users" => "js/rabbitcms.users",
         "rabbitcms.users.groups" => "js/rabbitcms.users.groups",
+        "jquery" => "plugins/jquery.min.js",
+        "bootbox" => "plugins/bootbox.js",
+        'jquery.cookie' => 'plugins/jquery.cokie.min.js'
+    ],
+    'handlers' => [
+        '.*' => true
     ]
 ];
