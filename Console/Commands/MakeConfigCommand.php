@@ -32,9 +32,9 @@ class MakeConfigCommand extends Command
         $config = [
             'baseUrl' => rtrim($baseUrl, '/') . '/',
             'shim' => [],
-            'paths' => [],
+            'bundles' => [],
+            'paths' => []
         ];
-        $time = time();
         $dir = public_path('backend');
         if (!is_dir($dir)) {
             mkdir($dir);
@@ -56,12 +56,15 @@ class MakeConfigCommand extends Command
                             if (array_key_exists('deps', $c)) {
                                 $config['shim'][$m] = ['deps' => (array)$c['deps']];
                             }
+                            if (array_key_exists('bundles', $c)) {
+                                $config['bundles'][$m] = (array)$c['bundles'];
+                            }
                             if (array_key_exists('css', $c)) {
                                 $config['shim'][$m]['deps'] = $config['shim'][$m]['deps'] ?? [];
                                 foreach ((array)$c['css'] as $css) {
-                                    $config['shim'][$m]['deps'][]= 'css!'.$module->getLowerName() . '/backend/' . ltrim($css, '/');
+                                    $config['shim'][$m]['deps'][] =
+                                        'css!' . $module->getLowerName() . '/backend/' . ltrim($css, '/');
                                 }
-
                             }
                         }
                     }
@@ -69,7 +72,7 @@ class MakeConfigCommand extends Command
             }
         }
 
-
+        $time = time();
         $config = json_encode($config, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
         file_put_contents(
             public_path('backend/config.js'),
@@ -83,9 +86,6 @@ class MakeConfigCommand extends Command
     require.config(config);
 })();
 JS
-
-
         );
-
     }
 }

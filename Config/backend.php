@@ -62,6 +62,7 @@ return [
         "rabbitcms.backend.login" => [
             "path" => "js/rabbitcms.backend.login"
         ],
+        "rabbitcms.datatable" => "js/rabbitcms.datatable",
         "rabbitcms.users" => "js/rabbitcms.users",
         "rabbitcms.users.groups" => "js/rabbitcms.users.groups",
         "jquery" => "plugins/jquery.min",
@@ -74,7 +75,17 @@ return [
             "path" => "plugins/uniform/jquery.uniform.min",
             "css" => "plugins/uniform/css/uniform.default.css"
         ],
-        "jquery.blockui" => "plugins/jquery.block-ui"
+        "jquery.blockui" => "plugins/jquery.block-ui",
+        "datatables.net" => [
+            "path" => "plugins/datatables/datatables.all.min",
+            "css" => [
+                "plugins/datatables/datatables.min.css",
+                "plugins/datatables/plugins/bootstrap/datatables.bootstrap.css"
+            ],
+            "bundles"=>[
+                "datatables.net-buttons"
+            ]
+        ]
     ],
     'handlers' => [
         '.*' => true

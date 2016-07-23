@@ -10,6 +10,7 @@ var _pathname = _location.length > 1 ? _location.replace(/\/$/, '') : _location;
 var _cache = {};
 var _visiblePortlet = $();
 var _path:string = '/';
+var _token:string = '';
 
 export class RabbitCMS {
     static init() {
@@ -65,6 +66,14 @@ export class RabbitCMS {
     static getPath():string {
         return _path;
     }
+
+    static setToken(value:string) {
+        _token = value;
+    }
+
+    static getToken():string {
+        return _token;
+    };
 
     static loadModule(portlet:JQuery) {
         var _module = portlet.data('require');
@@ -168,6 +177,67 @@ export class RabbitCMS {
                 });
             });
         }
+    }
+
+    static getUniqueID(prefix:string = '') {
+        return prefix + '_' + Math.floor(Math.random() * (new Date()).getTime());
+    }
+
+    static alert(options) {
+
+        options = $.extend(true, {
+            container: "", // alerts parent container(by default placed after the page breadcrumbs)
+            place: "append", // "append" or "prepend" in container
+            type: 'success', // alert's type
+            message: "", // alert's message
+            close: true, // make alert closable
+            reset: true, // close all previouse alerts first
+            focus: true, // auto scroll to the alert after shown
+            closeInSeconds: 0, // auto close after defined seconds
+            icon: "" // put icon before the message
+        }, options);
+
+        var id = this.getUniqueID("App_alert");
+
+        var html = '<div id="' + id + '" class="custom-alerts alert alert-' + options.type + ' fade in">' + (options.close ? '<button type="button" class="close" data-dismiss="alert" aria-hidden="true"></button>' : '') + (options.icon !== "" ? '<i class="fa-lg fa fa-' + options.icon + '"></i>  ' : '') + options.message + '</div>';
+
+        if (options.reset) {
+            $('.custom-alerts').remove();
+        }
+
+        if (!options.container) {
+            var pfmc = $('.page-fixed-main-content');
+            if (pfmc.length === 1) {
+                pfmc.prepend(html);
+            } else if (($('body').hasClass("page-container-bg-solid") || $('body').hasClass("page-content-white")) && $('.page-head').length === 0) {
+                $('.page-title').after(html);
+            } else {
+                var $page_bar = $('.page-bar');
+                if ($page_bar.length > 0) {
+                    $page_bar.after(html);
+                } else {
+                    $('.page-breadcrumb, .breadcrumbs').after(html);
+                }
+            }
+        } else {
+            if (options.place == "append") {
+                $(options.container).append(html);
+            } else {
+                $(options.container).prepend(html);
+            }
+        }
+
+        if (options.focus) {
+            this.scrollTo($('#' + id));
+        }
+
+        if (options.closeInSeconds > 0) {
+            setTimeout(function () {
+                $('#' + id).remove();
+            }, options.closeInSeconds * 1000);
+        }
+
+        return id;
     }
 
     static uniformUpdate(selector) {

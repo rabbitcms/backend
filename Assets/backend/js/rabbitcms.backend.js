@@ -6,6 +6,7 @@ define(["require", "exports", "jquery", "jquery.cookie"], function (require, exp
     var _cache = {};
     var _visiblePortlet = $();
     var _path = '/';
+    var _token = '';
     var RabbitCMS = (function () {
         function RabbitCMS() {
             this.Dialogs = {
@@ -132,6 +133,13 @@ define(["require", "exports", "jquery", "jquery.cookie"], function (require, exp
         RabbitCMS.getPath = function () {
             return _path;
         };
+        RabbitCMS.setToken = function (value) {
+            _token = value;
+        };
+        RabbitCMS.getToken = function () {
+            return _token;
+        };
+        ;
         RabbitCMS.loadModule = function (portlet) {
             var _module = portlet.data('require');
             if (_module) {
@@ -219,6 +227,63 @@ define(["require", "exports", "jquery", "jquery.cookie"], function (require, exp
                     });
                 });
             }
+        };
+        RabbitCMS.getUniqueID = function (prefix) {
+            if (prefix === void 0) { prefix = ''; }
+            return prefix + '_' + Math.floor(Math.random() * (new Date()).getTime());
+        };
+        RabbitCMS.alert = function (options) {
+            options = $.extend(true, {
+                container: "",
+                place: "append",
+                type: 'success',
+                message: "",
+                close: true,
+                reset: true,
+                focus: true,
+                closeInSeconds: 0,
+                icon: ""
+            }, options);
+            var id = this.getUniqueID("App_alert");
+            var html = '<div id="' + id + '" class="custom-alerts alert alert-' + options.type + ' fade in">' + (options.close ? '<button type="button" class="close" data-dismiss="alert" aria-hidden="true"></button>' : '') + (options.icon !== "" ? '<i class="fa-lg fa fa-' + options.icon + '"></i>  ' : '') + options.message + '</div>';
+            if (options.reset) {
+                $('.custom-alerts').remove();
+            }
+            if (!options.container) {
+                var pfmc = $('.page-fixed-main-content');
+                if (pfmc.length === 1) {
+                    pfmc.prepend(html);
+                }
+                else if (($('body').hasClass("page-container-bg-solid") || $('body').hasClass("page-content-white")) && $('.page-head').length === 0) {
+                    $('.page-title').after(html);
+                }
+                else {
+                    var $page_bar = $('.page-bar');
+                    if ($page_bar.length > 0) {
+                        $page_bar.after(html);
+                    }
+                    else {
+                        $('.page-breadcrumb, .breadcrumbs').after(html);
+                    }
+                }
+            }
+            else {
+                if (options.place == "append") {
+                    $(options.container).append(html);
+                }
+                else {
+                    $(options.container).prepend(html);
+                }
+            }
+            if (options.focus) {
+                this.scrollTo($('#' + id));
+            }
+            if (options.closeInSeconds > 0) {
+                setTimeout(function () {
+                    $('#' + id).remove();
+                }, options.closeInSeconds * 1000);
+            }
+            return id;
         };
         RabbitCMS.uniformUpdate = function (selector) {
             require(['jquery.uniform'], function () {
