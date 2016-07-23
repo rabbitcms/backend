@@ -13,7 +13,6 @@ use Illuminate\Foundation\Auth\Access\Authorizable;
 use Illuminate\Support\Facades\Hash;
 use RabbitCMS\Backend\Contracts\HasAccessEntity;
 
-
 /**
  * Class User
  *
@@ -107,7 +106,7 @@ class User extends Eloquent implements AuthenticatableContract, AuthorizableCont
 
         foreach ($permissions as $permission) {
             //todo temporary check key(old permissions)
-            if (array_key_exists($permission,$allPermissions) || in_array($permission, $allPermissions)) {
+            if (array_key_exists($permission, $allPermissions) || in_array($permission, $allPermissions)) {
                 $match = true;
             } elseif ($all) {
                 return false;

@@ -8,7 +8,6 @@ use Illuminate\Routing\Route;
 
 class MediaController extends LaravelController
 {
-
     public function image(Route $route)
     {
         /**

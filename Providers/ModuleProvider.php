@@ -65,13 +65,11 @@ class ModuleProvider extends CarrotModuleProvider
             'domain' => $config->get('module.backend.domain'),
             'middleware' => ['backend']
         ], function (Router $router) use ($modules) {
-
             $router->get('auth/login', ['uses' => AuthController::class . '@getLogin', 'as' => 'auth']);
             $router->post('auth/login', ['uses' => AuthController::class . '@postLogin', 'as' => 'auth.login']);
             $router->get('auth/logout', ['uses' => AuthController::class . '@getLogout', 'as' => 'auth.logout']);
 
             $router->group(['middleware' => ['backend.auth']], function (Router $router) use ($modules) {
-
                 $router->get('', ['uses' => function () {
                     return view('backend::index');
                 }, 'as' => 'index']);
@@ -85,7 +83,7 @@ class ModuleProvider extends CarrotModuleProvider
                                 [
                                     'prefix' => $module->getAlias(),
                                     'as' => $module->getAlias() . '.',
-                                    'namespace' => $namespace === null ? '': trim($namespace,'\\').'\\Http\\Controllers\\Backend'
+                                    'namespace' => $namespace === null ? '': trim($namespace, '\\').'\\Http\\Controllers\\Backend'
                                 ],
                                 function (Router $router) use ($path) {
                                     $value = require($path); //todo cache module backend config
@@ -177,5 +175,4 @@ class ModuleProvider extends CarrotModuleProvider
     {
         return 'backend';
     }
-
 }

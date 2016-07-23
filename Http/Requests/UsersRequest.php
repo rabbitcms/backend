@@ -43,5 +43,4 @@ class UsersRequest extends Request
             'password'    => 'Пароль',
         ];
     }
-
 }

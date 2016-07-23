@@ -62,5 +62,4 @@ class CreateBackendUsersGroupsTable extends Migration
     {
         Schema::drop('backend_users_groups');
     }
-
 }

@@ -13,6 +13,7 @@
   },
   "files" :[
     "Assets/backend/js/rabbitcms.backend.ts",
-    "Assets/backend/js/rabbitcms.backend.login.ts"
+    "Assets/backend/js/rabbitcms.backend.login.ts",
+    "Assets/backend/js/rabbitcms.datatable.ts"
   ]
 }

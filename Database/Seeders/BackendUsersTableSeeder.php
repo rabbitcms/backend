@@ -22,5 +22,4 @@ class BackendUsersTableSeeder extends Seeder
             'active'   => 1,
         ]);
     }
-
 }

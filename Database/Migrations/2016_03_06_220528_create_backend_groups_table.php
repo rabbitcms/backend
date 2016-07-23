@@ -3,7 +3,8 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateBackendGroupsTable extends Migration {
+class CreateBackendGroupsTable extends Migration
+{
 
     /**
      * Run the migrations.
@@ -12,8 +13,7 @@ class CreateBackendGroupsTable extends Migration {
      */
     public function up()
     {
-        Schema::create('backend_groups', function(Blueprint $table)
-        {
+        Schema::create('backend_groups', function (Blueprint $table) {
             $table->increments('id');
             $table->string('caption');
             $table->text('permissions');
@@ -31,5 +31,4 @@ class CreateBackendGroupsTable extends Migration {
     {
         Schema::drop('backend_groups');
     }
-
 }

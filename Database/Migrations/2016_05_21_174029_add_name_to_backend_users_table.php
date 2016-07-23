@@ -3,7 +3,8 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class AddNameToBackendUsersTable extends Migration {
+class AddNameToBackendUsersTable extends Migration
+{
 
     /**
      * Run the migrations.
@@ -12,7 +13,7 @@ class AddNameToBackendUsersTable extends Migration {
      */
     public function up()
     {
-        Schema::table('backend_users', function(Blueprint $table) {
+        Schema::table('backend_users', function (Blueprint $table) {
             $table->string('name');
         });
     }
@@ -24,7 +25,5 @@ class AddNameToBackendUsersTable extends Migration {
      */
     public function down()
     {
-
     }
-
 }

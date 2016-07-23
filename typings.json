@@ -1,9 +1,15 @@
 {
   "globalDependencies": {
-    "bootstrap": "registry:dt/bootstrap#3.3.5+20160316155526",
-    "es6-shim": "registry:dt/es6-shim#0.31.2+20160317120654",
-    "jasmine": "registry:dt/jasmine#2.2.0+20160412134438",
-    "jquery": "registry:dt/jquery#1.10.0+20160316155526",
-    "react": "registry:dt/react#0.14.0+20160412154040"
+    "bootbox": "registry:dt/bootbox#4.4.0+20160326162245",
+    "bootstrap": "registry:dt/bootstrap#3.3.5+20160619023404",
+    "es6-shim": "registry:dt/es6-shim#0.31.2+20160602141504",
+    "jasmine": "registry:dt/jasmine#2.2.0+20160621224255",
+    "jquery": "registry:dt/jquery#1.10.0+20160704162008",
+    "jquery.blockui": "registry:dt/jquery.blockui#0.0.0+20160316155526",
+    "jquery.cookie": "registry:dt/jquery.cookie#1.4.1+20160316155526",
+    "jquery.datatables": "registry:dt/jquery.datatables#1.9.4+20160317120654",
+    "jquery.uniform": "registry:dt/jquery.uniform#0.0.0+20160316155526",
+    "jquery.validation": "registry:dt/jquery.validation#1.13.1+20160626224847",
+    "require": "registry:dt/require#2.1.20+20160316155526"
   }
 }

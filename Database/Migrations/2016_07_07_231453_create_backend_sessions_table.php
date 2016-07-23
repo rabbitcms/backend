@@ -3,7 +3,8 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateBackendSessionsTable extends Migration {
+class CreateBackendSessionsTable extends Migration
+{
 
     /**
      * Run the migrations.
@@ -12,8 +13,7 @@ class CreateBackendSessionsTable extends Migration {
      */
     public function up()
     {
-        Schema::create('backend_sessions', function(Blueprint $table)
-        {
+        Schema::create('backend_sessions', function (Blueprint $table) {
             $table->string('id')->unique();
             $table->integer('user_id')->nullable();
             $table->string('ip_address', 45)->nullable();
@@ -32,5 +32,4 @@ class CreateBackendSessionsTable extends Migration {
     {
         Schema::drop('backend_sessions');
     }
-
 }

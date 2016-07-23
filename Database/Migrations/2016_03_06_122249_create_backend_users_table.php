@@ -3,7 +3,8 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateBackendUsersTable extends Migration {
+class CreateBackendUsersTable extends Migration
+{
 
     /**
      * Run the migrations.
@@ -12,8 +13,7 @@ class CreateBackendUsersTable extends Migration {
      */
     public function up()
     {
-        Schema::create('backend_users', function(Blueprint $table)
-        {
+        Schema::create('backend_users', function (Blueprint $table) {
             $table->increments('id');
             $table->string('email');
             $table->string('password');
@@ -34,5 +34,4 @@ class CreateBackendUsersTable extends Migration {
     {
         Schema::drop('backend_users');
     }
-
 }

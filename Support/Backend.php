@@ -333,7 +333,7 @@ class Backend
      */
     public function setActiveMenu(...$path)
     {
-        $this->active = implode('.',$path);
+        $this->active = implode('.', $path);
     }
 
     /**
