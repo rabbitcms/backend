@@ -1,10 +1,13 @@
 @extends('backend::layouts.base')
+@push('styles')
+<link href="{{asset_module('backend/css/login.css', 'backend')}}" rel="stylesheet" type="text/css">
+@endpush
 @section('main')
     <body class="login loading">
     <div class="logo">
         <a href="{{relative_route('backend.index')}}">
             <img src="{{asset_module('img/logo-big.png','backend')}}" alt=""></a></div>
-    <div class="content ajax-portlet" data-require="rabbitcms.backend.login">
+    <div class="content ajax-portlet" data-require="rabbitcms.backend.login:init">
         <form class="login-form" action="" method="post">
             <input type="hidden" name="_token" value="{{csrf_token()}}">
 

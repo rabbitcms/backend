@@ -60,14 +60,21 @@ return [
         "css" => "plugins/require-css",
         "rabbitcms.backend" => "js/rabbitcms.backend",
         "rabbitcms.backend.login" => [
-            "path" => "js/rabbitcms.backend.login",
-            "deps" => "rabbitcms.backend"
+            "path" => "js/rabbitcms.backend.login"
         ],
         "rabbitcms.users" => "js/rabbitcms.users",
         "rabbitcms.users.groups" => "js/rabbitcms.users.groups",
-        "jquery" => "plugins/jquery.min.js",
-        "bootbox" => "plugins/bootbox.js",
-        'jquery.cookie' => 'plugins/jquery.cokie.min.js'
+        "jquery" => "plugins/jquery.min",
+        "bootbox" => "plugins/bootbox",
+        'jquery.cookie' => 'plugins/jquery.cokie.min',
+        "jquery.backstretch" => 'plugins/backstretch/jquery.backstretch.min',
+        "jquery.validation.additional" => "plugins/jquery-validation/additional-methods.min",
+        "jquery.validation" => "plugins/jquery-validation/jquery.validate.min",
+        "jquery.uniform" => [
+            "path" => "plugins/uniform/jquery.uniform.min",
+            "css" => "plugins/uniform/css/uniform.default.css"
+        ],
+        "jquery.blockui" => "plugins/jquery.block-ui"
     ],
     'handlers' => [
         '.*' => true

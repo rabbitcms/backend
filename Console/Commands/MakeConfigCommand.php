@@ -33,8 +33,8 @@ class MakeConfigCommand extends Command
             'baseUrl' => rtrim($baseUrl, '/') . '/',
             'shim' => [],
             'paths' => [],
-            'urlArgs' => time()
         ];
+        $time = time();
         $dir = public_path('backend');
         if (!is_dir($dir)) {
             mkdir($dir);
@@ -48,13 +48,20 @@ class MakeConfigCommand extends Command
                 if (is_array($value) && array_key_exists('requirejs', $value) && is_array($value['requirejs'])) {
                     foreach ($value['requirejs'] as $m => $c) {
                         if (is_string($c)) {
-                            $config['paths'][$m] = $module->getLowerName() . '/' . ltrim($c, '/');
+                            $config['paths'][$m] = $module->getLowerName() . '/backend/' . ltrim($c, '/');
                         } elseif (is_array($c)) {
                             if (array_key_exists('path', $c)) {
-                                $config['paths'][$m] = $module->getLowerName() . '/' . ltrim($c['path'], '/');
+                                $config['paths'][$m] = $module->getLowerName() . '/backend/' . ltrim($c['path'], '/');
                             }
                             if (array_key_exists('deps', $c)) {
-                                $config['shim'][$m] = ['deps'=>(array)$c['deps']];
+                                $config['shim'][$m] = ['deps' => (array)$c['deps']];
+                            }
+                            if (array_key_exists('css', $c)) {
+                                $config['shim'][$m]['deps'] = $config['shim'][$m]['deps'] ?? [];
+                                foreach ((array)$c['css'] as $css) {
+                                    $config['shim'][$m]['deps'][]= 'css!'.$module->getLowerName() . '/backend/' . ltrim($css, '/');
+                                }
+
                             }
                         }
                     }
@@ -67,7 +74,17 @@ class MakeConfigCommand extends Command
         file_put_contents(
             public_path('backend/config.js'),
             /* @lang JavaScript */
-            "require.config(${config});"
+            <<<JS
+(function() {
+    var config = ${config};
+    config.urlArgs = function(id, url) {
+        return (url.indexOf('?') === -1 ? '?' : '&') + ${time};
+    };
+    require.config(config);
+})();
+JS
+
+
         );
 
     }

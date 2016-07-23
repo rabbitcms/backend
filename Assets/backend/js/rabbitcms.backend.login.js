@@ -1,13 +1,10 @@
-define(["jquery"], function ($) {
+define(["require", "exports", "jquery", "rabbitcms.backend", "jquery.backstretch", "jquery.validation"], function (require, exports, $, rabbitcms_backend_1) {
     "use strict";
-
-    function _init(portlet) {
-        var _imgPath = '/modules/backend/img/bg/';
+    function init(portlet) {
+        var _imgPath = rabbitcms_backend_1.RabbitCMS.getPath() + '/img/bg/';
         var _images = [_imgPath + '1.jpg', _imgPath + '2.jpg', _imgPath + '3.jpg', _imgPath + '4.jpg'];
-        $.backstretch(_images, {fade: 1000, duration: 8000});
-
+        $.backstretch(_images, { fade: 1000, duration: 8000 });
         var loginForm = $('form', portlet);
-
         loginForm.validate({
             errorElement: 'span',
             errorClass: 'help-block',
@@ -42,7 +39,6 @@ define(["jquery"], function ($) {
                 form.submit();
             }
         });
-
         loginForm.on('keypress', 'input', function (e) {
             if (e.which == 13) {
                 if (loginForm.validate().form()) {
@@ -52,6 +48,6 @@ define(["jquery"], function ($) {
             }
         });
     }
-
-    return _init;
+    exports.init = init;
 });
+//# sourceMappingURL=rabbitcms.backend.login.js.map
