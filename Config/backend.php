@@ -59,9 +59,7 @@ return [
     'requirejs' => [
         "css" => "plugins/require-css",
         "rabbitcms.backend" => "js/rabbitcms.backend",
-        "rabbitcms.backend.login" => [
-            "path" => "js/rabbitcms.backend.login"
-        ],
+        "rabbitcms.backend.login" => "js/rabbitcms.backend.login",
         "rabbitcms.datatable" => "js/rabbitcms.datatable",
         "rabbitcms.users" => "js/rabbitcms.users",
         "rabbitcms.users.groups" => "js/rabbitcms.users.groups",
@@ -77,17 +75,29 @@ return [
         ],
         "jquery.blockui" => "plugins/jquery.block-ui",
         "datatables.net" => [
-            "path" => "plugins/datatables/datatables.all.min",
+            "path" => "plugins/datatables/jquery.dataTables.min",
+            "css" => "plugins/datatables/css/jquery.dataTables.min.css",
+        ],
+        "datatables.net-bt" => [
+            "path" => "plugins/datatables/plugins/bootstrap/datatables.bootstrap",
             "css" => [
-                "plugins/datatables/datatables.min.css",
-                "plugins/datatables/plugins/bootstrap/datatables.bootstrap.css"
+                "plugins/datatables/plugins/bootstrap/datatables.bootstrap.css",
+                "css/plugins/datatable.css"
             ],
-            "bundles"=>[
-                "datatables.net-buttons"
+        ],
+        "select2" => [
+            "path" => "plugins/select2/js/select2.min",
+            "css" => [
+                "plugins/select2/css/select2.min.css",
+                "plugins/select2/css/select2-bootstrap.min.css",
+                "css/plugins/select2.css"
             ]
         ]
     ],
     'handlers' => [
-        '.*' => true
+        '' => 'rabbitcms.backend.dashboard:init',
+        'groups' => 'rabbitcms.backend.groups:table',
+        'groups\/create' => 'rabbitcms.backend.groups:create',
+        'groups\/(\d+)' => 'rabbitcms.backend.groups:edit',
     ]
 ];
