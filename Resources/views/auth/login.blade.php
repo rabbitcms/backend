@@ -3,7 +3,7 @@
     <body class="login loading">
     <div class="logo">
         <a href="{{relative_route('backend.index')}}">
-            <img src="{{asset_module('img/logo-big.png','backend')}}" alt=""></a></div>
+            <img src="{{asset('backend/img/logo-big.png')}}" alt=""></a></div>
     <div class="content ajax-portlet" data-require="rabbitcms.backend.login">
         <form class="login-form" action="" method="post">
             <input type="hidden" name="_token" value="{{csrf_token()}}">

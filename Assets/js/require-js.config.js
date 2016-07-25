@@ -4,65 +4,64 @@ require.config({
         "rabbitcms.backend.login": {
             "deps": ["rabbitcms.backend"]
         },
-        "rabbitcms.backend.orders": {
+        "dtkt.subscribe.orders": {
             "deps": ["rabbitcms.backend"]
         },
-        "rabbitcms.backend.users": {
+        "dtkt.users": {
             "deps": ["rabbitcms.backend"]
         }
     },
     "paths": {
         "rabbitcms.backend": "backend/js/rabbitcms.backend",
         "rabbitcms.backend.login": "backend/js/rabbitcms.backend.login",
+        "rabbitcms.backend.users" : "backend/js/rabbitcms.backend.users",
+        "rabbitcms.backend.users.groups" : "backend/js/rabbitcms.backend.users.groups",
 
-        "rabbitcms.backend.users": "users/backend/js/rabbitcms.backend.users",
-        "rabbitcms.backend.users.autocomplete": "users/backend/js/rabbitcms.backend.users.autocomplete",
-        "dtkt.backend.users.agencies": "users/backend/js/dtkt.backend.users.agencies",
-        "dtkt.backend.users.managers": "users/backend/js/dtkt.backend.users.managers",
-        "dtkt.backend.users.firms": "users/backend/js/dtkt.backend.users.firms",
+        "dtkt.blanks": "blanks/backend/js/dtkt.blanks",
+        "dtkt.blanks.dates": "blanks/backend/js/dtkt.blanks.dates",
+        "dtkt.blanks.rubrics": "blanks/backend/js/dtkt.blanks.rubrics",
 
-        "rabbitcms.backend.orders": "subscribe/backend/js/rabbitcms.backend.orders",
-        "rabbitcms.backend.details": "subscribe/backend/js/rabbitcms.backend.details",
-        "rabbitcms.backend.templates": "subscribe/backend/js/rabbitcms.backend.templates",
-        "rabbitcms.backend.packages": "subscribe/backend/js/rabbitcms.backend.packages",
-        "rabbitcms.backend.webinars": "webinars/backend/js/rabbitcms.backend.webinars",
-        "rabbitcms.backend.news": "news/backend/js/rabbitcms.backend.news",
+        "dtkt.callcenter.users": "callcenter/backend/js/dtkt.callcenter.users",
+        "dtkt.callcenter.orders": "callcenter/backend/js/dtkt.callcenter.orders",
+        "dtkt.callcenter.sampling": "callcenter/backend/js/dtkt.callcenter.sampling",
 
-        "rabbitcms.backend.tags": "dtkt/backend/js/rabbitcms.backend.tags",
-        "rabbitcms.backend.origins": "dtkt/backend/js/rabbitcms.backend.origins",
-        "rabbitcms.backend.authors": "dtkt/backend/js/rabbitcms.backend.authors",
-        "rabbitcms.backend.footer": "dtkt/backend/js/rabbitcms.backend.footer",
+        "dtkt.consulting": "consulting/backend/js/dtkt.consulting",
+        "dtkt.consulting.questions": "consulting/backend/js/dtkt.consulting.questions",
+        "dtkt.consulting.subscribers": "consulting/backend/js/dtkt.consulting.subscribers",
 
-        "dtkt.backend.localization": "dtkt/backend/js/dtkt.backend.localization",
-        "dtkt.backend.comments": "dtkt/backend/js/dtkt.backend.comments",
+        "dtkt.documents": "documents/backend/js/dtkt.documents",
+        "dtkt.documents.arrivals": "documents/backend/js/dtkt.documents.arrivals",
+        "dtkt.documents.statistics": "documents/backend/js/dtkt.documents.statistics",
 
-        "rabbitcms.backend.consulting": "consulting/backend/js/rabbitcms.backend.consulting",
-        "rabbitcms.backend.questions": "consulting/backend/js/rabbitcms.backend.questions",
-        "rabbitcms.backend.subscribers": "consulting/backend/js/rabbitcms.backend.subscribers",
+        "dtkt.luna": "dtkt/backend/js/dtkt.luna",
+        "dtkt.tags": "dtkt/backend/js/dtkt.tags",
+        "dtkt.origins": "dtkt/backend/js/dtkt.origins",
+        "dtkt.authors": "dtkt/backend/js/dtkt.authors",
+        "dtkt.footer": "dtkt/backend/js/dtkt.footer",
+        "dtkt.localization": "dtkt/backend/js/dtkt.localization",
+        "dtkt.comments": "dtkt/backend/js/dtkt.comments",
 
-        "rabbitcms.users" : "backend/js/rabbitcms.users",
-        "rabbitcms.users.groups" : "backend/js/rabbitcms.users.groups",
+        "dtkt.news": "news/backend/js/dtkt.news",
 
-        "rabbitcms.backend.blanks": "blanks/backend/js/rabbitcms.backend.blanks",
-        "rabbitcms.backend.dates": "blanks/backend/js/rabbitcms.backend.dates",
-        "rabbitcms.backend.rubrics": "blanks/backend/js/rabbitcms.backend.rubrics",
-
-        "dtkt.subscribe.sampling.backend": "subscribe/backend/js/dtkt.subscribe.sampling.backend",
-        "dtkt.subscribe.abilities": "subscribe/backend/js/dtkt.subscribe.abilities",
-        "dtkt.subscribe.packages": "subscribe/backend/js/dtkt.subscribe.packages",
         "dtkt.subscribe.item": "subscribe/backend/js/dtkt.subscribe.item",
-        "dtkt.luna": "backend/js/dtkt.luna",
+        "dtkt.subscribe.abilities": "subscribe/backend/js/dtkt.subscribe.abilities",
+        "dtkt.subscribe.package": "subscribe/backend/js/dtkt.subscribe.package",
+        "dtkt.subscribe.orders": "subscribe/backend/js/dtkt.subscribe.orders",
+        "dtkt.subscribe.details": "subscribe/backend/js/dtkt.subscribe.details",
+        "dtkt.subscribe.templates": "subscribe/backend/js/dtkt.subscribe.templates",
+        "dtkt.subscribe.packages": "subscribe/backend/js/dtkt.subscribe.packages",
+        "dtkt.subscribe.sampling": "subscribe/backend/js/dtkt.subscribe.sampling",
+        "dtkt.subscribe.statuses": "subscribe/backend/js/dtkt.subscribe.statuses",
 
-        "dtkt.backend.documents": "documents/backend/js/dtkt.backend.documents",
-        "dtkt.backend.documents.arrivals": "documents/backend/js/dtkt.backend.documents.arrivals",
-        "dtkt.backend.documents.statistics": "documents/backend/js/dtkt.backend.documents.statistics",
-        "dtkt.backend.callcenter.users": "callcenter/backend/js/dtkt.backend.callcenter.users",
-        "dtkt.backend.callcenter.orders": "callcenter/backend/js/dtkt.backend.callcenter.orders",
-        "dtkt.backend.callcenter.sampling": "callcenter/backend/js/dtkt.backend.callcenter.sampling",
+        "dtkt.users": "users/backend/js/dtkt.users",
+        "dtkt.users.autocomplete": "users/backend/js/dtkt.users.autocomplete",
+        "dtkt.users.agencies": "users/backend/js/dtkt.users.agencies",
+        "dtkt.users.managers": "users/backend/js/dtkt.users.managers",
+        "dtkt.users.firms": "users/backend/js/dtkt.users.firms",
 
-        "dtkt.subscribe.statuses.backend": "subscribe/backend/js/dtkt.subscribe.statuses.backend"
+        "dtkt.webinars": "webinars/backend/js/dtkt.webinars"
     },
-    "urlArgs": "0000000023"
+    "urlArgs": "0000000026"
 });
 
 define('jquery', [], function() { return jQuery; });

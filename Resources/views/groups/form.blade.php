@@ -1,6 +1,6 @@
 @extends(\Request::ajax() ? 'backend::layouts.empty' : 'backend::layouts.master')
 @section('content')
-    <div class="portlet box blue-hoki ajax-portlet" data-require="rabbitcms.users.groups:form">
+    <div class="portlet box blue-hoki ajax-portlet" data-require="rabbitcms.backend.users.groups:form">
         <div class="portlet-title">
             <div class="caption">
                 {{$model->exists ? trans('backend::common.edit_group') : trans('backend::common.create_group')}}</div>
@@ -49,41 +49,11 @@
                                                     <tr>
                                                         <td style="font-weight: bold; font-style: italic;">{{$caption}}</td>
                                                         <td>
-                                                        @foreach(\BackendAcl::getGroupPermissions($group) as $rule => $caption)
+                                                        @foreach(\Backend::getGroupPermissions($group) as $rule => $caption)
                                                             <label>
                                                                 <input class="{{$rule}} read-rule" type="checkbox"
                                                                        @if($model->exists && array_key_exists($rule, $model->permissions)) checked="checked" @endif
                                                                        name="permissions[{{$rule}}]" value="1"> {{$caption}}</label><br>
-                                                            {{--<td>
-                                                                <input class="{{$module}} read-rule" type="checkbox"
-                                                                       @if($model->exists && array_key_exists($module . '.' . $section . '.read', $model->permissions)) checked="checked" @endif
-                                                                       name="permissions[{{$module . '.' . $section . '.read'}}]" value="1">
-                                                            </td>
-                                                            <td>
-                                                                <input class="{{$module}} write-rule" type="checkbox"
-                                                                       @if($model->exists && array_key_exists($module . '.' . $section . '.write', $model->permissions)) checked="checked" @endif
-                                                                       name="permissions[{{$module . '.' . $section . '.write'}}]" value="1">
-                                                            </td>--}}
-                                                        {{--@if(is_array($list))
-                                                            @foreach($list as $key => $val)
-                                                                @if($key === '*')
-                                                                    <tr>
-                                                                        <td></td>
-                                                                        <td>{{$val}}</td>
-                                                                        <td>
-                                                                            <input class="{{$module}} read-rule" type="checkbox"
-                                                                                   @if($model->exists && array_key_exists($module . '.' . $section . '.read', $model->permissions)) checked="checked" @endif
-                                                                                   name="permissions[{{$module . '.' . $section . '.read'}}]" value="1">
-                                                                        </td>
-                                                                        <td>
-                                                                            <input class="{{$module}} write-rule" type="checkbox"
-                                                                                   @if($model->exists && array_key_exists($module . '.' . $section . '.write', $model->permissions)) checked="checked" @endif
-                                                                                   name="permissions[{{$module . '.' . $section . '.write'}}]" value="1">
-                                                                        </td>
-                                                                    </tr>
-                                                                @endif
-                                                            @endforeach
-                                                        @endif--}}
                                                         @endforeach
                                                         </td>
                                                     </tr>

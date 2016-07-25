@@ -28,7 +28,8 @@
     <link href="{{asset_module('css/plugins.css', 'backend')}}" rel="stylesheet" type="text/css">
     <link href="{{asset_module('css/layout/layout.css', 'backend')}}" rel="stylesheet" type="text/css">
     <link href="{{asset_module('css/layout/themes/default.css', 'backend')}}" rel="stylesheet" type="text/css">
-    <link href="{{asset_module('css/layout/custom.css', 'backend')}}" rel="stylesheet" type="text/css">
+
+    <link href="{{asset('backend/css/custom.css')}}" rel="stylesheet" type="text/css">
 
     <!-- Scripts -->
     <script> var _TOKEN = '{{Session::token()}}'; </script>

@@ -1,6 +1,6 @@
 @extends(\Request::ajax() ? 'backend::layouts.empty' : 'backend::layouts.master')
 @section('content')
-    <div class="portlet box blue-hoki ajax-portlet" data-require="rabbitcms.users.groups:table" data-permanent="permanent">
+    <div class="portlet box blue-hoki ajax-portlet" data-require="rabbitcms.backend.users.groups:table" data-permanent="permanent">
         <div class="portlet-title">
             <div class="caption">
                 {{trans('backend::common.groups')}}</div>

@@ -4,7 +4,7 @@ use Illuminate\Routing\Router;
 use RabbitCMS\Backend\Support\Backend;
 
 return [
-    'boot' => function (Backend $backend) {
+    'boot'      => function (Backend $backend) {
         $backend->addAclResolver(
             function (Backend $acl) {
                 $acl->addAclGroup('system', trans('backend::acl.system.title'));
@@ -25,7 +25,7 @@ return [
             }, Backend::MENU_PRIORITY_MENU
         );
     },
-    'routes' => function (Router $router) {
+    'routes'    => function (Router $router) {
         $router->group(['prefix' => 'users'], function (\Illuminate\Routing\Router $router) {
             $router->get('', ['as' => 'users', 'uses' => 'Users@getIndex']);
             $router->post('', ['as' => 'users.list', 'uses' => 'Users@postIndex']);
@@ -57,19 +57,19 @@ return [
         });
     },
     'requirejs' => [
-        "css" => "plugins/require-css",
-        "rabbitcms.backend" => "js/rabbitcms.backend",
-        "rabbitcms.backend.login" => [
-            "path" => "js/rabbitcms.backend.login",
-            "deps" => "rabbitcms.backend"
+        'css'                            => 'plugins/require-css',
+        'rabbitcms.backend'              => 'js/rabbitcms.backend',
+        'rabbitcms.backend.login'        => [
+            'path' => 'js/rabbitcms.backend.login',
+            'deps' => 'rabbitcms.backend'
         ],
-        "rabbitcms.users" => "js/rabbitcms.users",
-        "rabbitcms.users.groups" => "js/rabbitcms.users.groups",
-        "jquery" => "plugins/jquery.min.js",
-        "bootbox" => "plugins/bootbox.js",
-        'jquery.cookie' => 'plugins/jquery.cokie.min.js'
+        'rabbitcms.backend.users'        => 'js/rabbitcms.backend.users',
+        'rabbitcms.backend.users.groups' => 'js/rabbitcms.backend.users.groups',
+        'jquery'                         => 'plugins/jquery.min.js',
+        'bootbox'                        => 'plugins/bootbox.js',
+        'jquery.cookie'                  => 'plugins/jquery.cokie.min.js'
     ],
-    'handlers' => [
+    'handlers'  => [
         '.*' => true
     ]
 ];
