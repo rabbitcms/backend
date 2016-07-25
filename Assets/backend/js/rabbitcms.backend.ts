@@ -12,7 +12,27 @@ var _visiblePortlet = $();
 var _path:string = '/';
 var _token:string = '';
 
+declare interface Handler {
+    /**
+     * Pathname regular expression.
+     */
+    handler:string;
+
+    /**
+     * Module name.
+     */
+        module:string;
+    exec?:string;
+    ajax?:boolean;
+    popState?:boolean;
+}
+
+var _handlers:Handler[] = [];
+
 export class RabbitCMS {
+    /**
+     * Init RabbitCMS backend.
+     */
     static init() {
         $body = $('body');
         window.onpopstate = (e) => {
@@ -37,26 +57,49 @@ export class RabbitCMS {
             return false;
         });
 
-        $body.on('click', '[rel="ajax-portlet"]', (event) => {
-            if (!this.canSubmit.check(event))
+        $body.on('click', 'a', (event:JQueryEventObject) => {
+            if (!this.canSubmit.check(event)) {
                 return false;
+            }
 
-            let link = $(event.currentTarget).attr('href');
-            this.navigate(link);
+            let a:HTMLAnchorElement = <HTMLAnchorElement>event.currentTarget;
 
-            return false;
+            if (a.hostname != location.hostname) {
+                return true;
+            }
+
+            return !this.go(a.pathname);
         });
 
-        var link = _pathname;
-        var portlet = $('.ajax-portlet:first');
+        this.go(location.pathname, false, false);
 
-        this.cachePortlet(link, portlet, false);
+        $('[data-require]').each((i, e)=> {
+            this.loadModule($(e));
+        });
+
+        let portlet = $('.ajax-portlet:first');
+        this.loadModule(portlet);
+        this.cachePortlet(_pathname, portlet, false);
         this.showPortlet(portlet);
 
-        this.loadModule(portlet);
 
         this.uniform();
         this.initSidebar();
+    }
+
+    static go(link:string, popState:boolean = true, checkAjax:boolean = true):boolean {
+        let result:boolean = false;
+        _handlers.forEach((h:Handler) => {
+            if (checkAjax && h.ajax === false) {
+                return;
+            }
+            let r = new RegExp('^' + h.handler);
+            if (r.exec(link)) {
+                this.navigate(link, popState && h.popState !== false, h);
+                result = true;
+            }
+        }, this);
+        return result;
     }
 
     static setPath(value:string) {
@@ -79,17 +122,17 @@ export class RabbitCMS {
         var _module = portlet.data('require');
 
         if (_module) {
-            var _tmp = _module.split(':');
+            let _tmp = _module.split(':');
             require([_tmp[0]], function (_module) {
                 if (_tmp.length === 2)
                     _module[_tmp[1]](portlet);
                 else
-                    _module(portlet);
+                    _module.init(portlet);
             });
         }
     }
 
-    static navigate(link, pushState:boolean = true) {
+    static navigate(link, pushState:boolean = true, handler?:Handler) {
         link = link.length > 1 ? link.replace(/\/$/, '') : link;
         pushState = (pushState === undefined) ? true : pushState;
 
@@ -379,8 +422,12 @@ export class RabbitCMS {
         });
     }
 
+    static setHandlers(handlers:Handler[]) {
+        _handlers = handlers;
+    }
+
     static blockUI(target?:any) {
-        var imgPath = '/modules/backend/img/loading-spinner-grey.gif';
+        var imgPath = this.getPath() + '/img/loading-spinner-grey.gif';
 
         var html = $('<div></div>').addClass('loading-message loading-message-boxed');
         html.append('<img src="' + imgPath + '">');
@@ -536,7 +583,7 @@ export class RabbitCMS {
     }
 
     /* Dialogs */
-    Dialogs = {
+    static Dialogs = {
         onDelete: function (link, callback) {
             require(['bootbox'], (bootbox)=> {
                 bootbox.dialog({
@@ -583,7 +630,7 @@ export class RabbitCMS {
     };
 
     /* Tools */
-    Tools = {
+    static Tools = {
         transliterate: function (string, spase) {
 
             spase = spase === undefined ? '-' : spase;
@@ -624,6 +671,15 @@ export class RabbitCMS {
             return $.trim(result);
         }
     };
+
+    static select2(selector:JQuery, options:Select2Options = {}) {
+        require(['select2'], function () {
+            $.fn.select2.defaults.set("theme", "bootstrap");
+            options.allowClear = true;
+            options.width = 'auto';
+            selector.select2(options);
+        });
+    }
 }
 
 $(()=> RabbitCMS.init());
@@ -634,10 +690,12 @@ $(()=> RabbitCMS.init());
 export class MicroEvent {
     private _events = {};
 
-    constructor(object) {
-        Object.keys(object).forEach((key) => {
-            this[key] = object[key];
-        }, this);
+    constructor(object?:Object) {
+        if (object !== void 0) {
+            Object.keys(object).forEach((key) => {
+                this[key] = object[key];
+            }, this);
+        }
     }
 
     bind(event:string, fct) {

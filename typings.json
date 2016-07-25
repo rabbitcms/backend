@@ -10,6 +10,7 @@
     "jquery.datatables": "registry:dt/jquery.datatables#1.9.4+20160317120654",
     "jquery.uniform": "registry:dt/jquery.uniform#0.0.0+20160316155526",
     "jquery.validation": "registry:dt/jquery.validation#1.13.1+20160626224847",
-    "require": "registry:dt/require#2.1.20+20160316155526"
+    "require": "registry:dt/require#2.1.20+20160316155526",
+    "select2": "registry:dt/select2#4.0.1+20160719214031"
   }
 }
