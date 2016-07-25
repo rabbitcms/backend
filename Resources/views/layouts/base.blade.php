@@ -64,9 +64,9 @@
     <script src="{{asset_module('backend/plugins/require.js', 'backend')}}" type="text/javascript"></script>
     <script src="{{asset('backend/config.js')}}" type="text/javascript"></script>
     <script>
-        define('jquery', [], function() { return jQuery; });
         require(["jquery", "rabbitcms.backend"], function ($,rbc) {
             rbc.RabbitCMS.setPath('{{asset_module("backend","backend")}}');
+            rbc.RabbitCMS.setToken('{{csrf_token()}}');
             $('body').removeClass('loading');
         });
     </script>
