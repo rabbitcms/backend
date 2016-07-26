@@ -4,10 +4,12 @@ namespace RabbitCMS\Backend\Providers;
 
 use Illuminate\Auth\SessionGuard;
 use Illuminate\Config\Repository as ConfigRepository;
+use Illuminate\Contracts\Bus\Dispatcher;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\AliasLoader;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
+use Illuminate\Http\Response;
 use Illuminate\Routing\Router;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 use Pingpong\Modules\Module;
@@ -20,6 +22,7 @@ use RabbitCMS\Backend\Http\Middleware\Authenticate;
 use RabbitCMS\Backend\Http\Middleware\AuthenticateWithBasicAuth;
 use RabbitCMS\Backend\Http\Middleware\StartSession;
 use RabbitCMS\Backend\Support\Backend;
+use RabbitCMS\Backend\Support\ConfigMaker;
 use RabbitCMS\Carrot\Providers\ModuleProvider as CarrotModuleProvider;
 
 class ModuleProvider extends CarrotModuleProvider
@@ -30,8 +33,9 @@ class ModuleProvider extends CarrotModuleProvider
      * @param ConfigRepository $config
      * @param Router $router
      * @param ModulesRepository $modules
+     * @param Dispatcher $dispatcher
      */
-    public function boot(ConfigRepository $config, Router $router, ModulesRepository $modules)
+    public function boot(ConfigRepository $config, Router $router, ModulesRepository $modules, Dispatcher $dispatcher)
     {
         $this->app->make('config')->set('auth.guards.backend', [
             'driver' => 'session',
@@ -60,6 +64,21 @@ class ModuleProvider extends CarrotModuleProvider
         );
 
         $router->group([
+            'as' => 'backend.config.js',
+            'domain' => $config->get('module.backend.domain'),
+            //'middleware' => ['backend']
+        ], function (Router $router) use ($dispatcher) {
+            $router->get('backend/config.js', function () use ($dispatcher) {
+                $response = new Response($dispatcher->dispatchNow(new ConfigMaker()), 200, [
+                    'Content-Type' => 'application/javascript'
+                ]);
+                $response->headers->addCacheControlDirective('public');
+                $response->headers->addCacheControlDirective('max-age', 60 * 60);
+                return $response;
+            });
+        });
+
+        $router->group([
             'as' => 'backend.',
             'prefix' => $config->get('module.backend.path'),
             'domain' => $config->get('module.backend.domain'),
@@ -70,9 +89,12 @@ class ModuleProvider extends CarrotModuleProvider
             $router->get('auth/logout', ['uses' => AuthController::class . '@getLogout', 'as' => 'auth.logout']);
 
             $router->group(['middleware' => ['backend.auth']], function (Router $router) use ($modules) {
-                $router->get('', ['uses' => function () {
-                    return view('backend::index');
-                }, 'as' => 'index']);
+                $router->get('', [
+                    'uses' => function () {
+                        return view('backend::index');
+                    },
+                    'as' => 'index'
+                ]);
 
                 array_map(
                     function (Module $module) use ($router) {
@@ -83,7 +105,8 @@ class ModuleProvider extends CarrotModuleProvider
                                 [
                                     'prefix' => $module->getAlias(),
                                     'as' => $module->getAlias() . '.',
-                                    'namespace' => $namespace === null ? '': trim($namespace, '\\').'\\Http\\Controllers\\Backend'
+                                    'namespace' => $namespace === null ? '' : trim($namespace,
+                                            '\\') . '\\Http\\Controllers\\Backend'
                                 ],
                                 function (Router $router) use ($path) {
                                     $value = require($path); //todo cache module backend config
@@ -149,7 +172,7 @@ class ModuleProvider extends CarrotModuleProvider
             ShareErrorsFromSession::class,
             VerifyCsrfToken::class
         ]);
-        
+
         $this->app->make('router')->middleware('backend.auth', Authenticate::class);
         $this->app->make('router')->middleware('backend.auth.base', AuthenticateWithBasicAuth::class);
 

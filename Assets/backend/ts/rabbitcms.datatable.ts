@@ -6,36 +6,58 @@ import * as $ from "jquery";
 import "datatables.net";
 import "datatables.net-bt";
 import {RabbitCMS} from "rabbitcms.backend";
+import * as i18n from "i18n!rabbitcms/nls/datatable";
 
+export interface DataTableOptions {
+    dataTable?:DataTables.Settings;
+    src?:string|JQuery;
+    loadingMessage?:string;
+    resetGroupActionInputOnSuccess?:boolean;
+    filterApplyAction?:string;
+    filterCancelAction?:string;
+    onDataLoad?:(dataTable:DataTable) => void;
+    onError?:(dataTable:DataTable) => void;
+    onSuccess?:(dataTable:DataTable, response:DataTableResponseData) => void;
+}
+
+export interface DataTableResponseData {
+    raw:number;
+    recordsFiltered:number;
+    recordsTotal:number;
+    customActionMessage?:string;
+    customActionStatus?:string;
+    data:any[];
+}
+
+interface AjaxParams {
+    [propName:string]:any;
+}
 /***
  Wrapper/Helper Class for datagrid based on jQuery Datatable Plugin
  ***/
 export class DataTable {
 
-    tableOptions; // main options
-    dataTable; // datatable object
-    table; // actual table jquery object
-    tableContainer; // actual table container object
-    tableWrapper; // actual table wrapper jquery object
-    tableInitialized = false;
-    ajaxParams = {}; // set filter mode
+    tableOptions:DataTableOptions; // main options
+    dataTable:DataTables.DataTable; // datatable object
+    table:JQuery; // actual table jquery object
+    tableContainer:JQuery; // actual table container object
+    tableWrapper:JQuery; // actual table wrapper jquery object
+    tableInitialized:boolean = false;
+    private ajaxParams:AjaxParams = {}; // set filter mode
 
     private countSelectedRecords() {
         var selected = $('tbody > tr > td:nth-child(1) input[type="checkbox"]:checked', this.table).length;
-        var text = this.tableOptions.dataTable.language.metronicGroupActions;
         if (selected > 0) {
-            $('.table-group-actions > span', this.tableWrapper).text(text.replace("_TOTAL_", selected));
+            $('.table-group-actions > span', this.tableWrapper).text(i18n.groupActions.replace('_TOTAL_', selected.toString()));
         } else {
             $('.table-group-actions > span', this.tableWrapper).text("");
         }
     }
 
     //main function to initiate the module
-    init(options) {
+    constructor(options:DataTableOptions) {
 
-        // if (!$().dataTable) {
-        //     return;
-        // }
+        this.setAjaxParam('_token', RabbitCMS.getToken());
 
         // default settings
         options = $.extend(true, {
@@ -45,57 +67,37 @@ export class DataTable {
             resetGroupActionInputOnSuccess: true,
             loadingMessage: 'Loading...',
             dataTable: {
-                "dom": "<'row'<'col-md-8 col-sm-12'pli><'col-md-4 col-sm-12'<'table-group-actions pull-right'>>r><'table-responsive't><'row'<'col-md-8 col-sm-12'pli><'col-md-4 col-sm-12'>>", // datatable layout
-                "pageLength": 10, // default records per page
-                "language": { // language settings
-                    // metronic spesific
-                    "metronicGroupActions": "_TOTAL_ records selected:  ",
-                    "metronicAjaxRequestGeneralError": "Could not complete request. Please check your internet connection",
+                dom: "<'row'<'col-md-8 col-sm-12'pli><'col-md-4 col-sm-12'<'table-group-actions pull-right'>>r><'table-responsive't><'row'<'col-md-8 col-sm-12'pli><'col-md-4 col-sm-12'>>", // datatable layout
+                pageLength: 10, // default records per page
+                language: i18n.dataTable,
 
-                    // data tables spesific
-                    "lengthMenu": "<span class='seperator'>|</span>View _MENU_ records",
-                    "info": "<span class='seperator'>|</span>Found total _TOTAL_ records",
-                    "infoEmpty": "No records found to show",
-                    "emptyTable": "No data available in table",
-                    "zeroRecords": "No matching records found",
-                    "paginate": {
-                        "previous": "Prev",
-                        "next": "Next",
-                        "last": "Last",
-                        "first": "First",
-                        "page": "Page",
-                        "pageOf": "of"
-                    }
-                },
-
-                "orderCellsTop": true,
-                "columnDefs": [{ // define columns sorting options(by default all columns are sortable extept the first checkbox column)
-                    'orderable': false,
-                    'targets': [0]
+                orderCellsTop: true,
+                columnDefs: [{ // define columns sorting options(by default all columns are sortable extept the first checkbox column)
+                    orderable: false,
+                    targets: [0]
                 }],
 
-                "pagingType": "bootstrap_extended", // pagination type(bootstrap, bootstrap_full_number or bootstrap_extended)
-                "autoWidth": false, // disable fixed width and enable fluid table
-                "processing": false, // enable/disable display message box on record load
-                "serverSide": true, // enable/disable server side ajax loading
+                pagingType: "bootstrap_extended", // pagination type(bootstrap, bootstrap_full_number or bootstrap_extended)
+                autoWidth: false, // disable fixed width and enable fluid table
+                processing: false, // enable/disable display message box on record load
+                serverSide: true, // enable/disable server side ajax loading
 
-                "ajax": { // define ajax settings
-                    "url": "", // ajax URL
-                    "type": "POST", // request type
-                    "timeout": 20000,
-                    "data": (data) => { // add request parameters before submit
-                        $.each(this.ajaxParams, function (key, value) {
+                ajax: { // define ajax settings
+                    url: "", // ajax URL
+                    type: "POST", // request type
+                    timeout: 20000,
+                    data: (data:AjaxParams) => { // add request parameters before submit
+                        $.each(this.ajaxParams, (key:string, value:any) => {
                             data[key] = value;
                         });
-                        RabbitCMS.blockUI({
+                        RabbitCMS.blockUI(this.tableContainer, {
                             message: this.tableOptions.loadingMessage,
-                            target: this.tableContainer,
                             overlayColor: 'none',
                             cenrerY: true,
                             boxed: true
                         });
                     },
-                    "dataSrc": (res) => { // Manipulate the data returned from the server
+                    dataSrc: (res:DataTableResponseData) => { // Manipulate the data returned from the server
                         if (res.customActionMessage) {
                             RabbitCMS.alert({
                                 type: (res.customActionStatus == 'OK' ? 'success' : 'danger'),
@@ -124,7 +126,7 @@ export class DataTable {
 
                         return res.data;
                     },
-                    "error": () => { // handle general connection errors
+                    error: () => { // handle general connection errors
                         if (this.tableOptions.onError) {
                             this.tableOptions.onError.call(undefined, this);
                         }
@@ -132,7 +134,7 @@ export class DataTable {
                         RabbitCMS.alert({
                             type: 'danger',
                             icon: 'warning',
-                            message: this.tableOptions.dataTable.language.metronicAjaxRequestGeneralError,
+                            message: i18n.ajaxRequestGeneralError,
                             container: this.tableWrapper,
                             place: 'prepend'
                         });
@@ -141,7 +143,7 @@ export class DataTable {
                     }
                 },
 
-                "drawCallback": ()=> { // run some code on table redraw
+                drawCallback: ()=> { // run some code on table redraw
                     if (this.tableInitialized === false) { // check if table has been initialized
                         this.tableInitialized = true; // set table initialized
                         this.table.show(); // display table
@@ -160,6 +162,13 @@ export class DataTable {
 
         // create table's jquery object
         this.table = $(options.src);
+
+
+        if ((<DataTables.AjaxSettings>options.dataTable.ajax).url === '' && this.table.data('link')) {
+            (<DataTables.AjaxSettings>options.dataTable.ajax).url = this.table.data('link');
+        }
+
+
         this.tableContainer = this.table.parents(".table-container");
 
         // apply the special class that used to restyle the default datatable
@@ -193,6 +202,10 @@ export class DataTable {
                 $(this).prop("checked", checked);
             });
             this.countSelectedRecords();
+        });
+
+        this.table.on('change', '.form-filter', () => {
+            this.submitFilter();
         });
 
         // handle row's checkbox click
@@ -232,7 +245,7 @@ export class DataTable {
         });
 
         this.dataTable.ajax.reload();
-    };
+    }
 
     resetFilter() {
         $('textarea.form-filter, select.form-filter, input.form-filter', this.table).each(function () {

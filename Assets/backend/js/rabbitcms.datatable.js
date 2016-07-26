@@ -1,22 +1,11 @@
-define(["require", "exports", "jquery", "rabbitcms.backend", "datatables.net", "datatables.net-bt"], function (require, exports, $, rabbitcms_backend_1) {
+define(["require", "exports", "jquery", "rabbitcms.backend", "i18n!rabbitcms/nls/datatable", "datatables.net", "datatables.net-bt"], function (require, exports, $, rabbitcms_backend_1, i18n) {
     "use strict";
     var DataTable = (function () {
-        function DataTable() {
+        function DataTable(options) {
+            var _this = this;
             this.tableInitialized = false;
             this.ajaxParams = {};
-        }
-        DataTable.prototype.countSelectedRecords = function () {
-            var selected = $('tbody > tr > td:nth-child(1) input[type="checkbox"]:checked', this.table).length;
-            var text = this.tableOptions.dataTable.language.metronicGroupActions;
-            if (selected > 0) {
-                $('.table-group-actions > span', this.tableWrapper).text(text.replace("_TOTAL_", selected));
-            }
-            else {
-                $('.table-group-actions > span', this.tableWrapper).text("");
-            }
-        };
-        DataTable.prototype.init = function (options) {
-            var _this = this;
+            this.setAjaxParam('_token', rabbitcms_backend_1.RabbitCMS.getToken());
             options = $.extend(true, {
                 src: "",
                 filterApplyAction: "filter",
@@ -24,51 +13,34 @@ define(["require", "exports", "jquery", "rabbitcms.backend", "datatables.net", "
                 resetGroupActionInputOnSuccess: true,
                 loadingMessage: 'Loading...',
                 dataTable: {
-                    "dom": "<'row'<'col-md-8 col-sm-12'pli><'col-md-4 col-sm-12'<'table-group-actions pull-right'>>r><'table-responsive't><'row'<'col-md-8 col-sm-12'pli><'col-md-4 col-sm-12'>>",
-                    "pageLength": 10,
-                    "language": {
-                        "metronicGroupActions": "_TOTAL_ records selected:  ",
-                        "metronicAjaxRequestGeneralError": "Could not complete request. Please check your internet connection",
-                        "lengthMenu": "<span class='seperator'>|</span>View _MENU_ records",
-                        "info": "<span class='seperator'>|</span>Found total _TOTAL_ records",
-                        "infoEmpty": "No records found to show",
-                        "emptyTable": "No data available in table",
-                        "zeroRecords": "No matching records found",
-                        "paginate": {
-                            "previous": "Prev",
-                            "next": "Next",
-                            "last": "Last",
-                            "first": "First",
-                            "page": "Page",
-                            "pageOf": "of"
-                        }
-                    },
-                    "orderCellsTop": true,
-                    "columnDefs": [{
-                            'orderable': false,
-                            'targets': [0]
+                    dom: "<'row'<'col-md-8 col-sm-12'pli><'col-md-4 col-sm-12'<'table-group-actions pull-right'>>r><'table-responsive't><'row'<'col-md-8 col-sm-12'pli><'col-md-4 col-sm-12'>>",
+                    pageLength: 10,
+                    language: i18n.dataTable,
+                    orderCellsTop: true,
+                    columnDefs: [{
+                            orderable: false,
+                            targets: [0]
                         }],
-                    "pagingType": "bootstrap_extended",
-                    "autoWidth": false,
-                    "processing": false,
-                    "serverSide": true,
-                    "ajax": {
-                        "url": "",
-                        "type": "POST",
-                        "timeout": 20000,
-                        "data": function (data) {
+                    pagingType: "bootstrap_extended",
+                    autoWidth: false,
+                    processing: false,
+                    serverSide: true,
+                    ajax: {
+                        url: "",
+                        type: "POST",
+                        timeout: 20000,
+                        data: function (data) {
                             $.each(_this.ajaxParams, function (key, value) {
                                 data[key] = value;
                             });
-                            rabbitcms_backend_1.RabbitCMS.blockUI({
+                            rabbitcms_backend_1.RabbitCMS.blockUI(_this.tableContainer, {
                                 message: _this.tableOptions.loadingMessage,
-                                target: _this.tableContainer,
                                 overlayColor: 'none',
                                 cenrerY: true,
                                 boxed: true
                             });
                         },
-                        "dataSrc": function (res) {
+                        dataSrc: function (res) {
                             if (res.customActionMessage) {
                                 rabbitcms_backend_1.RabbitCMS.alert({
                                     type: (res.customActionStatus == 'OK' ? 'success' : 'danger'),
@@ -92,21 +64,21 @@ define(["require", "exports", "jquery", "rabbitcms.backend", "datatables.net", "
                             rabbitcms_backend_1.RabbitCMS.unblockUI(_this.tableContainer);
                             return res.data;
                         },
-                        "error": function () {
+                        error: function () {
                             if (_this.tableOptions.onError) {
                                 _this.tableOptions.onError.call(undefined, _this);
                             }
                             rabbitcms_backend_1.RabbitCMS.alert({
                                 type: 'danger',
                                 icon: 'warning',
-                                message: _this.tableOptions.dataTable.language.metronicAjaxRequestGeneralError,
+                                message: i18n.ajaxRequestGeneralError,
                                 container: _this.tableWrapper,
                                 place: 'prepend'
                             });
                             rabbitcms_backend_1.RabbitCMS.unblockUI(_this.tableContainer);
                         }
                     },
-                    "drawCallback": function () {
+                    drawCallback: function () {
                         if (_this.tableInitialized === false) {
                             _this.tableInitialized = true;
                             _this.table.show();
@@ -120,6 +92,9 @@ define(["require", "exports", "jquery", "rabbitcms.backend", "datatables.net", "
             }, options);
             this.tableOptions = options;
             this.table = $(options.src);
+            if (options.dataTable.ajax.url === '' && this.table.data('link')) {
+                options.dataTable.ajax.url = this.table.data('link');
+            }
             this.tableContainer = this.table.parents(".table-container");
             var tmp = $.fn.dataTableExt.oStdClasses;
             $.fn.dataTableExt.oStdClasses.sWrapper = $.fn.dataTableExt.oStdClasses.sWrapper + " dataTables_extended_wrapper";
@@ -142,6 +117,9 @@ define(["require", "exports", "jquery", "rabbitcms.backend", "datatables.net", "
                 });
                 _this.countSelectedRecords();
             });
+            this.table.on('change', '.form-filter', function () {
+                _this.submitFilter();
+            });
             this.table.on('change', 'tbody > tr > td:nth-child(1) input[type="checkbox"]', function () {
                 _this.countSelectedRecords();
             });
@@ -153,6 +131,15 @@ define(["require", "exports", "jquery", "rabbitcms.backend", "datatables.net", "
                 e.preventDefault();
                 _this.resetFilter();
             });
+        }
+        DataTable.prototype.countSelectedRecords = function () {
+            var selected = $('tbody > tr > td:nth-child(1) input[type="checkbox"]:checked', this.table).length;
+            if (selected > 0) {
+                $('.table-group-actions > span', this.tableWrapper).text(i18n.groupActions.replace('_TOTAL_', selected.toString()));
+            }
+            else {
+                $('.table-group-actions > span', this.tableWrapper).text("");
+            }
         };
         ;
         DataTable.prototype.submitFilter = function () {
@@ -169,7 +156,6 @@ define(["require", "exports", "jquery", "rabbitcms.backend", "datatables.net", "
             });
             this.dataTable.ajax.reload();
         };
-        ;
         DataTable.prototype.resetFilter = function () {
             $('textarea.form-filter, select.form-filter, input.form-filter', this.table).each(function () {
                 $(this).val("");

@@ -58,11 +58,16 @@ return [
     },
     'requirejs' => [
         "css" => "plugins/require-css",
+        "i18n" => "plugins/i18n",
         "rabbitcms.backend" => "js/rabbitcms.backend",
         "rabbitcms.backend.login" => "js/rabbitcms.backend.login",
         "rabbitcms.datatable" => "js/rabbitcms.datatable",
         "rabbitcms.users" => "js/rabbitcms.users",
         "rabbitcms.users.groups" => "js/rabbitcms.users.groups",
+
+        "rabbitcms/nls/datatable" => "js/nls/datatable",
+        "rabbitcms/nls/ru/datatable" => "js/nls/ru/datatable",
+        "rabbitcms/nls/uk/datatable" => "js/nls/uk/datatable",
         "jquery" => "plugins/jquery.min",
         "bootbox" => "plugins/bootbox",
         'jquery.cookie' => 'plugins/jquery.cokie.min',
@@ -73,7 +78,7 @@ return [
             "path" => "plugins/uniform/jquery.uniform.min",
             "css" => "plugins/uniform/css/uniform.default.css"
         ],
-        "jquery.blockui" => "plugins/jquery.block-ui",
+        "jquery.blockui" => "plugins/jquery.blockui.min",
         "datatables.net" => [
             "path" => "plugins/datatables/jquery.dataTables.min",
             "css" => "plugins/datatables/css/jquery.dataTables.min.css",
@@ -92,12 +97,23 @@ return [
                 "plugins/select2/css/select2-bootstrap.min.css",
                 "css/plugins/select2.css"
             ]
+        ],
+        "jquery.colorbox" => [
+            "path" => "plugins/colorbox/jquery.colorbox",
+            "css" => "plugins/colorbox/colorbox.css"
         ]
     ],
     'handlers' => [
         '' => 'rabbitcms.backend.dashboard:init',
         'groups' => 'rabbitcms.backend.groups:table',
-        'groups\/create' => 'rabbitcms.backend.groups:create',
+        'groups\/create' => 'rabbitcms.backend.groups:edit',
         'groups\/(\d+)' => 'rabbitcms.backend.groups:edit',
+        'users' => [
+            'module'=>'rabbitcms.users',
+            'exec'=>'table',
+            'permanent' => true
+        ],
+        'users\/create' => 'rabbitcms.users:form',
+        'users\/(\d+)' => 'rabbitcms.users:form',
     ]
 ];

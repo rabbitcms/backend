@@ -112,7 +112,7 @@ AngularJS Basic Animations
 }
 
 .portlet.ajax-portlet {
-    display: none;
+    /*display: none;*/
 }
 .portlet.ajax-portlet.show{
     display: block;

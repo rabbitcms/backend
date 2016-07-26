@@ -3,74 +3,74 @@ define(["require", "exports", "jquery", "jquery.cookie"], function (require, exp
     var $body = $('body');
     var _location = document.location.pathname;
     var _pathname = _location.length > 1 ? _location.replace(/\/$/, '') : _location;
-    var _cache = {};
     var _visiblePortlet = $();
     var _path = '/';
     var _token = '';
     var _handlers = [];
+    var _currentWidget;
+    var _currentHandler;
+    var defaultTarget = '.page-content';
     var RabbitCMS = (function () {
         function RabbitCMS() {
         }
-        RabbitCMS.init = function () {
+        RabbitCMS.init = function (options) {
             var _this = this;
-            $body = $('body');
+            options = $.extend(true, {
+                handlers: [],
+                path: ''
+            }, options);
+            _path = options.path;
+            _handlers = options.handlers.map(function (h) {
+                if (!(h.regex instanceof RegExp)) {
+                    h.regex = new RegExp('^' + h.handler);
+                }
+                return h;
+            }).sort(function (a, b) { return b.regex.source.length - a.regex.source.length; });
+            console.log(_handlers);
             window.onpopstate = function (e) {
                 var link = (e.state && e.state.link && e.state.link !== '') ? e.state.link : _pathname;
-                _this.navigate(link, false);
-                return false;
+                return !_this.navigate(link, false);
             };
+            $(function () { return _this.ready(); });
+        };
+        RabbitCMS.ready = function () {
+            var _this = this;
+            $body = $('body');
             $body.on('click', '[rel="back"]', function (event) {
-                if (!_this.canSubmit.check(event))
-                    return false;
                 if (history.state !== null) {
                     history.back();
                 }
                 else {
-                    var link = $(event.currentTarget).attr('href');
-                    _this.navigate(link);
+                    var a = event.currentTarget;
+                    return !_this.navigate(a.pathname, false);
                 }
                 return false;
             });
             $body.on('click', 'a', function (event) {
-                if (!_this.canSubmit.check(event)) {
-                    return false;
-                }
                 var a = event.currentTarget;
                 if (a.hostname != location.hostname) {
                     return true;
                 }
-                return !_this.go(a.pathname);
+                return !_this.navigate(a.pathname);
             });
-            this.go(location.pathname, false, false);
+            var handler = this.findHandler(location.pathname);
+            if (handler !== void 0) {
+                _currentHandler = handler;
+                var widget = $('[data-require]:first', defaultTarget);
+                this.loadModuleByHandler(handler, widget);
+                this.showPortlet(handler, widget);
+            }
             $('[data-require]').each(function (i, e) {
                 _this.loadModule($(e));
             });
-            var portlet = $('.ajax-portlet:first');
-            this.loadModule(portlet);
-            this.cachePortlet(_pathname, portlet, false);
-            this.showPortlet(portlet);
-            this.uniform();
+            this.updatePlugins();
             this.initSidebar();
         };
-        RabbitCMS.go = function (link, popState, checkAjax) {
-            var _this = this;
-            if (popState === void 0) { popState = true; }
-            if (checkAjax === void 0) { checkAjax = true; }
-            var result = false;
-            _handlers.forEach(function (h) {
-                if (checkAjax && h.ajax === false) {
-                    return;
-                }
-                var r = new RegExp('^' + h.handler);
-                if (r.exec(link)) {
-                    _this.navigate(link, popState && h.popState !== false, h);
-                    result = true;
-                }
-            }, this);
-            return result;
-        };
-        RabbitCMS.setPath = function (value) {
-            _path = value;
+        RabbitCMS.findHandler = function (link) {
+            link = link.length > 1 ? link.replace(/\/$/, '') : link;
+            return _handlers.find(function (h) {
+                return new RegExp('^' + h.handler).exec(link) !== null;
+            }) || null;
         };
         RabbitCMS.getPath = function () {
             return _path;
@@ -82,62 +82,86 @@ define(["require", "exports", "jquery", "jquery.cookie"], function (require, exp
             return _token;
         };
         ;
-        RabbitCMS.loadModule = function (portlet) {
-            var _module = portlet.data('require');
+        RabbitCMS.loadModuleByHandler = function (handler, widget) {
+            if (widget.data('loaded')) {
+                return;
+            }
+            widget.data('loaded', true);
+            this.updatePlugins(widget);
+            require([handler.module], function (_module) {
+                console.log(_module);
+                if (handler.exec !== void 0) {
+                    _module[handler.exec](widget);
+                }
+                else {
+                    _module.init(widget);
+                }
+            });
+        };
+        RabbitCMS.loadModule = function (widget) {
+            if (widget.data('loaded')) {
+                return;
+            }
+            widget.data('loaded', true);
+            this.updatePlugins(widget);
+            var _module = widget.data('require');
             if (_module) {
                 var _tmp_1 = _module.split(':');
                 require([_tmp_1[0]], function (_module) {
-                    if (_tmp_1.length === 2)
-                        _module[_tmp_1[1]](portlet);
-                    else
-                        _module.init(portlet);
+                    if (_tmp_1.length === 2) {
+                        _module[_tmp_1[1]](widget);
+                    }
+                    else {
+                        _module.init(widget);
+                    }
                 });
             }
         };
-        RabbitCMS.navigate = function (link, pushState, handler) {
+        RabbitCMS.navigateByHandler = function (h, link, pushState) {
             var _this = this;
             if (pushState === void 0) { pushState = true; }
-            link = link.length > 1 ? link.replace(/\/$/, '') : link;
-            pushState = (pushState === undefined) ? true : pushState;
-            if (_cache[link] !== undefined) {
-                var portlet = _cache[link];
-                this.cachePortlet(link, portlet, pushState);
-                this.showPortlet(portlet);
+            if (h.widget instanceof jQuery) {
+                if (this.showPortlet(h, h.widget) && pushState && h.pushState !== false) {
+                    history.pushState({ link: link }, null, link);
+                }
             }
-            else {
+            else if (link !== void 0) {
                 this.ajax(link, function (data) {
-                    var portlet = $(data);
-                    _this.loadModule(portlet);
-                    $('.page-content').append(portlet);
-                    _this.cachePortlet(link, portlet, pushState);
-                    _this.showPortlet(portlet);
+                    var widget = $(data);
+                    _this.loadModuleByHandler(h, widget);
+                    if (_this.showPortlet(h, widget) && pushState && h.pushState !== false) {
+                        history.pushState({ link: link }, null, link);
+                    }
                 });
             }
         };
-        RabbitCMS.cachePortlet = function (link, portlet, pushState) {
+        RabbitCMS.navigate = function (link, pushState) {
             if (pushState === void 0) { pushState = true; }
-            _cache[link] = portlet;
-            if (pushState)
-                history.pushState({ link: link }, null, link);
+            var h = this.findHandler(link);
+            if (h && h.ajax !== false) {
+                this.navigateByHandler(h, link, pushState);
+                return true;
+            }
+            return false;
         };
-        RabbitCMS.showPortlet = function (portlet) {
-            if (_visiblePortlet == portlet)
+        RabbitCMS.showPortlet = function (h, widget) {
+            if (_currentWidget == widget)
                 return false;
-            $('.ajax-portlet:visible').removeClass('show');
-            if (portlet.length)
-                portlet.addClass('show');
-            else
-                this.dangerMessage('Помилка. RabbitCMS.prototype.showPortlet');
-            var _toRemove = _visiblePortlet;
-            $.map(_cache, function (portlet, link) {
-                if (portlet == _toRemove && portlet.data('permanent') === undefined) {
-                    _toRemove.remove();
-                    delete _cache[link];
+            if (_currentHandler && _currentWidget) {
+                if (_currentHandler.permanent) {
+                    _currentHandler.widget = _currentWidget;
+                    _currentWidget.detach();
                 }
-            });
-            _visiblePortlet = portlet;
+                else {
+                    _currentWidget.remove();
+                }
+            }
+            _currentHandler = h;
+            _currentWidget = widget;
+            widget.appendTo(defaultTarget);
             this.canSubmit.init();
             this.scrollTop();
+            return true;
         };
         RabbitCMS.loadModalWindow = function (link, callback) {
             var _this = this;
@@ -159,16 +183,6 @@ define(["require", "exports", "jquery", "jquery.cookie"], function (require, exp
                 modal.modal();
             else
                 this.dangerMessage('Помилка. RabbitCMS.prototype.showModal');
-        };
-        RabbitCMS.uniform = function (selector) {
-            if (selector === void 0) { selector = $('input[type="checkbox"]:not(.toggle, .make-switch), input[type="radio"]:not(.toggle, .star, .make-switch)'); }
-            if (selector.length) {
-                require(['jquery.uniform'], function () {
-                    selector.each(function (i, e) {
-                        $(e).uniform();
-                    });
-                });
-            }
         };
         RabbitCMS.getUniqueID = function (prefix) {
             if (prefix === void 0) { prefix = ''; }
@@ -296,6 +310,14 @@ define(["require", "exports", "jquery", "jquery.cookie"], function (require, exp
                 eight: e[a + 'Height']
             };
         };
+        RabbitCMS.updatePlugins = function (target) {
+            var select2 = $('.select2', target);
+            if (select2.length) {
+                require(['select2'], function () {
+                    select2.select2();
+                });
+            }
+        };
         RabbitCMS.initSidebar = function () {
             if ($.cookie && $.cookie('sidebar_closed') === '1' && this.getViewPort().width >= 992) {
                 $body.addClass('page-sidebar-closed');
@@ -340,31 +362,59 @@ define(["require", "exports", "jquery", "jquery.cookie"], function (require, exp
                 e.preventDefault();
             });
         };
-        RabbitCMS.setHandlers = function (handlers) {
-            _handlers = handlers;
-        };
-        RabbitCMS.blockUI = function (target) {
-            var imgPath = this.getPath() + '/img/loading-spinner-grey.gif';
-            var html = $('<div></div>').addClass('loading-message loading-message-boxed');
-            html.append('<img src="' + imgPath + '">');
-            html.append('<span>&nbsp;&nbsp;' + ('Завантаження...') + '</span>');
+        RabbitCMS.blockUI = function (target, options) {
+            var _this = this;
+            if (options === void 0) { options = {}; }
             require(['jquery.blockui'], function () {
+                var html = '';
+                if (options.animate) {
+                    html = '<div class="loading-message ' + (options.boxed ? 'loading-message-boxed' : '') + '">' + '<div class="block-spinner-bar"><div class="bounce1"></div><div class="bounce2"></div><div class="bounce3"></div></div>' + '</div>';
+                }
+                else if (options.iconOnly) {
+                    html = '<div class="loading-message ' + (options.boxed ? 'loading-message-boxed' : '') + '"><img src="' + _this.getPath() + '/img/loading-spinner-grey.gif" align=""></div>';
+                }
+                else if (options.textOnly) {
+                    html = '<div class="loading-message ' + (options.boxed ? 'loading-message-boxed' : '') + '"><span>&nbsp;&nbsp;' + (options.message ? options.message : 'LOADING...') + '</span></div>';
+                }
+                else {
+                    html = '<div class="loading-message ' + (options.boxed ? 'loading-message-boxed' : '') + '"><img src="' + _this.getPath() + '/img/loading-spinner-grey.gif" align=""><span>&nbsp;&nbsp;' + (options.message ? options.message : 'LOADING...') + '</span></div>';
+                }
                 if (target) {
                     var el = $(target);
+                    if (el.height() <= ($(window).height())) {
+                        options.cenrerY = true;
+                    }
                     el.block({
                         message: html,
-                        baseZ: 1000,
-                        centerY: (el.height() <= ($(window).height())),
-                        css: { top: '10%', border: '0', padding: '0', backgroundColor: 'none' },
-                        overlayCSS: { backgroundColor: '#000', opacity: 0.05, cursor: 'wait' }
+                        baseZ: options.zIndex ? options.zIndex : 1000,
+                        centerY: options.cenrerY !== undefined ? options.cenrerY : false,
+                        css: {
+                            top: '10%',
+                            border: '0',
+                            padding: '0',
+                            backgroundColor: 'none'
+                        },
+                        overlayCSS: {
+                            backgroundColor: options.overlayColor ? options.overlayColor : '#555',
+                            opacity: options.boxed ? 0.05 : 0.1,
+                            cursor: 'wait'
+                        }
                     });
                 }
                 else {
                     $.blockUI({
                         message: html,
-                        baseZ: 1000,
-                        css: { border: '0', padding: '0', backgroundColor: 'none' },
-                        overlayCSS: { backgroundColor: '#000', opacity: 0.05, cursor: 'wait' }
+                        baseZ: options.zIndex ? options.zIndex : 1000,
+                        css: {
+                            border: '0',
+                            padding: '0',
+                            backgroundColor: 'none'
+                        },
+                        overlayCSS: {
+                            backgroundColor: options.overlayColor ? options.overlayColor : '#555',
+                            opacity: options.boxed ? 0.05 : 0.1,
+                            cursor: 'wait'
+                        }
                     });
                 }
             });
@@ -384,7 +434,7 @@ define(["require", "exports", "jquery", "jquery.cookie"], function (require, exp
         };
         RabbitCMS.submitForm = function (form, callback) {
             var _this = this;
-            form = (form instanceof jQuery) ? form : $(form);
+            form = (form instanceof $) ? form : $(form);
             var link = form.attr('action');
             var data = form.serialize();
             this.ajaxPost(link, data, function (data) {
@@ -437,6 +487,28 @@ define(["require", "exports", "jquery", "jquery.cookie"], function (require, exp
             }, options);
             this.blockUI();
             $.ajax(options);
+        };
+        RabbitCMS.validate = function (form, options) {
+            var _this = this;
+            options = $.extend(true, {
+                focusInvalid: true,
+                highlight: function (element) {
+                    $(element).closest('.form-group').addClass('has-error');
+                },
+                unhighlight: function (element) {
+                    $(element).closest('.form-group').removeClass('has-error');
+                },
+                errorPlacement: function () {
+                },
+                submitHandler: function (form) {
+                    _this.submitForm(form, options.completeSubmit);
+                },
+                completeSubmit: function () {
+                }
+            }, options);
+            require(['jquery.validation'], function () {
+                form.validate(options);
+            });
         };
         RabbitCMS.select2 = function (selector, options) {
             if (options === void 0) { options = {}; }
@@ -577,7 +649,6 @@ define(["require", "exports", "jquery", "jquery.cookie"], function (require, exp
         return RabbitCMS;
     }());
     exports.RabbitCMS = RabbitCMS;
-    $(function () { return RabbitCMS.init(); });
     var MicroEvent = (function () {
         function MicroEvent(object) {
             var _this = this;

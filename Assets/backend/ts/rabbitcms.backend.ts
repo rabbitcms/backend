@@ -7,60 +7,72 @@ var $body:JQuery = $('body');
 var _location = document.location.pathname;
 var _pathname = _location.length > 1 ? _location.replace(/\/$/, '') : _location;
 
-var _cache = {};
 var _visiblePortlet = $();
 var _path:string = '/';
 var _token:string = '';
 
-declare interface Handler {
-    /**
-     * Pathname regular expression.
-     */
-    handler:string;
-
-    /**
-     * Module name.
-     */
-        module:string;
-    exec?:string;
-    ajax?:boolean;
-    popState?:boolean;
-}
-
 var _handlers:Handler[] = [];
+
+var _currentWidget:JQuery;
+var _currentHandler:Handler;
+
+const defaultTarget = '.page-content';
+export interface RabbitCMSOptions {
+    handlers?:Handler[];
+    path?:string;
+}
 
 export class RabbitCMS {
     /**
      * Init RabbitCMS backend.
      */
-    static init() {
-        $body = $('body');
+    static init(options?:RabbitCMSOptions):void {
+        options = $.extend(true, {
+            handlers: [],
+            path:''
+        }, options);
+
+        _path = options.path;
+
+        _handlers = options.handlers.map((h:Handler) => {
+            if (!(h.regex instanceof RegExp)) {
+                h.regex = new RegExp('^' + h.handler);
+            }
+            return h;
+        }).sort((a:Handler, b:Handler)=>b.regex.source.length - a.regex.source.length);
+
+        console.log(_handlers);
         window.onpopstate = (e) => {
             var link = (e.state && e.state.link && e.state.link !== '') ? e.state.link : _pathname;
 
-            this.navigate(link, false);
-
-            return false;
+            return !this.navigate(link, false);
         };
 
-        $body.on('click', '[rel="back"]', (event) => {
-            if (!this.canSubmit.check(event))
-                return false;
+        $(()=>this.ready());
+    }
+
+    static ready() {
+        $body = $('body');
+
+
+        $body.on('click', '[rel="back"]', (event:JQueryEventObject) => {
+            // if (!this.canSubmit.check(event))
+            //     return false;
 
             if (history.state !== null) {
                 history.back();
             } else {
-                let link = $(event.currentTarget).attr('href');
-                this.navigate(link);
+                let a:HTMLAnchorElement = <HTMLAnchorElement>event.currentTarget;
+                return !this.navigate(a.pathname, false);
             }
 
             return false;
         });
 
         $body.on('click', 'a', (event:JQueryEventObject) => {
-            if (!this.canSubmit.check(event)) {
-                return false;
-            }
+            // if (!this.canSubmit.check(event)) {
+            //     return false;
+            // }
 
             let a:HTMLAnchorElement = <HTMLAnchorElement>event.currentTarget;
 
@@ -68,42 +80,36 @@ export class RabbitCMS {
                 return true;
             }
 
-            return !this.go(a.pathname);
+            return !this.navigate(a.pathname);
         });
 
-        this.go(location.pathname, false, false);
+        let handler = this.findHandler(location.pathname);
+        if (handler !== void 0) {
+            _currentHandler = handler;
+            let widget = $('[data-require]:first', defaultTarget);
+            this.loadModuleByHandler(handler, widget);
+            this.showPortlet(handler, widget);
+        }
 
         $('[data-require]').each((i, e)=> {
             this.loadModule($(e));
         });
 
-        let portlet = $('.ajax-portlet:first');
-        this.loadModule(portlet);
-        this.cachePortlet(_pathname, portlet, false);
-        this.showPortlet(portlet);
-
-
-        this.uniform();
-        this.initSidebar();
+         this.updatePlugins();
+         this.initSidebar();
     }
 
-    static go(link:string, popState:boolean = true, checkAjax:boolean = true):boolean {
-        let result:boolean = false;
-        _handlers.forEach((h:Handler) => {
-            if (checkAjax && h.ajax === false) {
-                return;
-            }
-            let r = new RegExp('^' + h.handler);
-            if (r.exec(link)) {
-                this.navigate(link, popState && h.popState !== false, h);
-                result = true;
-            }
-        }, this);
-        return result;
-    }
-
-    static setPath(value:string) {
-        _path = value;
+    /**
+     * Find handler for link.
+     *
+     * @param {string} link
+     * @returns {Handler|null}
+     */
+    static findHandler(link:string):Handler {
+        link = link.length > 1 ? link.replace(/\/$/, '') : link;
+        return _handlers.find((h:Handler) => {
+                return new RegExp('^' + h.handler).exec(link) !== null;
+            }) || null;
     }
 
     static getPath():string {
@@ -118,71 +124,97 @@ export class RabbitCMS {
         return _token;
     };
 
-    static loadModule(portlet:JQuery) {
-        var _module = portlet.data('require');
+    static loadModuleByHandler(handler:Handler, widget:JQuery):void {
+        if (widget.data('loaded')) {
+            return;
+        }
+
+        widget.data('loaded', true);
+        this.updatePlugins(widget);
+
+        require([handler.module], function (_module) {
+            console.log(_module);
+            if (handler.exec !== void 0) {
+                _module[handler.exec](widget);
+            } else {
+                _module.init(widget);
+            }
+        });
+    }
+
+    static loadModule(widget:JQuery) {
+        if (widget.data('loaded')) {
+            return;
+        }
+
+        widget.data('loaded', true);
+        this.updatePlugins(widget);
+
+        let _module = widget.data('require');
 
         if (_module) {
             let _tmp = _module.split(':');
             require([_tmp[0]], function (_module) {
-                if (_tmp.length === 2)
-                    _module[_tmp[1]](portlet);
-                else
-                    _module.init(portlet);
+                if (_tmp.length === 2) {
+                    _module[_tmp[1]](widget);
+                } else {
+                    _module.init(widget);
+                }
             });
         }
     }
 
-    static navigate(link, pushState:boolean = true, handler?:Handler) {
-        link = link.length > 1 ? link.replace(/\/$/, '') : link;
-        pushState = (pushState === undefined) ? true : pushState;
-
-        if (_cache[link] !== undefined) {
-            var portlet = _cache[link];
-
-            this.cachePortlet(link, portlet, pushState);
-            this.showPortlet(portlet);
-        } else {
-            this.ajax(link, (data) => {
-                var portlet = $(data);
-                this.loadModule(portlet);
-
-                $('.page-content').append(portlet);
-
-                this.cachePortlet(link, portlet, pushState);
-                this.showPortlet(portlet);
-            });
-        }
-    }
-
-    static cachePortlet(link, portlet, pushState:boolean = true) {
-        _cache[link] = portlet;
-
-        if (pushState)
-            history.pushState({link: link}, null, link);
-    }
-
-    static showPortlet(portlet:JQuery) {
-        if (_visiblePortlet == portlet)
-            return false;
-
-        $('.ajax-portlet:visible').removeClass('show');
-
-        if (portlet.length)
-            portlet.addClass('show');
-        else
-            this.dangerMessage('Помилка. RabbitCMS.prototype.showPortlet');
-
-        var _toRemove = _visiblePortlet;
-        $.map(_cache, (portlet, link) => {
-            if (portlet == _toRemove && portlet.data('permanent') === undefined) {
-                _toRemove.remove();
-                delete _cache[link];
+    static navigateByHandler(h:Handler, link:string, pushState:boolean = true) {
+        if (h.widget instanceof jQuery) {
+            if (this.showPortlet(h, h.widget) && pushState && h.pushState !== false) {
+                history.pushState({link: link}, null, link);
             }
-        });
+        } else if (link !== void 0) {
+            this.ajax(link, (data) => {
+                let widget = $(data);
+                this.loadModuleByHandler(h, widget);
+                if (this.showPortlet(h, widget) && pushState && h.pushState !== false) {
+                    history.pushState({link: link}, null, link);
+                }
+            });
+        }
+    }
 
-        _visiblePortlet = portlet;
+    /**
+     * Go to link.
+     * @param {string} link
+     * @param {boolean} pushState
+     * @returns {boolean}
+     */
+    static navigate(link:string, pushState:boolean = true):boolean {
+        let h = this.findHandler(link);
+        if (h && h.ajax !== false) {
+            this.navigateByHandler(h, link, pushState);
+            return true;
+        }
+        return false;
+    }
+
+    static showPortlet(h:Handler, widget:JQuery) {
+        if (_currentWidget == widget)
+            return false;
+        if (_currentHandler && _currentWidget) {
+            if (_currentHandler.permanent) {
+                _currentHandler.widget = _currentWidget;
+                _currentWidget.detach();
+            } else {
+                _currentWidget.remove();
+            }
+        }
+
+        _currentHandler = h;
+        _currentWidget = widget;
+
+        widget.appendTo(defaultTarget);
+
         this.canSubmit.init();
         this.scrollTop();
+        return true;
     }
 
     static loadModalWindow(link, callback) {
@@ -210,16 +242,6 @@ export class RabbitCMS {
             modal.modal();
         else
             this.dangerMessage('Помилка. RabbitCMS.prototype.showModal');
-    }
-
-    static uniform(selector:JQuery = $('input[type="checkbox"]:not(.toggle, .make-switch), input[type="radio"]:not(.toggle, .star, .make-switch)')) {
-        if (selector.length) {
-            require(['jquery.uniform'], ()=> {
-                selector.each((i:number, e:Element) => {
-                    $(e).uniform();
-                });
-            });
-        }
     }
 
     static getUniqueID(prefix:string = '') {
@@ -369,6 +391,15 @@ export class RabbitCMS {
         };
     }
 
+    static updatePlugins(target?:JQuery) {
+        let select2 = $('.select2', target);
+        if (select2.length) {
+            require(['select2'], ()=> {
+                select2.select2();
+            });
+        }
+    }
+
     static initSidebar() {
         if ($.cookie && $.cookie('sidebar_closed') === '1' && this.getViewPort().width >= 992) {
             $body.addClass('page-sidebar-closed');
@@ -422,44 +453,64 @@ export class RabbitCMS {
         });
     }
 
-    static setHandlers(handlers:Handler[]) {
-        _handlers = handlers;
-    }
+    static blockUI(target?:JQuery|string, options:BlockUIOptions = {}) {
+        require(['jquery.blockui'], ()=> {
+            var html = '';
+            if (options.animate) {
+                html = '<div class="loading-message ' + (options.boxed ? 'loading-message-boxed' : '') + '">' + '<div class="block-spinner-bar"><div class="bounce1"></div><div class="bounce2"></div><div class="bounce3"></div></div>' + '</div>';
+            } else if (options.iconOnly) {
+                html = '<div class="loading-message ' + (options.boxed ? 'loading-message-boxed' : '') + '"><img src="' + this.getPath() + '/img/loading-spinner-grey.gif" align=""></div>';
+            } else if (options.textOnly) {
+                html = '<div class="loading-message ' + (options.boxed ? 'loading-message-boxed' : '') + '"><span>&nbsp;&nbsp;' + (options.message ? options.message : 'LOADING...') + '</span></div>';
+            } else {
+                html = '<div class="loading-message ' + (options.boxed ? 'loading-message-boxed' : '') + '"><img src="' + this.getPath() + '/img/loading-spinner-grey.gif" align=""><span>&nbsp;&nbsp;' + (options.message ? options.message : 'LOADING...') + '</span></div>';
+            }
 
-    static blockUI(target?:any) {
-        var imgPath = this.getPath() + '/img/loading-spinner-grey.gif';
-
-        var html = $('<div></div>').addClass('loading-message loading-message-boxed');
-        html.append('<img src="' + imgPath + '">');
-        html.append('<span>&nbsp;&nbsp;' + ('Завантаження...') + '</span>');
-
-        require(['jquery.blockui'], function () {
-            if (target) {
+            if (target) { // element blocking
                 var el = $(target);
-
+                if (el.height() <= ($(window).height())) {
+                    options.cenrerY = true;
+                }
                 el.block({
                     message: html,
-                    baseZ: 1000,
-                    centerY: (el.height() <= ($(window).height())),
-                    css: {top: '10%', border: '0', padding: '0', backgroundColor: 'none'},
-                    overlayCSS: {backgroundColor: '#000', opacity: 0.05, cursor: 'wait'}
+                    baseZ: options.zIndex ? options.zIndex : 1000,
+                    centerY: options.cenrerY !== undefined ? options.cenrerY : false,
+                    css: {
+                        top: '10%',
+                        border: '0',
+                        padding: '0',
+                        backgroundColor: 'none'
+                    },
+                    overlayCSS: {
+                        backgroundColor: options.overlayColor ? options.overlayColor : '#555',
+                        opacity: options.boxed ? 0.05 : 0.1,
+                        cursor: 'wait'
+                    }
                 });
-            } else {
+            } else { // page blocking
                 $.blockUI({
                     message: html,
-                    baseZ: 1000,
-                    css: {border: '0', padding: '0', backgroundColor: 'none'},
-                    overlayCSS: {backgroundColor: '#000', opacity: 0.05, cursor: 'wait'}
+                    baseZ: options.zIndex ? options.zIndex : 1000,
+                    css: {
+                        border: '0',
+                        padding: '0',
+                        backgroundColor: 'none'
+                    },
+                    overlayCSS: {
+                        backgroundColor: options.overlayColor ? options.overlayColor : '#555',
+                        opacity: options.boxed ? 0.05 : 0.1,
+                        cursor: 'wait'
+                    }
                 });
             }
         });
     }
 
     static unblockUI(target?:any) {
-        require(['jquery.blockui'], function () {
+        require(['jquery.blockui'], ()=> {
             if (target) {
                 $(target).unblock({
-                    onUnblock: function () {
+                    onUnblock: ()=> {
                         $(target).css({position: '', zoom: ''});
                     }
                 });
@@ -520,7 +571,7 @@ export class RabbitCMS {
 
     /* all ajax methods */
     static submitForm(form, callback) {
-        form = (form instanceof jQuery) ? form : $(form);
+        form = (form instanceof $) ? form : $(form);
         var link = form.attr('action');
         var data = form.serialize();
 
@@ -542,7 +593,7 @@ export class RabbitCMS {
         this._ajax({url: link, method: 'POST', data: data}, callback);
     }
 
-    static _ajax(options, callback) {
+    static _ajax(options:JQueryAjaxSettings, callback) {
         options = $.extend(true, {
             success: (data) => {
                 if ($.isFunction(callback))
@@ -550,7 +601,7 @@ export class RabbitCMS {
 
                 this.unblockUI();
             },
-            error: (jqXHR) => {
+            error: (jqXHR:JQueryXHR) => {
                 switch (jqXHR.status) {
                     case 404:
                         this.dangerMessage('Сторінку не знайдено');
@@ -580,6 +631,29 @@ export class RabbitCMS {
 
         this.blockUI();
         $.ajax(options);
+    }
+
+    static validate(form:JQuery, options?:ValidationOptions):void {
+        options = $.extend(true, {
+            focusInvalid: true,
+            highlight (element:HTMLElement) {
+                $(element).closest('.form-group').addClass('has-error');
+            },
+            unhighlight(element:HTMLElement) {
+                $(element).closest('.form-group').removeClass('has-error');
+            },
+            errorPlacement() {
+            },
+            submitHandler: (form:HTMLFormElement) => {
+                this.submitForm(form, options.completeSubmit);
+            },
+            completeSubmit(){
+            }
+        }, options);
+
+        require(['jquery.validation'], ()=> {
+            form.validate(options);
+        });
     }
 
     /* Dialogs */
@@ -682,8 +756,6 @@ export class RabbitCMS {
     }
 }
 
-$(()=> RabbitCMS.init());
-
 /* --- --- --- */
 
 
@@ -717,4 +789,34 @@ export class MicroEvent {
             this._events[event][i].apply(this, args);
         }
     }
+}
+
+export interface Handler {
+    /**
+     * Pathname regular expression.
+     */
+    handler:string;
+    regex?:RegExp;
+    module:string;
+    exec?:string;
+    ajax?:boolean;
+    pushState?:boolean;
+    permanent?:boolean;
+    widget?:JQuery;
+}
+
+export interface BlockUIOptions {
+    message?:string;
+    boxed?:boolean;
+    animate?:boolean;
+    iconOnly?:boolean;
+    textOnly?:boolean;
+    target?:JQuery|string;
+    zIndex?:number;
+    cenrerY?:boolean;
+    overlayColor?:string;
+}
+
+export interface ValidationOptions extends JQueryValidation.ValidationOptions {
+    completeSubmit?:()=>void;
 }

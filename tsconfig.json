@@ -1,5 +1,5 @@
 {
-  "compileOnSave":true,
+  "compileOnSave": true,
   "compilerOptions": {
     "target": "es5",
     "module": "amd",
@@ -9,12 +9,11 @@
     "experimentalDecorators": true,
     "removeComments": true,
     "noImplicitAny": false,
-    "preserveConstEnums": true
+    "preserveConstEnums": true,
+    "noEmitHelpers": true,
+    "outDir":"Assets/backend/js"
   },
-  "files" :[
-    "Assets/backend/js/rabbitcms.backend.ts",
-    "Assets/backend/js/rabbitcms.backend.login.ts",
-    "Assets/backend/js/rabbitcms.datatable.ts",
-    "Assets/backend/js/rabbitcms.users.ts"
+  "filesGlob": [
+    "Assets/backend/ts/**"
   ]
 }
