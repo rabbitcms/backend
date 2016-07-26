@@ -63,9 +63,10 @@ return [
         "rabbitcms.backend.login" => "js/rabbitcms.backend.login",
         "rabbitcms.datatable" => "js/rabbitcms.datatable",
         "rabbitcms.users" => "js/rabbitcms.users",
-        "rabbitcms.users.groups" => "js/rabbitcms.users.groups",
+        "rabbitcms.groups" => "js/rabbitcms.groups",
 
         "rabbitcms/nls/datatable" => "js/nls/datatable",
+        "rabbitcms/nls/backend" => "js/nls/backend",
         "rabbitcms/nls/ru/datatable" => "js/nls/ru/datatable",
         "rabbitcms/nls/uk/datatable" => "js/nls/uk/datatable",
         "jquery" => "plugins/jquery.min",
@@ -105,15 +106,19 @@ return [
     ],
     'handlers' => [
         '' => 'rabbitcms.backend.dashboard:init',
-        'groups' => 'rabbitcms.backend.groups:table',
-        'groups\/create' => 'rabbitcms.backend.groups:edit',
-        'groups\/(\d+)' => 'rabbitcms.backend.groups:edit',
+        'groups' => [
+            'module' => 'rabbitcms.groups',
+            'exec' => 'table',
+            'permanent' => true
+        ],
+        'groups\/create' => 'rabbitcms.groups:form',
+        'groups\/edit\/(\d+)' => 'rabbitcms.groups:form',
         'users' => [
-            'module'=>'rabbitcms.users',
-            'exec'=>'table',
+            'module' => 'rabbitcms.users',
+            'exec' => 'table',
             'permanent' => true
         ],
         'users\/create' => 'rabbitcms.users:form',
-        'users\/(\d+)' => 'rabbitcms.users:form',
+        'users\/edit\/(\d+)' => 'rabbitcms.users:form',
     ]
 ];

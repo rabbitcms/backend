@@ -1,5 +1,5 @@
 import * as $ from "jquery";
-import {MicroEvent, RabbitCMS} from "rabbitcms.backend";
+import {MicroEvent, RabbitCMS, State} from "rabbitcms.backend";
 import {DataTable} from "rabbitcms.datatable";
 
 class User extends MicroEvent {
@@ -30,8 +30,13 @@ class User extends MicroEvent {
     /**
      * Initialize user form.
      * @param {JQuery} portlet
+     * @param {State} state
      */
-    form(portlet:JQuery) {
+    form(portlet:JQuery,state:State) {
+        // state.addChecker(new Promise<void>((a,b)=>{
+        //     b();
+        //     a();
+        // }));
         let $form = $('form', portlet);
         let _validationRules = {
             "user[email]": {required: true, email: true},

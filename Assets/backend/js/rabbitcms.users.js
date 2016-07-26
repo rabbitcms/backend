@@ -22,7 +22,7 @@ define(["require", "exports", "jquery", "rabbitcms.backend", "rabbitcms.datatabl
                 });
             });
         };
-        User.prototype.form = function (portlet) {
+        User.prototype.form = function (portlet, state) {
             var _this = this;
             var $form = $('form', portlet);
             var _validationRules = {

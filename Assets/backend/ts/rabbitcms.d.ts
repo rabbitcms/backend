@@ -33,11 +33,24 @@ declare module "rabbitcms.backend" {
 
     export interface ValidationOptions extends JQueryValidation.ValidationOptions {
         completeSubmit?:() => void;
+        state?:State;
     }
 
     export interface RabbitCMSOptions {
         handlers?:Handler[];
         path?:string;
+    }
+
+    export class State {
+        link:string;
+        handler:Handler;
+        checkers:Promise<void>[];
+
+        constructor(link:string, handler:Handler);
+
+        public check():Promise<void[]>;
+
+        public addChecker(promise:Promise<void>);
     }
 
     export class RabbitCMS {
@@ -174,10 +187,19 @@ declare module "rabbitcms.datatable" {
 }
 
 declare module "i18n!rabbitcms/nls/datatable" {
-    var _default: {
-        groupActions: string;
-        ajaxRequestGeneralError: string;
-        dataTable: DataTables.LanguageSettings;
+    var _default:{
+        groupActions:string;
+        ajaxRequestGeneralError:string;
+        dataTable:DataTables.LanguageSettings;
+    };
+    export = _default;
+}
+
+declare module "i18n!rabbitcms/nls/backend" {
+
+    var _default:{
+        pageNotFound:string;
+        accessDenied:string;
     };
     export = _default;
 }

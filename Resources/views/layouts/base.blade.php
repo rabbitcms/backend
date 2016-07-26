@@ -50,6 +50,7 @@
             }}
         });
         require(["jquery", "rabbitcms.backend"], function ($, rbc) {
+            rbc.RabbitCMS.setPath('{{asset_module('backend','backend')}}');
             rbc.RabbitCMS.setToken('{{csrf_token()}}');
             $('body').removeClass('loading');
         });

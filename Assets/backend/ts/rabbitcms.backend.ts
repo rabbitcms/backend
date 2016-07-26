@@ -1,14 +1,11 @@
 /// <reference path="../../../typings/index.d.ts" />
 import * as $ from "jquery";
 import "jquery.cookie";
+import * as i18n from "i18n!rabbitcms/nls/backend";
 
 var $body:JQuery = $('body');
 
-var _location = document.location.pathname;
-var _pathname = _location.length > 1 ? _location.replace(/\/$/, '') : _location;
-
 var _visiblePortlet = $();
-var _path:string = '/';
 var _token:string = '';
 
 var _handlers:Handler[] = [];
@@ -22,17 +19,136 @@ export interface RabbitCMSOptions {
     path?:string;
 }
 
+class State {
+    link:string;
+    handler:Handler;
+    checkers:Promise<void>[] = [];
+
+    constructor(link:string, handler:Handler) {
+        this.link = link;
+        this.handler = handler;
+    }
+
+    public check():Promise<void[]> {
+        return Promise.all<void>(this.checkers);
+    }
+
+    public addChecker(promise:Promise<void>) {
+        this.checkers.push(promise);
+    }
+}
+enum StateType{
+    NoPush = 0,
+    None = 1,
+    Push = 2,
+    Replace = 3
+}
+
+class Stack extends Array<State> {
+
+    private _position:number = -1;
+
+    get current():State {
+        return this.fetch(this._position);
+    }
+
+    get position():number {
+        return this._position;
+    }
+
+    constructor() {
+        super();
+        window.addEventListener('popstate', (e) => {
+            if (e.state && e.state.state !== void 0) {
+                this.go(e.state.state, e.state.link);
+            } else if (e.state && e.state.link) {
+                RabbitCMS.navigate(e.state.link, StateType.NoPush);
+            } else {
+                RabbitCMS.navigate(location.pathname, StateType.NoPush);
+            }
+        });
+    }
+
+    public add(state:State, type:StateType = StateType.Push):number {
+        this.length = this._position + 1;
+        this._position = super.push(state) - 1;
+        switch (type) {
+            case StateType.Push:
+                history.pushState({state: this._position, link: state.link}, null, state.link);
+                break;
+            case StateType.Replace:
+                history.replaceState({state: this._position, link: state.link}, null, state.link);
+                break;
+        }
+
+        console.log(this);
+
+        return this._position;
+    }
+
+    public fetch(index:number):State {
+        if (index < 0) {
+            return null;
+        }
+        if (index >= this.length) {
+            return null
+        }
+
+        return this[index];
+    }
+
+    private go(index:number, link:string) {
+        if (index === this._position && this.current.link === link) {
+            return;
+        }
+        let s:State = this.fetch(index);
+        if (s && s.link == link) {
+            console.log(this._position);
+            RabbitCMS.navigateByHandler(s.handler, s.link, StateType.NoPush).then(()=> {
+                this._position = index;
+            }, ()=> {
+                if (index > this._position) {
+                    history.back();
+                } else {
+                    history.forward();
+                }
+            });
+        } else {
+            RabbitCMS.navigate(link, StateType.Replace).then(()=> {
+                //history.replaceState({state: this._position, link: this.current.link}, null, this.current.link);
+            }, ()=> {
+                if (index > this._position) {
+                    history.back();
+                } else {
+                    history.forward();
+                }
+            });
+        }
+    }
+}
+
+export interface AjaxSettings extends JQueryAjaxSettings {
+    warningTarget?:JQuery;
+}
+
 export class RabbitCMS {
+    /**
+     * Path to backend resources.
+     */
+    private static _path:string;
+
+    private static _stack:Stack = new Stack();
+
     /**
      * Init RabbitCMS backend.
      */
     static init(options?:RabbitCMSOptions):void {
         options = $.extend(true, {
             handlers: [],
-            path:''
+            path: '/'
         }, options);
 
-        _path = options.path;
+        this._path = options.path;
 
         _handlers = options.handlers.map((h:Handler) => {
             if (!(h.regex instanceof RegExp)) {
@@ -41,12 +157,6 @@ export class RabbitCMS {
             return h;
         }).sort((a:Handler, b:Handler)=>b.regex.source.length - a.regex.source.length);
 
-        console.log(_handlers);
-        window.onpopstate = (e) => {
-            var link = (e.state && e.state.link && e.state.link !== '') ? e.state.link : _pathname;
-
-            return !this.navigate(link, false);
-        };
 
         $(()=>this.ready());
     }
@@ -56,23 +166,21 @@ export class RabbitCMS {
 
 
         $body.on('click', '[rel="back"]', (event:JQueryEventObject) => {
-            // if (!this.canSubmit.check(event))
-            //     return false;
+            event.stopPropagation();
+            event.preventDefault();
 
             if (history.state !== null) {
                 history.back();
             } else {
                 let a:HTMLAnchorElement = <HTMLAnchorElement>event.currentTarget;
-                return !this.navigate(a.pathname, false);
+                this.navigate(a.pathname, StateType.NoPush);
             }
-
-            return false;
         });
 
         $body.on('click', 'a', (event:JQueryEventObject) => {
-            // if (!this.canSubmit.check(event)) {
-            //     return false;
-            // }
+            if ($(event.target).attr('rel') === 'back') {
+                return false;
+            }
 
             let a:HTMLAnchorElement = <HTMLAnchorElement>event.currentTarget;
 
@@ -83,11 +191,13 @@ export class RabbitCMS {
             return !this.navigate(a.pathname);
         });
 
-        let handler = this.findHandler(location.pathname);
-        if (handler !== void 0) {
+        let link = location.pathname.length > 1 ? location.pathname.replace(/\/$/, '') : location.pathname;
+        let handler = this.findHandler(link);
+        if (handler) {
             _currentHandler = handler;
             let widget = $('[data-require]:first', defaultTarget);
-            this.loadModuleByHandler(handler, widget);
+            this._stack.add(new State(link, handler), StateType.Replace);
+            this.loadModuleByHandler(handler, widget, this._stack.current);
             this.showPortlet(handler, widget);
         }
 
@@ -95,8 +205,8 @@ export class RabbitCMS {
             this.loadModule($(e));
         });
 
-         this.updatePlugins();
-         this.initSidebar();
+        this.updatePlugins();
+        this.initSidebar();
     }
 
     /**
@@ -112,8 +222,22 @@ export class RabbitCMS {
             }) || null;
     }
 
+    /**
+     * Set backend resources path.
+     *
+     * @param {string} path
+     */
+    static setPath(path:string):void {
+        this._path = path;
+    }
+
+    /**
+     * Get backend resources path.
+     *
+     * @returns {string}
+     */
     static getPath():string {
-        return _path;
+        return this._path;
     }
 
     static setToken(value:string) {
@@ -124,7 +248,7 @@ export class RabbitCMS {
         return _token;
     };
 
-    static loadModuleByHandler(handler:Handler, widget:JQuery):void {
+    static loadModuleByHandler(handler:Handler, widget:JQuery, state:State):void {
         if (widget.data('loaded')) {
             return;
         }
@@ -133,11 +257,10 @@ export class RabbitCMS {
         this.updatePlugins(widget);
 
         require([handler.module], function (_module) {
-            console.log(_module);
             if (handler.exec !== void 0) {
-                _module[handler.exec](widget);
+                _module[handler.exec](widget, state);
             } else {
-                _module.init(widget);
+                _module.init(widget, state);
             }
         });
     }
@@ -164,20 +287,30 @@ export class RabbitCMS {
         }
     }
 
-    static navigateByHandler(h:Handler, link:string, pushState:boolean = true) {
-        if (h.widget instanceof jQuery) {
-            if (this.showPortlet(h, h.widget) && pushState && h.pushState !== false) {
-                history.pushState({link: link}, null, link);
-            }
-        } else if (link !== void 0) {
-            this.ajax(link, (data) => {
-                let widget = $(data);
-                this.loadModuleByHandler(h, widget);
-                if (this.showPortlet(h, widget) && pushState && h.pushState !== false) {
-                    history.pushState({link: link}, null, link);
+    static navigateByHandler(h:Handler, link:string, pushState:StateType = StateType.Push):Promise<boolean> {
+        return this._stack.current.check().then(()=>new Promise<boolean>((resolve, reject)=> {
+            if (h.widget instanceof jQuery) {
+                if (this.showPortlet(h, h.widget) && pushState !== StateType.NoPush) {
+                    this._stack.add(new State(link, h), h.pushState || pushState);
+                    resolve(true);
+                } else {
+                    resolve(false);
                 }
-            });
-        }
+            } else if (link !== void 0) {
+                this.ajax({
+                    url: link, success: (data) => {
+                        let widget = $(data);
+                        let state = new State(link, h);
+                        this.showPortlet(h, widget);
+                        this.loadModuleByHandler(h, widget, state);
+                        this._stack.add(state, h.pushState || pushState);
+                        resolve(true);
+                    }
+                });
+            } else {
+                reject();
+            }
+        }));
     }
 
     /**
@@ -186,13 +319,12 @@ export class RabbitCMS {
      * @param {boolean} pushState
      * @returns {boolean}
      */
-    static navigate(link:string, pushState:boolean = true):boolean {
+    static navigate(link:string, pushState:StateType = StateType.Push):Promise<boolean> {
         let h = this.findHandler(link);
         if (h && h.ajax !== false) {
-            this.navigateByHandler(h, link, pushState);
-            return true;
+            return this.navigateByHandler(h, link, pushState);
         }
-        return false;
+        return new Promise<boolean>((resolve, reject)=> reject());
     }
 
     static showPortlet(h:Handler, widget:JQuery) {
@@ -217,16 +349,19 @@ export class RabbitCMS {
         return true;
     }
 
-    static loadModalWindow(link, callback) {
-        this.ajax(link, (data) => {
-            let modal = $(data);
+    static loadModalWindow(link:string, callback:(model:JQuery, data:any, textStatus:string, jqXHR:JQueryXHR)=> any):void {
+        this.ajax({
+            url: link,
+            success: (data, textStatus, jqXHR) => {
+                let modal = $(data);
+                $('.page-content').append(modal);
 
-            $('.page-content').append(modal);
+                if ($.isFunction(callback)) {
+                    callback(modal, data, textStatus, jqXHR);
+                }
 
-            this.showModal(modal);
-
-            if ($.isFunction(callback))
-                callback(modal);
+                this.showModal(modal);
+            }
         });
     }
 
@@ -244,7 +379,7 @@ export class RabbitCMS {
             this.dangerMessage('Помилка. RabbitCMS.prototype.showModal');
     }
 
-    static getUniqueID(prefix:string = '') {
+    static getUniqueID(prefix:string = ''):string {
         return prefix + '_' + Math.floor(Math.random() * (new Date()).getTime());
     }
 
@@ -305,12 +440,6 @@ export class RabbitCMS {
         return id;
     }
 
-    static uniformUpdate(selector) {
-        require(['jquery.uniform'], ()=> {
-            $.uniform.update(selector);
-        });
-    }
-
     static message(options) {
         options = $.extend(true, {
             container: '',
@@ -354,8 +483,8 @@ export class RabbitCMS {
         }
     }
 
-    static dangerMessage(message, container?) {
-        var options = {container: container, type: 'danger', message: message, icon: 'fa-warning'};
+    static dangerMessage(message:string, target?:JQuery) {
+        var options = {container: target, type: 'danger', message: message, icon: 'fa-warning'};
         this.message(options);
     }
 
@@ -570,6 +699,11 @@ export class RabbitCMS {
     };
 
     /* all ajax methods */
+    /**
+     * @deprecated
+     * @param form
+     * @param callback
+     */
     static submitForm(form, callback) {
         form = (form instanceof $) ? form : $(form);
         var link = form.attr('action');
@@ -585,54 +719,69 @@ export class RabbitCMS {
         });
     }
 
-    static ajax(link:string, callback) {
-        this._ajax({url: link}, callback);
-    }
-
+    /**
+     * @deprecated
+     * @param link
+     * @param data
+     * @param callback
+     */
     static ajaxPost(link:string, data:Object, callback) {
-        this._ajax({url: link, method: 'POST', data: data}, callback);
+        this.ajax({url: link, method: 'POST', data: data, success: callback});
     }
 
-    static _ajax(options:JQueryAjaxSettings, callback) {
-        options = $.extend(true, {
-            success: (data) => {
-                if ($.isFunction(callback))
-                    callback(data);
+    /**
+     * Ajax wrapper.
+     * @param {JQueryAjaxSettings} options
+     */
+    static ajax(options:AjaxSettings) {
+        var originalOptions = options;
+        options = $.extend(true, {}, options);
 
-                this.unblockUI();
-            },
-            error: (jqXHR:JQueryXHR) => {
-                switch (jqXHR.status) {
-                    case 404:
-                        this.dangerMessage('Сторінку не знайдено');
-                        break;
-                    case 403:
-                        this.dangerMessage('Доступ заборонено. Зверніться до адміністратора');
-                        break;
-                    case 401:
-                        location.reload(true);
-                        break;
-                    case 503:
-                        var responseText;
-                        try {
-                            responseText = $.parseJSON(jqXHR.responseText);
-                        } catch (message) {
-                            responseText = {message: message};
-                        }
-                        this.dangerMessage('Помилка ' + jqXHR.status + '. ' + responseText.message);
-                        break;
-                    default:
-                        this.dangerMessage('Помилка ' + jqXHR.status + '. ' + jqXHR.statusText);
-                }
-
-                this.unblockUI();
+        options.error = (jqXHR:JQueryXHR, textStatus:string, errorThrown:string) => {
+            if ($.isFunction(originalOptions.error) && originalOptions.error(jqXHR, textStatus, errorThrown)) {
+                return;
             }
-        }, options);
+
+            switch (jqXHR.status) {
+                case 404:
+                    this.dangerMessage(i18n.pageNotFound, options.warningTarget);
+                    break;
+                case 403:
+                    this.dangerMessage(i18n.accessDenied, options.warningTarget);
+                    break;
+                case 401:
+                    location.reload(true);
+                    break;
+                case 503:
+                    let responseText;
+                    try {
+                        responseText = $.parseJSON(jqXHR.responseText);
+                    } catch (message) {
+                        responseText = {message: message};
+                    }
+                    this.dangerMessage('Error: ' + jqXHR.status + '. ' + responseText.message, options.warningTarget);
+                    break;
+                default:
+                    this.dangerMessage('Error: ' + jqXHR.status + '. ' + jqXHR.statusText, options.warningTarget);
+            }
+        };
+
+        options.complete = (jqXHR:JQueryXHR, textStatus:string):any => {
+            RabbitCMS.unblockUI();
+            if ($.isFunction(originalOptions.complete)) {
+                originalOptions.complete(jqXHR, textStatus);
+            }
+        };
 
         this.blockUI();
         $.ajax(options);
     }
 
+    /**
+     * @dedrecated
+     * @param form
+     * @param options
+     */
     static validate(form:JQuery, options?:ValidationOptions):void {
         options = $.extend(true, {
             focusInvalid: true,
@@ -703,49 +852,6 @@ export class RabbitCMS {
         }
     };
 
-    /* Tools */
-    static Tools = {
-        transliterate: function (string, spase) {
-
-            spase = spase === undefined ? '-' : spase;
-
-            var text = $.trim(string.toLowerCase());
-            var result = '';
-            var char = '';
-
-            var matrix = {
-                'й': 'i', 'ц': 'c', 'у': 'u', 'к': 'k', 'е': 'e', 'н': 'n',
-                'г': 'g', 'ш': 'sh', 'щ': 'shch', 'з': 'z', 'х': 'h', 'ъ': '',
-                'ф': 'f', 'ы': 'y', 'в': 'v', 'а': 'a', 'п': 'p', 'р': 'r',
-                'о': 'o', 'л': 'l', 'д': 'd', 'ж': 'zh', 'э': 'e', 'ё': 'e',
-                'я': 'ya', 'ч': 'ch', 'с': 's', 'м': 'm', 'и': 'i', 'т': 't',
-                'ь': '', 'б': 'b', 'ю': 'yu', 'ү': 'u', 'қ': 'k', 'ғ': 'g',
-                'ә': 'e', 'ң': 'n', 'ұ': 'u', 'ө': 'o', 'Һ': 'h', 'һ': 'h',
-                'і': 'i', 'ї': 'ji', 'є': 'je', 'ґ': 'g',
-                ' ': spase, '_': spase, '`': '', '~': '', '!': '', '@': '',
-                '#': '', '$': '', '%': '', '^': '', '&': '', '*': '',
-                '(': '', ')': '', '-': spase, '=': '', '+': '', '[': '',
-                ']': '', '\\': '', '|': '', '/': '', '.': '', ',': '',
-                '{': '', '}': '', '\'': '', '"': '', ';': '', ':': '',
-                '?': '', '<': '', '>': '', '№': ''
-            };
-
-            for (var i = 0; i < text.length; i++) {
-                if (matrix[text[i]] != undefined) {
-                    if (char != matrix[text[i]] || char != spase) {
-                        result += matrix[text[i]];
-                        char = matrix[text[i]];
-                    }
-                } else {
-                    result += text[i];
-                    char = text[i];
-                }
-            }
-
-            return $.trim(result);
-        }
-    };
-
     static select2(selector:JQuery, options:Select2Options = {}) {
         require(['select2'], function () {
             $.fn.select2.defaults.set("theme", "bootstrap");
@@ -753,6 +859,112 @@ export class RabbitCMS {
             options.width = 'auto';
             selector.select2(options);
         });
+    }
+}
+
+export class Tools {
+    static transliterate(string:string, spase = '-') {
+        var text = $.trim(string.toLowerCase());
+        var result = '';
+        var char = '';
+
+        var matrix = {
+            'й': 'i', 'ц': 'c', 'у': 'u', 'к': 'k', 'е': 'e', 'н': 'n',
+            'г': 'g', 'ш': 'sh', 'щ': 'shch', 'з': 'z', 'х': 'h', 'ъ': '',
+            'ф': 'f', 'ы': 'y', 'в': 'v', 'а': 'a', 'п': 'p', 'р': 'r',
+            'о': 'o', 'л': 'l', 'д': 'd', 'ж': 'zh', 'э': 'e', 'ё': 'e',
+            'я': 'ya', 'ч': 'ch', 'с': 's', 'м': 'm', 'и': 'i', 'т': 't',
+            'ь': '', 'б': 'b', 'ю': 'yu', 'ү': 'u', 'қ': 'k', 'ғ': 'g',
+            'ә': 'e', 'ң': 'n', 'ұ': 'u', 'ө': 'o', 'Һ': 'h', 'һ': 'h',
+            'і': 'i', 'ї': 'ji', 'є': 'je', 'ґ': 'g',
+            ' ': spase, '_': spase, '`': '', '~': '', '!': '', '@': '',
+            '#': '', '$': '', '%': '', '^': '', '&': '', '*': '',
+            '(': '', ')': '', '-': spase, '=': '', '+': '', '[': '',
+            ']': '', '\\': '', '|': '', '/': '', '.': '', ',': '',
+            '{': '', '}': '', '\'': '', '"': '', ';': '', ':': '',
+            '?': '', '<': '', '>': '', '№': ''
+        };
+
+        for (var i = 0; i < text.length; i++) {
+            if (matrix[text[i]] != undefined) {
+                if (char != matrix[text[i]] || char != spase) {
+                    result += matrix[text[i]];
+                    char = matrix[text[i]];
+                }
+            } else {
+                result += text[i];
+                char = text[i];
+            }
+        }
+
+        return $.trim(result);
+    }
+}
+
+export interface FormOptions {
+    validation?:ValidationOptions;
+    ajax?:AjaxSettings|boolean;
+    state?:State;
+}
+
+export class Form {
+    private options:FormOptions;
+    private form:JQuery;
+    private data:string;
+
+    constructor(form:JQuery, options?:FormOptions) {
+        this.form = form;
+        this.options = $.extend(true, {
+            validate: null
+        }, options);
+
+        if (options.state) {
+            options.state.addChecker(new Promise<void>((resolve, reject)=> {
+
+            }));
+        }
+
+        if (this.options.validation !== false) {
+            require(['jquery.validation'], ()=> {
+                let options = $.extend(true, {
+                    focusInvalid: true,
+                    highlight (element:HTMLElement) {
+                        $(element).closest('.form-group').addClass('has-error');
+                    },
+                    unhighlight(element:HTMLElement) {
+                        $(element).closest('.form-group').removeClass('has-error');
+                    },
+                    errorPlacement() {
+                    },
+                    submitHandler: (form:HTMLFormElement) => {
+                        this.submitForm();
+                    }
+                }, this.options.validation);
+                form.validate(options);
+            });
+        } else {
+            form.on('submit', (e)=> {
+                this.submitForm();
+            });
+        }
+        this.syncOriginal();
+    }
+
+    syncOriginal() {
+        this.data = $('.form-change', this.form).serialize();
+    }
+
+    submitForm() {
+        this.syncOriginal();
+        if (this.options.ajax !== false) {
+            RabbitCMS.ajax({
+                url: this.form.attr('action'),
+                method: this.form.attr('method'),
+                data: this.data,
+            });
+        } else {
+            (<HTMLFormElement>this.form[0]).submit();
+        }
     }
 }
 
@@ -800,7 +1012,7 @@ export interface Handler {
     module:string;
     exec?:string;
     ajax?:boolean;
-    pushState?:boolean;
+    pushState?:StateType;
     permanent?:boolean;
     widget?:JQuery;
 }

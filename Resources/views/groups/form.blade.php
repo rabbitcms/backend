@@ -49,7 +49,7 @@
                                                     <tr>
                                                         <td style="font-weight: bold; font-style: italic;">{{$caption}}</td>
                                                         <td>
-                                                        @foreach(\BackendAcl::getGroupPermissions($group) as $rule => $caption)
+                                                        @foreach(\Backend::getGroupPermissions($group) as $rule => $caption)
                                                             <label>
                                                                 <input class="{{$rule}} read-rule" type="checkbox"
                                                                        @if($model->exists && array_key_exists($rule, $model->permissions)) checked="checked" @endif

@@ -1,15 +1,122 @@
-define(["require", "exports", "jquery", "jquery.cookie"], function (require, exports, $) {
+define(["require", "exports", "jquery", "i18n!rabbitcms/nls/backend", "jquery.cookie"], function (require, exports, $, i18n) {
     "use strict";
     var $body = $('body');
-    var _location = document.location.pathname;
-    var _pathname = _location.length > 1 ? _location.replace(/\/$/, '') : _location;
     var _visiblePortlet = $();
-    var _path = '/';
     var _token = '';
     var _handlers = [];
     var _currentWidget;
     var _currentHandler;
     var defaultTarget = '.page-content';
+    var State = (function () {
+        function State(link, handler) {
+            this.checkers = [];
+            this.link = link;
+            this.handler = handler;
+        }
+        State.prototype.check = function () {
+            return Promise.all(this.checkers);
+        };
+        State.prototype.addChecker = function (promise) {
+            this.checkers.push(promise);
+        };
+        return State;
+    }());
+    var StateType;
+    (function (StateType) {
+        StateType[StateType["NoPush"] = 0] = "NoPush";
+        StateType[StateType["None"] = 1] = "None";
+        StateType[StateType["Push"] = 2] = "Push";
+        StateType[StateType["Replace"] = 3] = "Replace";
+    })(StateType || (StateType = {}));
+    var Stack = (function (_super) {
+        __extends(Stack, _super);
+        function Stack() {
+            var _this = this;
+            _super.call(this);
+            this._position = -1;
+            window.addEventListener('popstate', function (e) {
+                if (e.state && e.state.state !== void 0) {
+                    _this.go(e.state.state, e.state.link);
+                }
+                else if (e.state && e.state.link) {
+                    RabbitCMS.navigate(e.state.link, StateType.NoPush);
+                }
+                else {
+                    RabbitCMS.navigate(location.pathname, StateType.NoPush);
+                }
+            });
+        }
+        Object.defineProperty(Stack.prototype, "current", {
+            get: function () {
+                return this.fetch(this._position);
+            },
+            enumerable: true,
+            configurable: true
+        });
+        Object.defineProperty(Stack.prototype, "position", {
+            get: function () {
+                return this._position;
+            },
+            enumerable: true,
+            configurable: true
+        });
+        Stack.prototype.add = function (state, type) {
+            if (type === void 0) { type = StateType.Push; }
+            this.length = this._position + 1;
+            this._position = _super.prototype.push.call(this, state) - 1;
+            switch (type) {
+                case StateType.Push:
+                    history.pushState({ state: this._position, link: state.link }, null, state.link);
+                    break;
+                case StateType.Replace:
+                    history.replaceState({ state: this._position, link: state.link }, null, state.link);
+                    break;
+            }
+            console.log(this);
+            return this._position;
+        };
+        Stack.prototype.fetch = function (index) {
+            if (index < 0) {
+                return null;
+            }
+            if (index >= this.length) {
+                return null;
+            }
+            return this[index];
+        };
+        Stack.prototype.go = function (index, link) {
+            var _this = this;
+            if (index === this._position && this.current.link === link) {
+                return;
+            }
+            var s = this.fetch(index);
+            if (s && s.link == link) {
+                console.log(this._position);
+                RabbitCMS.navigateByHandler(s.handler, s.link, StateType.NoPush).then(function () {
+                    _this._position = index;
+                }, function () {
+                    if (index > _this._position) {
+                        history.back();
+                    }
+                    else {
+                        history.forward();
+                    }
+                });
+            }
+            else {
+                RabbitCMS.navigate(link, StateType.Replace).then(function () {
+                }, function () {
+                    if (index > _this._position) {
+                        history.back();
+                    }
+                    else {
+                        history.forward();
+                    }
+                });
+            }
+        };
+        return Stack;
+    }(Array));
     var RabbitCMS = (function () {
         function RabbitCMS() {
         }
@@ -17,47 +124,48 @@ define(["require", "exports", "jquery", "jquery.cookie"], function (require, exp
             var _this = this;
             options = $.extend(true, {
                 handlers: [],
-                path: ''
+                path: '/'
             }, options);
-            _path = options.path;
+            this._path = options.path;
             _handlers = options.handlers.map(function (h) {
                 if (!(h.regex instanceof RegExp)) {
                     h.regex = new RegExp('^' + h.handler);
                 }
                 return h;
             }).sort(function (a, b) { return b.regex.source.length - a.regex.source.length; });
-            console.log(_handlers);
-            window.onpopstate = function (e) {
-                var link = (e.state && e.state.link && e.state.link !== '') ? e.state.link : _pathname;
-                return !_this.navigate(link, false);
-            };
             $(function () { return _this.ready(); });
         };
         RabbitCMS.ready = function () {
             var _this = this;
             $body = $('body');
             $body.on('click', '[rel="back"]', function (event) {
+                event.stopPropagation();
+                event.preventDefault();
                 if (history.state !== null) {
                     history.back();
                 }
                 else {
                     var a = event.currentTarget;
-                    return !_this.navigate(a.pathname, false);
+                    _this.navigate(a.pathname, StateType.NoPush);
                 }
-                return false;
             });
             $body.on('click', 'a', function (event) {
+                if ($(event.target).attr('rel') === 'back') {
+                    return false;
+                }
                 var a = event.currentTarget;
                 if (a.hostname != location.hostname) {
                     return true;
                 }
                 return !_this.navigate(a.pathname);
             });
-            var handler = this.findHandler(location.pathname);
-            if (handler !== void 0) {
+            var link = location.pathname.length > 1 ? location.pathname.replace(/\/$/, '') : location.pathname;
+            var handler = this.findHandler(link);
+            if (handler) {
                 _currentHandler = handler;
                 var widget = $('[data-require]:first', defaultTarget);
-                this.loadModuleByHandler(handler, widget);
+                this._stack.add(new State(link, handler), StateType.Replace);
+                this.loadModuleByHandler(handler, widget, this._stack.current);
                 this.showPortlet(handler, widget);
             }
             $('[data-require]').each(function (i, e) {
@@ -72,8 +180,11 @@ define(["require", "exports", "jquery", "jquery.cookie"], function (require, exp
                 return new RegExp('^' + h.handler).exec(link) !== null;
             }) || null;
         };
+        RabbitCMS.setPath = function (path) {
+            this._path = path;
+        };
         RabbitCMS.getPath = function () {
-            return _path;
+            return this._path;
         };
         RabbitCMS.setToken = function (value) {
             _token = value;
@@ -82,19 +193,18 @@ define(["require", "exports", "jquery", "jquery.cookie"], function (require, exp
             return _token;
         };
         ;
-        RabbitCMS.loadModuleByHandler = function (handler, widget) {
+        RabbitCMS.loadModuleByHandler = function (handler, widget, state) {
             if (widget.data('loaded')) {
                 return;
             }
             widget.data('loaded', true);
             this.updatePlugins(widget);
             require([handler.module], function (_module) {
-                console.log(_module);
                 if (handler.exec !== void 0) {
-                    _module[handler.exec](widget);
+                    _module[handler.exec](widget, state);
                 }
                 else {
-                    _module.init(widget);
+                    _module.init(widget, state);
                 }
             });
         };
@@ -119,30 +229,41 @@ define(["require", "exports", "jquery", "jquery.cookie"], function (require, exp
         };
         RabbitCMS.navigateByHandler = function (h, link, pushState) {
             var _this = this;
-            if (pushState === void 0) { pushState = true; }
-            if (h.widget instanceof jQuery) {
-                if (this.showPortlet(h, h.widget) && pushState && h.pushState !== false) {
-                    history.pushState({ link: link }, null, link);
-                }
-            }
-            else if (link !== void 0) {
-                this.ajax(link, function (data) {
-                    var widget = $(data);
-                    _this.loadModuleByHandler(h, widget);
-                    if (_this.showPortlet(h, widget) && pushState && h.pushState !== false) {
-                        history.pushState({ link: link }, null, link);
+            if (pushState === void 0) { pushState = StateType.Push; }
+            return this._stack.current.check().then(function () { return new Promise(function (resolve, reject) {
+                if (h.widget instanceof jQuery) {
+                    if (_this.showPortlet(h, h.widget) && pushState !== StateType.NoPush) {
+                        _this._stack.add(new State(link, h), h.pushState || pushState);
+                        resolve(true);
                     }
-                });
-            }
+                    else {
+                        resolve(false);
+                    }
+                }
+                else if (link !== void 0) {
+                    _this.ajax({
+                        url: link, success: function (data) {
+                            var widget = $(data);
+                            var state = new State(link, h);
+                            _this.showPortlet(h, widget);
+                            _this.loadModuleByHandler(h, widget, state);
+                            _this._stack.add(state, h.pushState || pushState);
+                            resolve(true);
+                        }
+                    });
+                }
+                else {
+                    reject();
+                }
+            }); });
         };
         RabbitCMS.navigate = function (link, pushState) {
-            if (pushState === void 0) { pushState = true; }
+            if (pushState === void 0) { pushState = StateType.Push; }
             var h = this.findHandler(link);
             if (h && h.ajax !== false) {
-                this.navigateByHandler(h, link, pushState);
-                return true;
+                return this.navigateByHandler(h, link, pushState);
             }
-            return false;
+            return new Promise(function (resolve, reject) { return reject(); });
         };
         RabbitCMS.showPortlet = function (h, widget) {
             if (_currentWidget == widget)
@@ -165,12 +286,16 @@ define(["require", "exports", "jquery", "jquery.cookie"], function (require, exp
         };
         RabbitCMS.loadModalWindow = function (link, callback) {
             var _this = this;
-            this.ajax(link, function (data) {
-                var modal = $(data);
-                $('.page-content').append(modal);
-                _this.showModal(modal);
-                if ($.isFunction(callback))
-                    callback(modal);
+            this.ajax({
+                url: link,
+                success: function (data, textStatus, jqXHR) {
+                    var modal = $(data);
+                    $('.page-content').append(modal);
+                    if ($.isFunction(callback)) {
+                        callback(modal, data, textStatus, jqXHR);
+                    }
+                    _this.showModal(modal);
+                }
             });
         };
         RabbitCMS.showModal = function (modal) {
@@ -241,11 +366,6 @@ define(["require", "exports", "jquery", "jquery.cookie"], function (require, exp
             }
             return id;
         };
-        RabbitCMS.uniformUpdate = function (selector) {
-            require(['jquery.uniform'], function () {
-                $.uniform.update(selector);
-            });
-        };
         RabbitCMS.message = function (options) {
             options = $.extend(true, {
                 container: '',
@@ -280,8 +400,8 @@ define(["require", "exports", "jquery", "jquery.cookie"], function (require, exp
                 }, options.timeout * 1000);
             }
         };
-        RabbitCMS.dangerMessage = function (message, container) {
-            var options = { container: container, type: 'danger', message: message, icon: 'fa-warning' };
+        RabbitCMS.dangerMessage = function (message, target) {
+            var options = { container: target, type: 'danger', message: message, icon: 'fa-warning' };
             this.message(options);
         };
         RabbitCMS.scrollTo = function (element, offset) {
@@ -444,47 +564,47 @@ define(["require", "exports", "jquery", "jquery.cookie"], function (require, exp
                     callback(data);
             });
         };
-        RabbitCMS.ajax = function (link, callback) {
-            this._ajax({ url: link }, callback);
-        };
         RabbitCMS.ajaxPost = function (link, data, callback) {
-            this._ajax({ url: link, method: 'POST', data: data }, callback);
+            this.ajax({ url: link, method: 'POST', data: data, success: callback });
         };
-        RabbitCMS._ajax = function (options, callback) {
+        RabbitCMS.ajax = function (options) {
             var _this = this;
-            options = $.extend(true, {
-                success: function (data) {
-                    if ($.isFunction(callback))
-                        callback(data);
-                    _this.unblockUI();
-                },
-                error: function (jqXHR) {
-                    switch (jqXHR.status) {
-                        case 404:
-                            _this.dangerMessage('Сторінку не знайдено');
-                            break;
-                        case 403:
-                            _this.dangerMessage('Доступ заборонено. Зверніться до адміністратора');
-                            break;
-                        case 401:
-                            location.reload(true);
-                            break;
-                        case 503:
-                            var responseText;
-                            try {
-                                responseText = $.parseJSON(jqXHR.responseText);
-                            }
-                            catch (message) {
-                                responseText = { message: message };
-                            }
-                            _this.dangerMessage('Помилка ' + jqXHR.status + '. ' + responseText.message);
-                            break;
-                        default:
-                            _this.dangerMessage('Помилка ' + jqXHR.status + '. ' + jqXHR.statusText);
-                    }
-                    _this.unblockUI();
+            var originalOptions = options;
+            options = $.extend(true, {}, options);
+            options.error = function (jqXHR, textStatus, errorThrown) {
+                if ($.isFunction(originalOptions.error) && originalOptions.error(jqXHR, textStatus, errorThrown)) {
+                    return;
                 }
-            }, options);
+                switch (jqXHR.status) {
+                    case 404:
+                        _this.dangerMessage(i18n.pageNotFound, options.warningTarget);
+                        break;
+                    case 403:
+                        _this.dangerMessage(i18n.accessDenied, options.warningTarget);
+                        break;
+                    case 401:
+                        location.reload(true);
+                        break;
+                    case 503:
+                        var responseText = void 0;
+                        try {
+                            responseText = $.parseJSON(jqXHR.responseText);
+                        }
+                        catch (message) {
+                            responseText = { message: message };
+                        }
+                        _this.dangerMessage('Error: ' + jqXHR.status + '. ' + responseText.message, options.warningTarget);
+                        break;
+                    default:
+                        _this.dangerMessage('Error: ' + jqXHR.status + '. ' + jqXHR.statusText, options.warningTarget);
+                }
+            };
+            options.complete = function (jqXHR, textStatus) {
+                RabbitCMS.unblockUI();
+                if ($.isFunction(originalOptions.complete)) {
+                    originalOptions.complete(jqXHR, textStatus);
+                }
+            };
             this.blockUI();
             $.ajax(options);
         };
@@ -519,6 +639,7 @@ define(["require", "exports", "jquery", "jquery.cookie"], function (require, exp
                 selector.select2(options);
             });
         };
+        RabbitCMS._stack = new Stack();
         RabbitCMS.canSubmit = {
             _match: false,
             init: function () {
@@ -609,46 +730,106 @@ define(["require", "exports", "jquery", "jquery.cookie"], function (require, exp
                 });
             }
         };
-        RabbitCMS.Tools = {
-            transliterate: function (string, spase) {
-                spase = spase === undefined ? '-' : spase;
-                var text = $.trim(string.toLowerCase());
-                var result = '';
-                var char = '';
-                var matrix = {
-                    'й': 'i', 'ц': 'c', 'у': 'u', 'к': 'k', 'е': 'e', 'н': 'n',
-                    'г': 'g', 'ш': 'sh', 'щ': 'shch', 'з': 'z', 'х': 'h', 'ъ': '',
-                    'ф': 'f', 'ы': 'y', 'в': 'v', 'а': 'a', 'п': 'p', 'р': 'r',
-                    'о': 'o', 'л': 'l', 'д': 'd', 'ж': 'zh', 'э': 'e', 'ё': 'e',
-                    'я': 'ya', 'ч': 'ch', 'с': 's', 'м': 'm', 'и': 'i', 'т': 't',
-                    'ь': '', 'б': 'b', 'ю': 'yu', 'ү': 'u', 'қ': 'k', 'ғ': 'g',
-                    'ә': 'e', 'ң': 'n', 'ұ': 'u', 'ө': 'o', 'Һ': 'h', 'һ': 'h',
-                    'і': 'i', 'ї': 'ji', 'є': 'je', 'ґ': 'g',
-                    ' ': spase, '_': spase, '`': '', '~': '', '!': '', '@': '',
-                    '#': '', '$': '', '%': '', '^': '', '&': '', '*': '',
-                    '(': '', ')': '', '-': spase, '=': '', '+': '', '[': '',
-                    ']': '', '\\': '', '|': '', '/': '', '.': '', ',': '',
-                    '{': '', '}': '', '\'': '', '"': '', ';': '', ':': '',
-                    '?': '', '<': '', '>': '', '№': ''
-                };
-                for (var i = 0; i < text.length; i++) {
-                    if (matrix[text[i]] != undefined) {
-                        if (char != matrix[text[i]] || char != spase) {
-                            result += matrix[text[i]];
-                            char = matrix[text[i]];
-                        }
-                    }
-                    else {
-                        result += text[i];
-                        char = text[i];
-                    }
-                }
-                return $.trim(result);
-            }
-        };
         return RabbitCMS;
     }());
     exports.RabbitCMS = RabbitCMS;
+    var Tools = (function () {
+        function Tools() {
+        }
+        Tools.transliterate = function (string, spase) {
+            if (spase === void 0) { spase = '-'; }
+            var text = $.trim(string.toLowerCase());
+            var result = '';
+            var char = '';
+            var matrix = {
+                'й': 'i', 'ц': 'c', 'у': 'u', 'к': 'k', 'е': 'e', 'н': 'n',
+                'г': 'g', 'ш': 'sh', 'щ': 'shch', 'з': 'z', 'х': 'h', 'ъ': '',
+                'ф': 'f', 'ы': 'y', 'в': 'v', 'а': 'a', 'п': 'p', 'р': 'r',
+                'о': 'o', 'л': 'l', 'д': 'd', 'ж': 'zh', 'э': 'e', 'ё': 'e',
+                'я': 'ya', 'ч': 'ch', 'с': 's', 'м': 'm', 'и': 'i', 'т': 't',
+                'ь': '', 'б': 'b', 'ю': 'yu', 'ү': 'u', 'қ': 'k', 'ғ': 'g',
+                'ә': 'e', 'ң': 'n', 'ұ': 'u', 'ө': 'o', 'Һ': 'h', 'һ': 'h',
+                'і': 'i', 'ї': 'ji', 'є': 'je', 'ґ': 'g',
+                ' ': spase, '_': spase, '`': '', '~': '', '!': '', '@': '',
+                '#': '', '$': '', '%': '', '^': '', '&': '', '*': '',
+                '(': '', ')': '', '-': spase, '=': '', '+': '', '[': '',
+                ']': '', '\\': '', '|': '', '/': '', '.': '', ',': '',
+                '{': '', '}': '', '\'': '', '"': '', ';': '', ':': '',
+                '?': '', '<': '', '>': '', '№': ''
+            };
+            for (var i = 0; i < text.length; i++) {
+                if (matrix[text[i]] != undefined) {
+                    if (char != matrix[text[i]] || char != spase) {
+                        result += matrix[text[i]];
+                        char = matrix[text[i]];
+                    }
+                }
+                else {
+                    result += text[i];
+                    char = text[i];
+                }
+            }
+            return $.trim(result);
+        };
+        return Tools;
+    }());
+    exports.Tools = Tools;
+    var Form = (function () {
+        function Form(form, options) {
+            var _this = this;
+            this.form = form;
+            this.options = $.extend(true, {
+                validate: null
+            }, options);
+            if (options.state) {
+                options.state.addChecker(new Promise(function (resolve, reject) {
+                }));
+            }
+            if (this.options.validation !== false) {
+                require(['jquery.validation'], function () {
+                    var options = $.extend(true, {
+                        focusInvalid: true,
+                        highlight: function (element) {
+                            $(element).closest('.form-group').addClass('has-error');
+                        },
+                        unhighlight: function (element) {
+                            $(element).closest('.form-group').removeClass('has-error');
+                        },
+                        errorPlacement: function () {
+                        },
+                        submitHandler: function (form) {
+                            _this.submitForm();
+                        }
+                    }, _this.options.validation);
+                    form.validate(options);
+                });
+            }
+            else {
+                form.on('submit', function (e) {
+                    _this.submitForm();
+                });
+            }
+            this.syncOriginal();
+        }
+        Form.prototype.syncOriginal = function () {
+            this.data = $('.form-change', this.form).serialize();
+        };
+        Form.prototype.submitForm = function () {
+            this.syncOriginal();
+            if (this.options.ajax !== false) {
+                RabbitCMS.ajax({
+                    url: this.form.attr('action'),
+                    method: this.form.attr('method'),
+                    data: this.data,
+                });
+            }
+            else {
+                this.form[0].submit();
+            }
+        };
+        return Form;
+    }());
+    exports.Form = Form;
     var MicroEvent = (function () {
         function MicroEvent(object) {
             var _this = this;
