@@ -29,12 +29,14 @@ define(["require", "exports", "jquery", "rabbitcms.backend", "rabbitcms.datatabl
                 "user[email]": { required: true, email: true },
                 "groups[]": { required: true }
             };
-            rabbitcms_backend_1.RabbitCMS.select2($('.select2', portlet));
             if ($form.data('type') !== 'update') {
                 _validationRules["password"] = { required: true };
             }
-            rabbitcms_backend_1.RabbitCMS.validate($form, {
-                rules: _validationRules,
+            new rabbitcms_backend_1.Form($form, {
+                state: state,
+                validation: {
+                    rules: _validationRules,
+                },
                 completeSubmit: function () {
                     _this.trigger('updated');
                 },

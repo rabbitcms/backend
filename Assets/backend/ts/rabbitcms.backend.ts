@@ -22,19 +22,21 @@ export interface RabbitCMSOptions {
 class State {
     link:string;
     handler:Handler;
-    checkers:Promise<void>[] = [];
+    checkers:((event?:JQueryEventObject)=>Promise<void>)[] = [];
+    widget:JQuery;
 
-    constructor(link:string, handler:Handler) {
+    constructor(link:string, handler:Handler, widget:JQuery) {
         this.link = link;
         this.handler = handler;
+        this.widget = widget;
     }
 
-    public check():Promise<void[]> {
-        return Promise.all<void>(this.checkers);
+    public check(event?:JQueryEventObject):Promise<void[]> {
+        return Promise.all<void>(this.checkers.map((a)=>a(event)));
     }
 
-    public addChecker(promise:Promise<void>) {
-        this.checkers.push(promise);
+    public addChecker(checker:(event:JQueryEventObject)=>Promise<void>) {
+        this.checkers.push(checker);
     }
 }
 enum StateType{
@@ -44,9 +46,15 @@ enum StateType{
     Replace = 3
 }
 
+interface PrevStatEventObject extends JQueryEventObject {
+    index:number;
+}
+
 class Stack extends Array<State> {
 
     private _position:number = -1;
+    private handleEvent:JQueryEventObject;
+    private index:number = 0;
 
     get current():State {
         return this.fetch(this._position);
@@ -58,15 +66,49 @@ class Stack extends Array<State> {
 
     constructor() {
         super();
-        window.addEventListener('popstate', (e) => {
-            if (e.state && e.state.state !== void 0) {
-                this.go(e.state.state, e.state.link);
-            } else if (e.state && e.state.link) {
-                RabbitCMS.navigate(e.state.link, StateType.NoPush);
-            } else {
-                RabbitCMS.navigate(location.pathname, StateType.NoPush);
+        if (history.state && history.state.index) {
+            this.index = history.state.index;
+            console.log('index', this.index);
+        }
+        $(window).on('prevstat', (e:PrevStatEventObject)=> {
+            if (this.index > e.index) {
+                this.back(e, this.index - e.index);
+            } else if (this.index < e.index) {
+                this.back(e, e.index - this.index);
             }
         });
+        window.addEventListener('popstate', (e:PopStateEvent) => {
+            var event = this.handleEvent;
+            this.handleEvent = null;
+            if (e.state && e.state.index !== void 0) {
+                this.index = history.state.index;
+            }
+
+            if (!event) {
+                event = new $.Event('prevstat',{
+                    currentTarget:e.srcElement,
+                    index:this.index
+                });
+            }
+
+            if (e.state && e.state.state !== void 0) {
+                this.go(e.state.state, e.state.link, event);
+            } else if (e.state && e.state.link) {
+                RabbitCMS.navigate(e.state.link, StateType.NoPush, event);
+            } else {
+                RabbitCMS.navigate(location.pathname, StateType.NoPush, event);
+            }
+        });
+    }
+
+    public back(event?:JQueryEventObject, distance?:any) {
+        this.handleEvent = event;
+        history.back(distance);
+    }
+
+    public forward(event?:JQueryEventObject, distance?:any) {
+        this.handleEvent = event;
+        history.forward(distance);
     }
 
     public add(state:State, type:StateType = StateType.Push):number {
@@ -74,10 +116,11 @@ class Stack extends Array<State> {
         this._position = super.push(state) - 1;
         switch (type) {
             case StateType.Push:
-                history.pushState({state: this._position, link: state.link}, null, state.link);
+                history.pushState({state: this._position, link: state.link, index: ++this.index}, null, state.link);
+                console.log('index', this.index);
                 break;
             case StateType.Replace:
-                history.replaceState({state: this._position, link: state.link}, null, state.link);
+                history.replaceState({state: this._position, link: state.link, index: this.index}, null, state.link);
                 break;
         }
 
@@ -97,14 +140,14 @@ class Stack extends Array<State> {
         return this[index];
     }
 
-    private go(index:number, link:string) {
+    private go(index:number, link:string, event:JQueryEventObject) {
         if (index === this._position && this.current.link === link) {
             return;
         }
         let s:State = this.fetch(index);
         if (s && s.link == link) {
             console.log(this._position);
-            RabbitCMS.navigateByHandler(s.handler, s.link, StateType.NoPush).then(()=> {
+            RabbitCMS.navigateByHandler(s.handler, s.link, StateType.NoPush, event).then(()=> {
                 this._position = index;
             }, ()=> {
                 if (index > this._position) {
@@ -114,13 +157,13 @@ class Stack extends Array<State> {
                 }
             });
         } else {
-            RabbitCMS.navigate(link, StateType.Replace).then(()=> {
+            RabbitCMS.navigate(link, StateType.Replace, event).then(()=> {
                 //history.replaceState({state: this._position, link: this.current.link}, null, this.current.link);
             }, ()=> {
                 if (index > this._position) {
-                    history.back();
+                    this.back(event);
                 } else {
-                    history.forward();
+                    this.forward(event);
                 }
             });
         }
@@ -138,6 +181,10 @@ export class RabbitCMS {
     private static _path:string;
 
     private static _stack:Stack = new Stack();
+
+    static get stack():Stack{
+        return this._stack;
+    }
 
     /**
      * Init RabbitCMS backend.
@@ -170,10 +217,10 @@ export class RabbitCMS {
             event.preventDefault();
 
             if (history.state !== null) {
-                history.back();
+                this._stack.back(event);
             } else {
                 let a:HTMLAnchorElement = <HTMLAnchorElement>event.currentTarget;
-                this.navigate(a.pathname, StateType.NoPush);
+                this.navigate(a.pathname, StateType.NoPush, event);
             }
         });
 
@@ -188,7 +235,7 @@ export class RabbitCMS {
                 return true;
             }
 
-            return !this.navigate(a.pathname);
+            return !this.navigate(a.pathname, StateType.Push, event);
         });
 
         let link = location.pathname.length > 1 ? location.pathname.replace(/\/$/, '') : location.pathname;
@@ -196,7 +243,7 @@ export class RabbitCMS {
         if (handler) {
             _currentHandler = handler;
             let widget = $('[data-require]:first', defaultTarget);
-            this._stack.add(new State(link, handler), StateType.Replace);
+            this._stack.add(new State(link, handler, widget), StateType.Replace);
             this.loadModuleByHandler(handler, widget, this._stack.current);
             this.showPortlet(handler, widget);
         }
@@ -287,42 +334,58 @@ export class RabbitCMS {
         }
     }
 
-    static navigateByHandler(h:Handler, link:string, pushState:StateType = StateType.Push):Promise<boolean> {
-        return this._stack.current.check().then(()=>new Promise<boolean>((resolve, reject)=> {
+    static navigateByHandler(h:Handler, link:string, pushState:StateType = StateType.Push, event?:JQueryEventObject):Promise<boolean> {
+        return new Promise<boolean>((resolve, reject)=> {
+            let current = this._stack.current || new State(null, null, null);
             if (h.widget instanceof jQuery) {
-                if (this.showPortlet(h, h.widget) && pushState !== StateType.NoPush) {
-                    this._stack.add(new State(link, h), h.pushState || pushState);
-                    resolve(true);
-                } else {
+                if (current.widget === h.widget) {
                     resolve(false);
+                    return;
                 }
-            } else if (link !== void 0) {
-                this.ajax({
-                    url: link, success: (data) => {
-                        let widget = $(data);
-                        let state = new State(link, h);
-                        this.showPortlet(h, widget);
-                        this.loadModuleByHandler(h, widget, state);
-                        this._stack.add(state, h.pushState || pushState);
+                current.check(event).then(()=> {
+                    this.showPortlet(h, h.widget);
+                    if (pushState !== StateType.NoPush) {
+                        this._stack.add(new State(link, h, h.widget), h.pushState || pushState);
                         resolve(true);
+                    } else {
+                        resolve(false);
                     }
+                }, ()=> {
+                    reject();
+                });
+
+            } else if (link !== void 0) {
+                current.check(event).then(()=> {
+                    this.ajax({
+                        url: link, success: (data) => {
+                            let widget = $(data);
+                            let state = new State(link, h, widget);
+                            this.showPortlet(h, widget);
+                            this.loadModuleByHandler(h, widget, state);
+                            this._stack.add(state, h.pushState || pushState);
+                            resolve(true);
+                        }
+                    });
+                }, ()=> {
+                    reject();
                 });
             } else {
                 reject();
             }
-        }));
+        });
     }
 
     /**
      * Go to link.
      * @param {string} link
      * @param {boolean} pushState
+     * @param {JQueryEventObject} event
      * @returns {boolean}
      */
-    static navigate(link:string, pushState:StateType = StateType.Push):Promise<boolean> {
+    static navigate(link:string, pushState:StateType = StateType.Push, event?:JQueryEventObject):Promise<boolean> {
         let h = this.findHandler(link);
         if (h && h.ajax !== false) {
-            return this.navigateByHandler(h, link, pushState);
+            return this.navigateByHandler(h, link, pushState, event);
         }
         return new Promise<boolean>((resolve, reject)=> reject());
     }
@@ -344,7 +407,6 @@ export class RabbitCMS {
 
         widget.appendTo(defaultTarget);
 
-        this.canSubmit.init();
         this.scrollTop();
         return true;
     }
@@ -648,56 +710,6 @@ export class RabbitCMS {
         });
     }
 
-    static canSubmit = {
-        _match: false,
-        init () {
-            this.form = _visiblePortlet.find('form');
-            this._match = false;
-
-            if (this.form.length)
-                this.initData = $('.form-change', this.form).serialize();
-        },
-        check (event) {
-            if (this.form.length)
-                this.saveData = $('.form-change', this.form).serialize();
-
-            if (this._match === true || !this.form.length || (this.initData === this.saveData))
-                return true;
-
-            var form = this.form;
-            var self = this;
-            require(['bootbox'], function (bootbox) {
-                bootbox.dialog({
-                    message: '<h4>Дані було змінено. Зберегти внесені зміни?</h4>',
-                    closeButton: false,
-                    buttons: {
-                        save: {
-                            label: 'Зберегти',
-                            className: 'btn-sm btn-success btn-green',
-                            callback: function () {
-                                form.submit();
-                            }
-                        },
-                        cancel: {
-                            label: 'Не зберігати',
-                            className: 'btn-sm btn-danger',
-                            callback: function () {
-                                self._match = true;
-                                $(event.target).trigger(event.type);
-                            }
-                        },
-                        close: {
-                            label: 'Закрити',
-                            className: 'btn-sm'
-                        }
-                    }
-                });
-            });
-
-            return false;
-        }
-    };
-
     /* all ajax methods */
     /**
      * @deprecated
@@ -711,7 +723,6 @@ export class RabbitCMS {
 
 
         this.ajaxPost(link, data, (data) => {
-            this.canSubmit._match = true;
             $('[rel="back"]:first', _visiblePortlet).trigger('click');
 
             if ($.isFunction(callback))
@@ -752,7 +763,7 @@ export class RabbitCMS {
                 case 401:
                     location.reload(true);
                     break;
-                case 503:
+                default:
                     let responseText;
                     try {
                         responseText = $.parseJSON(jqXHR.responseText);
@@ -761,8 +772,6 @@ export class RabbitCMS {
                     }
                     this.dangerMessage('Error: ' + jqXHR.status + '. ' + responseText.message, options.warningTarget);
                     break;
-                default:
-                    this.dangerMessage('Error: ' + jqXHR.status + '. ' + jqXHR.statusText, options.warningTarget);
             }
         };
 
@@ -904,23 +913,64 @@ export class Tools {
 export interface FormOptions {
     validation?:ValidationOptions;
     ajax?:AjaxSettings|boolean;
+    completeSubmit:()=>void;
     state?:State;
+    dialog?:BootboxDialogOptions|boolean
 }
 
 export class Form {
     private options:FormOptions;
     private form:JQuery;
     private data:string;
+    private match:boolean = false;
 
     constructor(form:JQuery, options?:FormOptions) {
         this.form = form;
         this.options = $.extend(true, {
-            validate: null
+            validate: null,
+            completeSubmit: ()=> {
+            }
         }, options);
 
-        if (options.state) {
-            options.state.addChecker(new Promise<void>((resolve, reject)=> {
-
+        if (this.options.state && this.options.dialog !== false) {
+            this.options.state.addChecker((event:JQueryEventObject)=>new Promise<void>((resolve, reject)=> {
+                if (!this.match && this.data !== this.getData()) {
+                    require(['bootbox'], (bootbox:BootboxStatic)=> {
+                        let dialog:BootboxDialogOptions = <BootboxDialogOptions>$.extend(true, <BootboxDialogOptions>{
+                            message: '<h4>Дані було змінено. Зберегти внесені зміни?</h4>',
+                            closeButton: false,
+                            buttons: {
+                                save: {
+                                    label: 'Зберегти',
+                                    className: 'btn-sm btn-success btn-green',
+                                    callback: ()=> {
+                                        this.form.submit();
+                                    }
+                                },
+                                cancel: {
+                                    label: 'Не зберігати',
+                                    className: 'btn-sm btn-danger',
+                                    callback: () => {
+                                        this.match = true;
+                                        console.log(event);
+                                        $(event.currentTarget).trigger(event);
+                                    }
+                                },
+                                close: {
+                                    label: 'Закрити',
+                                    className: 'btn-sm'
+                                }
+                            }
+                        }, this.options.dialog);
+                        bootbox.dialog(dialog);
+                    });
+                    reject();
+                    console.log('1.reject');
+                } else {
+                    this.match = false;
+                    resolve();
+                    console.log('1.resolve');
+                }
             }));
         }
 
@@ -936,14 +986,14 @@ export class Form {
                     },
                     errorPlacement() {
                     },
-                    submitHandler: (form:HTMLFormElement) => {
+                    submitHandler: () => {
                         this.submitForm();
                     }
                 }, this.options.validation);
                 form.validate(options);
             });
         } else {
-            form.on('submit', (e)=> {
+            form.on('submit', ()=> {
                 this.submitForm();
             });
         }
@@ -951,7 +1001,11 @@ export class Form {
     }
 
     syncOriginal() {
-        this.data = $('.form-change', this.form).serialize();
+        this.data = this.getData();
+    }
+
+    getData():string {
+        return $('input:not(.ignore-scan),select:not(.ignore-scan),textarea:not(.ignore-scan)', this.form).serialize();
     }
 
     submitForm() {
@@ -961,15 +1015,20 @@ export class Form {
                 url: this.form.attr('action'),
                 method: this.form.attr('method'),
                 data: this.data,
+                success: ()=> {
+                    if(!this.options.completeSubmit()){
+                        RabbitCMS.stack.back()
+                    }
+                }
             });
         } else {
             (<HTMLFormElement>this.form[0]).submit();
+            this.options.completeSubmit();
         }
     }
 }
 
 /* --- --- --- */
-
 
 export class MicroEvent {
     private _events = {};

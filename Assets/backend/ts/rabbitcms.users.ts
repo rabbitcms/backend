@@ -1,5 +1,5 @@
 import * as $ from "jquery";
-import {MicroEvent, RabbitCMS, State} from "rabbitcms.backend";
+import {MicroEvent, RabbitCMS, State, Form} from "rabbitcms.backend";
 import {DataTable} from "rabbitcms.datatable";
 
 class User extends MicroEvent {
@@ -32,25 +32,22 @@ class User extends MicroEvent {
      * @param {JQuery} portlet
      * @param {State} state
      */
-    form(portlet:JQuery,state:State) {
-        // state.addChecker(new Promise<void>((a,b)=>{
-        //     b();
-        //     a();
-        // }));
+    form(portlet:JQuery, state:State) {
         let $form = $('form', portlet);
         let _validationRules = {
             "user[email]": {required: true, email: true},
             "groups[]": {required: true}
         };
 
-        RabbitCMS.select2($('.select2', portlet));
-
         if ($form.data('type') !== 'update') {
             _validationRules["password"] = {required: true};
         }
 
-        RabbitCMS.validate($form, {
-            rules: _validationRules,
+        new Form($form, {
+            state: state,
+            validation: {
+                rules: _validationRules,
+            },
             completeSubmit: ()=> {
                 this.trigger('updated');
             },

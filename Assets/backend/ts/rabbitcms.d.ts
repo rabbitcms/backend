@@ -125,6 +125,29 @@ declare module "rabbitcms.backend" {
 
         trigger(event:string, ...args:any[]):void;
     }
+
+    export interface AjaxSettings extends JQueryAjaxSettings {
+        warningTarget?:JQuery;
+    }
+
+    export interface FormOptions {
+        validation?:ValidationOptions;
+        ajax?:AjaxSettings|boolean;
+        state?:State;
+        completeSubmit?:()=>void;
+    }
+
+    export class Form {
+        private options:FormOptions;
+        private form:JQuery;
+        private data:string;
+
+        constructor(form:JQuery, options?:FormOptions);
+
+        syncOriginal();
+
+        submitForm();
+    }
 }
 
 

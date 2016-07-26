@@ -1,6 +1,7 @@
 import * as $ from "jquery";
-import {MicroEvent, RabbitCMS} from "rabbitcms.backend";
+import {MicroEvent, RabbitCMS, Form, State} from "rabbitcms.backend";
 import {DataTable} from "rabbitcms.datatable";
+
 class Groups extends MicroEvent {
     table(portlet:JQuery) {
         var dataTable = new DataTable({
@@ -22,12 +23,13 @@ class Groups extends MicroEvent {
         });
     }
 
-    form(portlet:JQuery) {
+    form(portlet:JQuery, state:State) {
         var $form = $('form', portlet);
 
-        RabbitCMS.validate($form, {
-            rules: {
-                "groups[caption]": {required: true}
+        new Form($form, {
+            state: state,
+            validation: {
+                rules: {"groups[caption]": {required: true}}
             },
             completeSubmit: ()=> {
                 this.trigger('updated');
