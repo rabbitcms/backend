@@ -14,8 +14,8 @@ define(["require", "exports", "jquery", "i18n!rabbitcms/nls/backend", "jquery.co
             this.handler = handler;
             this.widget = widget;
         }
-        State.prototype.check = function (event) {
-            return Promise.all(this.checkers.map(function (a) { return a(event); }));
+        State.prototype.check = function (replay) {
+            return Promise.all(this.checkers.map(function (a) { return a(replay); }));
         };
         State.prototype.addChecker = function (checker) {
             this.checkers.push(checker);
@@ -40,34 +40,27 @@ define(["require", "exports", "jquery", "i18n!rabbitcms/nls/backend", "jquery.co
                 this.index = history.state.index;
                 console.log('index', this.index);
             }
-            $(window).on('prevstat', function (e) {
-                if (_this.index > e.index) {
-                    _this.back(e, _this.index - e.index);
-                }
-                else if (_this.index < e.index) {
-                    _this.back(e, e.index - _this.index);
-                }
-            });
             window.addEventListener('popstate', function (e) {
-                var event = _this.handleEvent;
                 _this.handleEvent = null;
                 if (e.state && e.state.index !== void 0) {
                     _this.index = history.state.index;
                 }
-                if (!event) {
-                    event = new $.Event('prevstat', {
-                        currentTarget: e.srcElement,
-                        index: _this.index
+                if (e.state && e.state.state !== void 0) {
+                    var index_1 = _this.index;
+                    _this.go(e.state.state, e.state.link, function () {
+                        if (_this.index > index_1) {
+                            history.back(_this.index - index_1);
+                        }
+                        else if (_this.index < index_1) {
+                            history.forward(index_1 - _this.index);
+                        }
                     });
                 }
-                if (e.state && e.state.state !== void 0) {
-                    _this.go(e.state.state, e.state.link, event);
-                }
                 else if (e.state && e.state.link) {
-                    RabbitCMS.navigate(e.state.link, StateType.NoPush, event);
+                    RabbitCMS.navigate(e.state.link, StateType.NoPush);
                 }
                 else {
-                    RabbitCMS.navigate(location.pathname, StateType.NoPush, event);
+                    RabbitCMS.navigate(location.pathname, StateType.NoPush);
                 }
             });
         }
@@ -85,14 +78,6 @@ define(["require", "exports", "jquery", "i18n!rabbitcms/nls/backend", "jquery.co
             enumerable: true,
             configurable: true
         });
-        Stack.prototype.back = function (event, distance) {
-            this.handleEvent = event;
-            history.back(distance);
-        };
-        Stack.prototype.forward = function (event, distance) {
-            this.handleEvent = event;
-            history.forward(distance);
-        };
         Stack.prototype.add = function (state, type) {
             if (type === void 0) { type = StateType.Push; }
             this.length = this._position + 1;
@@ -118,7 +103,7 @@ define(["require", "exports", "jquery", "i18n!rabbitcms/nls/backend", "jquery.co
             }
             return this[index];
         };
-        Stack.prototype.go = function (index, link, event) {
+        Stack.prototype.go = function (index, link, replay) {
             var _this = this;
             if (index === this._position && this.current.link === link) {
                 return;
@@ -126,7 +111,7 @@ define(["require", "exports", "jquery", "i18n!rabbitcms/nls/backend", "jquery.co
             var s = this.fetch(index);
             if (s && s.link == link) {
                 console.log(this._position);
-                RabbitCMS.navigateByHandler(s.handler, s.link, StateType.NoPush, event).then(function () {
+                RabbitCMS.navigateByHandler(s.handler, s.link, StateType.NoPush, replay).then(function () {
                     _this._position = index;
                 }, function () {
                     if (index > _this._position) {
@@ -138,13 +123,13 @@ define(["require", "exports", "jquery", "i18n!rabbitcms/nls/backend", "jquery.co
                 });
             }
             else {
-                RabbitCMS.navigate(link, StateType.Replace, event).then(function () {
+                RabbitCMS.navigate(link, StateType.Replace, replay).then(function () {
                 }, function () {
                     if (index > _this._position) {
-                        _this.back(event);
+                        history.back();
                     }
                     else {
-                        _this.forward(event);
+                        history.forward();
                     }
                 });
             }
@@ -154,13 +139,6 @@ define(["require", "exports", "jquery", "i18n!rabbitcms/nls/backend", "jquery.co
     var RabbitCMS = (function () {
         function RabbitCMS() {
         }
-        Object.defineProperty(RabbitCMS, "stack", {
-            get: function () {
-                return this._stack;
-            },
-            enumerable: true,
-            configurable: true
-        });
         RabbitCMS.init = function (options) {
             var _this = this;
             options = $.extend(true, {
@@ -180,15 +158,14 @@ define(["require", "exports", "jquery", "i18n!rabbitcms/nls/backend", "jquery.co
             var _this = this;
             $body = $('body');
             $body.on('click', '[rel="back"]', function (event) {
-                event.stopPropagation();
-                event.preventDefault();
                 if (history.state !== null) {
-                    _this._stack.back(event);
+                    history.back();
                 }
                 else {
                     var a = event.currentTarget;
-                    _this.navigate(a.pathname, StateType.NoPush, event);
+                    _this.navigate(a.pathname, StateType.NoPush);
                 }
+                return false;
             });
             $body.on('click', 'a', function (event) {
                 if ($(event.target).attr('rel') === 'back') {
@@ -198,7 +175,7 @@ define(["require", "exports", "jquery", "i18n!rabbitcms/nls/backend", "jquery.co
                 if (a.hostname != location.hostname) {
                     return true;
                 }
-                return !_this.navigate(a.pathname, StateType.Push, event);
+                return !_this.navigate(a.pathname, StateType.Push);
             });
             var link = location.pathname.length > 1 ? location.pathname.replace(/\/$/, '') : location.pathname;
             var handler = this.findHandler(link);
@@ -268,9 +245,12 @@ define(["require", "exports", "jquery", "i18n!rabbitcms/nls/backend", "jquery.co
                 });
             }
         };
-        RabbitCMS.navigateByHandler = function (h, link, pushState, event) {
+        RabbitCMS.navigateByHandler = function (h, link, pushState, replay) {
             var _this = this;
             if (pushState === void 0) { pushState = StateType.Push; }
+            if (!replay) {
+                replay = function () { return _this.navigateByHandler(h, link, pushState, replay); };
+            }
             return new Promise(function (resolve, reject) {
                 var current = _this._stack.current || new State(null, null, null);
                 if (h.widget instanceof jQuery) {
@@ -278,7 +258,7 @@ define(["require", "exports", "jquery", "i18n!rabbitcms/nls/backend", "jquery.co
                         resolve(false);
                         return;
                     }
-                    current.check(event).then(function () {
+                    current.check(replay).then(function () {
                         _this.showPortlet(h, h.widget);
                         if (pushState !== StateType.NoPush) {
                             _this._stack.add(new State(link, h, h.widget), h.pushState || pushState);
@@ -292,7 +272,7 @@ define(["require", "exports", "jquery", "i18n!rabbitcms/nls/backend", "jquery.co
                     });
                 }
                 else if (link !== void 0) {
-                    current.check(event).then(function () {
+                    current.check(replay).then(function () {
                         _this.ajax({
                             url: link, success: function (data) {
                                 var widget = $(data);
@@ -312,11 +292,11 @@ define(["require", "exports", "jquery", "i18n!rabbitcms/nls/backend", "jquery.co
                 }
             });
         };
-        RabbitCMS.navigate = function (link, pushState, event) {
+        RabbitCMS.navigate = function (link, pushState, replay) {
             if (pushState === void 0) { pushState = StateType.Push; }
             var h = this.findHandler(link);
             if (h && h.ajax !== false) {
-                return this.navigateByHandler(h, link, pushState, event);
+                return this.navigateByHandler(h, link, pushState, replay);
             }
             return new Promise(function (resolve, reject) { return reject(); });
         };
@@ -790,7 +770,7 @@ define(["require", "exports", "jquery", "i18n!rabbitcms/nls/backend", "jquery.co
                 }
             }, options);
             if (this.options.state && this.options.dialog !== false) {
-                this.options.state.addChecker(function (event) { return new Promise(function (resolve, reject) {
+                this.options.state.addChecker(function (replay) { return new Promise(function (resolve, reject) {
                     if (!_this.match && _this.data !== _this.getData()) {
                         require(['bootbox'], function (bootbox) {
                             var dialog = $.extend(true, {
@@ -809,8 +789,8 @@ define(["require", "exports", "jquery", "i18n!rabbitcms/nls/backend", "jquery.co
                                         className: 'btn-sm btn-danger',
                                         callback: function () {
                                             _this.match = true;
-                                            console.log(event);
-                                            $(event.currentTarget).trigger(event);
+                                            (replay || function () {
+                                            })();
                                         }
                                     },
                                     close: {
@@ -873,7 +853,7 @@ define(["require", "exports", "jquery", "i18n!rabbitcms/nls/backend", "jquery.co
                     data: this.data,
                     success: function () {
                         if (!_this.options.completeSubmit()) {
-                            RabbitCMS.stack.back();
+                            history.back();
                         }
                     }
                 });

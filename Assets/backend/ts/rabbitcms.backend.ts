@@ -14,6 +14,7 @@ var _currentWidget:JQuery;
 var _currentHandler:Handler;
 
 const defaultTarget = '.page-content';
+
 export interface RabbitCMSOptions {
     handlers?:Handler[];
     path?:string;
@@ -22,7 +23,7 @@ export interface RabbitCMSOptions {
 class State {
     link:string;
     handler:Handler;
-    checkers:((event?:JQueryEventObject)=>Promise<void>)[] = [];
+    checkers:((replay:ReplayFunc)=>Promise<void>)[] = [];
     widget:JQuery;
 
     constructor(link:string, handler:Handler, widget:JQuery) {
@@ -31,11 +32,11 @@ class State {
         this.widget = widget;
     }
 
-    public check(event?:JQueryEventObject):Promise<void[]> {
-        return Promise.all<void>(this.checkers.map((a)=>a(event)));
+    public check(replay:ReplayFunc):Promise<void[]> {
+        return Promise.all<void>(this.checkers.map((a)=>a(replay)));
     }
 
-    public addChecker(checker:(event:JQueryEventObject)=>Promise<void>) {
+    public addChecker(checker:(replay:ReplayFunc)=>Promise<void>) {
         this.checkers.push(checker);
     }
 }
@@ -46,8 +47,8 @@ enum StateType{
     Replace = 3
 }
 
-interface PrevStatEventObject extends JQueryEventObject {
-    index:number;
+interface ReplayFunc {
+    ():void;
 }
 
 class Stack extends Array<State> {
@@ -70,45 +71,27 @@ class Stack extends Array<State> {
             this.index = history.state.index;
             console.log('index', this.index);
         }
-        $(window).on('prevstat', (e:PrevStatEventObject)=> {
-            if (this.index > e.index) {
-                this.back(e, this.index - e.index);
-            } else if (this.index < e.index) {
-                this.back(e, e.index - this.index);
-            }
-        });
+
         window.addEventListener('popstate', (e:PopStateEvent) => {
-            var event = this.handleEvent;
             this.handleEvent = null;
             if (e.state && e.state.index !== void 0) {
                 this.index = history.state.index;
             }
-
-            if (!event) {
-                event = new $.Event('prevstat',{
-                    currentTarget:e.srcElement,
-                    index:this.index
-                });
-            }
-
             if (e.state && e.state.state !== void 0) {
-                this.go(e.state.state, e.state.link, event);
+                let index = this.index;
+                this.go(e.state.state, e.state.link, ()=> {
+                    if (this.index > index) {
+                        history.back(this.index - index);
+                    } else if (this.index < index) {
+                        history.forward(index - this.index);
+                    }
+                });
             } else if (e.state && e.state.link) {
-                RabbitCMS.navigate(e.state.link, StateType.NoPush, event);
+                RabbitCMS.navigate(e.state.link, StateType.NoPush);
             } else {
-                RabbitCMS.navigate(location.pathname, StateType.NoPush, event);
+                RabbitCMS.navigate(location.pathname, StateType.NoPush);
             }
         });
-    }
-
-    public back(event?:JQueryEventObject, distance?:any) {
-        this.handleEvent = event;
-        history.back(distance);
-    }
-
-    public forward(event?:JQueryEventObject, distance?:any) {
-        this.handleEvent = event;
-        history.forward(distance);
     }
 
     public add(state:State, type:StateType = StateType.Push):number {
@@ -140,14 +123,14 @@ class Stack extends Array<State> {
         return this[index];
     }
 
-    private go(index:number, link:string, event:JQueryEventObject) {
+    private go(index:number, link:string, replay:ReplayFunc) {
         if (index === this._position && this.current.link === link) {
             return;
         }
         let s:State = this.fetch(index);
         if (s && s.link == link) {
             console.log(this._position);
-            RabbitCMS.navigateByHandler(s.handler, s.link, StateType.NoPush, event).then(()=> {
+            RabbitCMS.navigateByHandler(s.handler, s.link, StateType.NoPush, replay).then(()=> {
                 this._position = index;
             }, ()=> {
                 if (index > this._position) {
@@ -157,13 +140,13 @@ class Stack extends Array<State> {
                 }
             });
         } else {
-            RabbitCMS.navigate(link, StateType.Replace, event).then(()=> {
+            RabbitCMS.navigate(link, StateType.Replace, replay).then(()=> {
                 //history.replaceState({state: this._position, link: this.current.link}, null, this.current.link);
             }, ()=> {
                 if (index > this._position) {
-                    this.back(event);
+                    history.back();
                 } else {
-                    this.forward(event);
+                    history.forward();
                 }
             });
         }
@@ -181,10 +164,6 @@ export class RabbitCMS {
     private static _path:string;
 
     private static _stack:Stack = new Stack();
-
-    static get stack():Stack{
-        return this._stack;
-    }
 
     /**
      * Init RabbitCMS backend.
@@ -211,17 +190,14 @@ export class RabbitCMS {
     static ready() {
         $body = $('body');
 
-
         $body.on('click', '[rel="back"]', (event:JQueryEventObject) => {
-            event.stopPropagation();
-            event.preventDefault();
-
             if (history.state !== null) {
-                this._stack.back(event);
+                history.back();
             } else {
                 let a:HTMLAnchorElement = <HTMLAnchorElement>event.currentTarget;
-                this.navigate(a.pathname, StateType.NoPush, event);
+                this.navigate(a.pathname, StateType.NoPush);
             }
+            return false;
         });
 
         $body.on('click', 'a', (event:JQueryEventObject) => {
@@ -235,7 +211,7 @@ export class RabbitCMS {
                 return true;
             }
 
-            return !this.navigate(a.pathname, StateType.Push, event);
+            return !this.navigate(a.pathname, StateType.Push);
         });
 
         let link = location.pathname.length > 1 ? location.pathname.replace(/\/$/, '') : location.pathname;
@@ -334,7 +310,10 @@ export class RabbitCMS {
         }
     }
 
-    static navigateByHandler(h:Handler, link:string, pushState:StateType = StateType.Push, event?:JQueryEventObject):Promise<boolean> {
+    static navigateByHandler(h:Handler, link:string, pushState:StateType = StateType.Push, replay:ReplayFunc):Promise<boolean> {
+        if (!replay) {
+            replay = ()=>this.navigateByHandler(h, link, pushState, replay);
+        }
         return new Promise<boolean>((resolve, reject)=> {
             let current = this._stack.current || new State(null, null, null);
             if (h.widget instanceof jQuery) {
@@ -342,7 +321,7 @@ export class RabbitCMS {
                     resolve(false);
                     return;
                 }
-                current.check(event).then(()=> {
+                current.check(replay).then(()=> {
                     this.showPortlet(h, h.widget);
                     if (pushState !== StateType.NoPush) {
                         this._stack.add(new State(link, h, h.widget), h.pushState || pushState);
@@ -355,7 +334,7 @@ export class RabbitCMS {
                 });
 
             } else if (link !== void 0) {
-                current.check(event).then(()=> {
+                current.check(replay).then(()=> {
                     this.ajax({
                         url: link, success: (data) => {
                             let widget = $(data);
@@ -379,13 +358,13 @@ export class RabbitCMS {
      * Go to link.
      * @param {string} link
      * @param {boolean} pushState
-     * @param {JQueryEventObject} event
+     * @param {ReplayFunc} replay
      * @returns {boolean}
      */
-    static navigate(link:string, pushState:StateType = StateType.Push, event?:JQueryEventObject):Promise<boolean> {
+    static navigate(link:string, pushState:StateType = StateType.Push, replay?:ReplayFunc):Promise<boolean> {
         let h = this.findHandler(link);
         if (h && h.ajax !== false) {
-            return this.navigateByHandler(h, link, pushState, event);
+            return this.navigateByHandler(h, link, pushState, replay);
         }
         return new Promise<boolean>((resolve, reject)=> reject());
     }
@@ -933,7 +912,7 @@ export class Form {
         }, options);
 
         if (this.options.state && this.options.dialog !== false) {
-            this.options.state.addChecker((event:JQueryEventObject)=>new Promise<void>((resolve, reject)=> {
+            this.options.state.addChecker((replay:()=>void)=>new Promise<void>((resolve, reject)=> {
                 if (!this.match && this.data !== this.getData()) {
                     require(['bootbox'], (bootbox:BootboxStatic)=> {
                         let dialog:BootboxDialogOptions = <BootboxDialogOptions>$.extend(true, <BootboxDialogOptions>{
@@ -952,8 +931,8 @@ export class Form {
                                     className: 'btn-sm btn-danger',
                                     callback: () => {
                                         this.match = true;
-                                        console.log(event);
-                                        $(event.currentTarget).trigger(event);
+                                        (replay || function () {
+                                        })();
                                     }
                                 },
                                 close: {
@@ -1016,8 +995,8 @@ export class Form {
                 method: this.form.attr('method'),
                 data: this.data,
                 success: ()=> {
-                    if(!this.options.completeSubmit()){
-                        RabbitCMS.stack.back()
+                    if (!this.options.completeSubmit()) {
+                        history.back();
                     }
                 }
             });
