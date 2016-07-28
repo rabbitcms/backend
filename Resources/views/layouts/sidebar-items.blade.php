@@ -1,5 +1,5 @@
 @foreach($items as $item)
-    <li class="nav-item @if($menu->isActiveMenu($item)) active open @endif">
+    <li data-path="{{$item['path']}}" class="nav-item @if($menu->isActiveMenu($item)) active open @endif">
         <a href="{{$item['url'] ?: 'javascript:;'}}" class="nav-link nav-toggle" @if(count($item['items']) === 0) rel="ajax-portlet" @endif>
             @if($item['icon'])
                 <i class="fa {{$item['icon']}}"></i>

@@ -55,7 +55,7 @@ class Backend
      *
      * @var string
      */
-    protected $active;
+    protected $activeMenu;
 
     /**
      * @var bool
@@ -333,7 +333,16 @@ class Backend
      */
     public function setActiveMenu(...$path)
     {
-        $this->active = implode('.', $path);
+        $this->activeMenu = implode('.', $path);
+    }
+
+    /**
+     * Get active path.
+     * @return string
+     */
+    public function getActiveMenu()
+    {
+        return $this->activeMenu;
     }
 
     /**
@@ -345,7 +354,7 @@ class Backend
      */
     public function isActiveMenu(array $item)
     {
-        return preg_match('/^' . preg_quote($item['path']) . '/', $this->active) != 0;
+        return preg_match('/^' . preg_quote($item['path']) . '/', $this->activeMenu) != 0;
     }
 
     /**
@@ -355,7 +364,7 @@ class Backend
      */
     public function getActiveMenuItems(array $prepend = [])
     {
-        $path = explode('.', $this->active);
+        $path = explode('.', $this->activeMenu);
         $items = $this->getMenu();
         $result = $prepend;
         while (count($path) > 0 && array_key_exists($path[0], $items)) {

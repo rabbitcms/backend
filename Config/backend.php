@@ -109,16 +109,34 @@ return [
         'groups' => [
             'module' => 'rabbitcms.groups',
             'exec' => 'table',
-            'permanent' => true
+            'permanent' => true,
+            'menuPath' => 'system.groups'
         ],
-        'groups\/create' => 'rabbitcms.groups:form',
-        'groups\/edit\/(\d+)' => 'rabbitcms.groups:form',
+        'groups\/create' => [
+            'module' => 'rabbitcms.groups',
+            'exec' => 'form',
+            'menuPath' => 'system.users'
+        ],
+        'groups\/edit\/(\d+)' => [
+            'module' => 'rabbitcms.groups',
+            'exec' => 'form',
+            'menuPath' => 'system.users'
+        ],
         'users' => [
             'module' => 'rabbitcms.users',
             'exec' => 'table',
-            'permanent' => true
+            'permanent' => true,
+            'menuPath' => 'system.users'
         ],
-        'users\/create' => 'rabbitcms.users:form',
-        'users\/edit\/(\d+)' => 'rabbitcms.users:form',
+        'users\/create' => [
+            'module' => 'rabbitcms.users',
+            'exec' => 'form',
+            'menuPath' => 'system.users'
+        ],
+        'users\/edit\/(\d+)' => [
+            'module' => 'rabbitcms.users',
+            'exec' => 'form',
+            'menuPath' => 'system.users'
+        ],
     ]
 ];
