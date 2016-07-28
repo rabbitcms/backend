@@ -303,6 +303,9 @@ define(["require", "exports", "jquery", "i18n!rabbitcms/nls/backend", "jquery.co
         RabbitCMS.showPortlet = function (h, widget) {
             if (_currentWidget == widget)
                 return false;
+            if (h.menuPath) {
+                this.setMenu(h.menuPath);
+            }
             if (_currentHandler && _currentWidget) {
                 if (_currentHandler.permanent) {
                     _currentHandler.widget = _currentWidget;
@@ -516,6 +519,16 @@ define(["require", "exports", "jquery", "i18n!rabbitcms/nls/backend", "jquery.co
                 e.preventDefault();
             });
         };
+        RabbitCMS.setMenu = function (menu) {
+            this.menu = menu;
+            console.log(menu);
+            $('li[data-path]', '.page-sidebar-menu').removeClass('active open').each(function (i, e) {
+                var el = $(e);
+                if ((menu + '.').startsWith($(e).data('path') + '.')) {
+                    el.addClass('active open');
+                }
+            });
+        };
         RabbitCMS.blockUI = function (target, options) {
             var _this = this;
             if (options === void 0) { options = {}; }
@@ -630,6 +643,10 @@ define(["require", "exports", "jquery", "i18n!rabbitcms/nls/backend", "jquery.co
                 }
             };
             options.complete = function (jqXHR, textStatus) {
+                var menu = jqXHR.getResponseHeader('X-Backend-Menu');
+                if (menu) {
+                    _this.setMenu(menu);
+                }
                 RabbitCMS.unblockUI();
                 if ($.isFunction(originalOptions.complete)) {
                     originalOptions.complete(jqXHR, textStatus);
@@ -670,6 +687,7 @@ define(["require", "exports", "jquery", "i18n!rabbitcms/nls/backend", "jquery.co
             });
         };
         RabbitCMS._stack = new Stack();
+        RabbitCMS.menu = '';
         RabbitCMS.Dialogs = {
             onDelete: function (link, callback) {
                 require(['bootbox'], function (bootbox) {

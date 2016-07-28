@@ -165,6 +165,8 @@ export class RabbitCMS {
 
     private static _stack:Stack = new Stack();
 
+    private static menu:string = '';
+
     /**
      * Init RabbitCMS backend.
      */
@@ -372,6 +374,9 @@ export class RabbitCMS {
     static showPortlet(h:Handler, widget:JQuery) {
         if (_currentWidget == widget)
             return false;
+        if (h.menuPath) {
+            this.setMenu(h.menuPath);
+        }
         if (_currentHandler && _currentWidget) {
             if (_currentHandler.permanent) {
                 _currentHandler.widget = _currentWidget;
@@ -623,6 +628,17 @@ export class RabbitCMS {
         });
     }
 
+    static setMenu(menu:string) {
+        this.menu = menu;
+        console.log(menu);
+        $('li[data-path]', '.page-sidebar-menu').removeClass('active open').each((i, e)=> {
+            let el = $(e);
+            if ((menu + '.').startsWith($(e).data('path') + '.')) {
+                el.addClass('active open');
+            }
+        });
+    }
+
     static blockUI(target?:JQuery|string, options:BlockUIOptions = {}) {
         require(['jquery.blockui'], ()=> {
             var html = '';
@@ -755,6 +771,10 @@ export class RabbitCMS {
         };
 
         options.complete = (jqXHR:JQueryXHR, textStatus:string):any => {
+            let menu = jqXHR.getResponseHeader('X-Backend-Menu');
+            if (menu) {
+                this.setMenu(menu);
+            }
             RabbitCMS.unblockUI();
             if ($.isFunction(originalOptions.complete)) {
                 originalOptions.complete(jqXHR, textStatus);
@@ -1053,6 +1073,7 @@ export interface Handler {
     pushState?:StateType;
     permanent?:boolean;
     widget?:JQuery;
+    menuPath?:string;
 }
 
 export interface BlockUIOptions {
