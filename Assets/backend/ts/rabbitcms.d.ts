@@ -203,6 +203,11 @@ declare module "i18n!rabbitcms/nls/backend" {
     var _default:{
         pageNotFound:string;
         accessDenied:string;
+
+        save:string;
+        dontSave:string;
+        close:string;
+        dataHasBeenModified:string;
     };
     export = _default;
 }

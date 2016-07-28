@@ -933,18 +933,18 @@ export class Form {
                 if (!this.match && this.data !== this.getData()) {
                     require(['bootbox'], (bootbox:BootboxStatic)=> {
                         let dialog:BootboxDialogOptions = <BootboxDialogOptions>$.extend(true, <BootboxDialogOptions>{
-                            message: '<h4>Дані було змінено. Зберегти внесені зміни?</h4>',
+                            message: '<h4>'+i18n.dataHasBeenModified+'</h4>',
                             closeButton: false,
                             buttons: {
                                 save: {
-                                    label: 'Зберегти',
+                                    label: i18n.save,
                                     className: 'btn-sm btn-success btn-green',
                                     callback: ()=> {
                                         this.form.submit();
                                     }
                                 },
                                 cancel: {
-                                    label: 'Не зберігати',
+                                    label: i18n.dontSave,
                                     className: 'btn-sm btn-danger',
                                     callback: () => {
                                         this.match = true;
@@ -953,7 +953,7 @@ export class Form {
                                     }
                                 },
                                 close: {
-                                    label: 'Закрити',
+                                    label: i18n.close,
                                     className: 'btn-sm'
                                 }
                             }

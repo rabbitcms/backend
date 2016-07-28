@@ -787,18 +787,18 @@ define(["require", "exports", "jquery", "i18n!rabbitcms/nls/backend", "jquery.co
                     if (!_this.match && _this.data !== _this.getData()) {
                         require(['bootbox'], function (bootbox) {
                             var dialog = $.extend(true, {
-                                message: '<h4>Дані було змінено. Зберегти внесені зміни?</h4>',
+                                message: '<h4>' + i18n.dataHasBeenModified + '</h4>',
                                 closeButton: false,
                                 buttons: {
                                     save: {
-                                        label: 'Зберегти',
+                                        label: i18n.save,
                                         className: 'btn-sm btn-success btn-green',
                                         callback: function () {
                                             _this.form.submit();
                                         }
                                     },
                                     cancel: {
-                                        label: 'Не зберігати',
+                                        label: i18n.dontSave,
                                         className: 'btn-sm btn-danger',
                                         callback: function () {
                                             _this.match = true;
@@ -807,7 +807,7 @@ define(["require", "exports", "jquery", "i18n!rabbitcms/nls/backend", "jquery.co
                                         }
                                     },
                                     close: {
-                                        label: 'Закрити',
+                                        label: i18n.close,
                                         className: 'btn-sm'
                                     }
                                 }
