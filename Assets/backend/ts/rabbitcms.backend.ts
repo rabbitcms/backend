@@ -20,7 +20,7 @@ export interface RabbitCMSOptions {
     path?:string;
 }
 
-class State {
+export class State {
     link:string;
     handler:Handler;
     checkers:((replay:ReplayFunc)=>Promise<void>)[] = [];
@@ -40,14 +40,15 @@ class State {
         this.checkers.push(checker);
     }
 }
-enum StateType{
+
+export enum StateType{
     NoPush = 0,
     None = 1,
     Push = 2,
     Replace = 3
 }
 
-interface ReplayFunc {
+export interface ReplayFunc {
     ():void;
 }
 
@@ -80,11 +81,7 @@ class Stack extends Array<State> {
             if (e.state && e.state.state !== void 0) {
                 let index = this.index;
                 this.go(e.state.state, e.state.link, ()=> {
-                    if (this.index > index) {
-                        history.back(this.index - index);
-                    } else if (this.index < index) {
-                        history.forward(index - this.index);
-                    }
+                    history.go(index - this.index);
                 });
             } else if (e.state && e.state.link) {
                 RabbitCMS.navigate(e.state.link, StateType.NoPush);
@@ -271,7 +268,7 @@ export class RabbitCMS {
 
     static getToken():string {
         return _token;
-    };
+    }
 
     static loadModuleByHandler(handler:Handler, widget:JQuery, state:State):void {
         if (widget.data('loaded')) {

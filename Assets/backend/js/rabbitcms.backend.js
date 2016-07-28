@@ -22,13 +22,14 @@ define(["require", "exports", "jquery", "i18n!rabbitcms/nls/backend", "jquery.co
         };
         return State;
     }());
-    var StateType;
+    exports.State = State;
     (function (StateType) {
         StateType[StateType["NoPush"] = 0] = "NoPush";
         StateType[StateType["None"] = 1] = "None";
         StateType[StateType["Push"] = 2] = "Push";
         StateType[StateType["Replace"] = 3] = "Replace";
-    })(StateType || (StateType = {}));
+    })(exports.StateType || (exports.StateType = {}));
+    var StateType = exports.StateType;
     var Stack = (function (_super) {
         __extends(Stack, _super);
         function Stack() {
@@ -48,12 +49,7 @@ define(["require", "exports", "jquery", "i18n!rabbitcms/nls/backend", "jquery.co
                 if (e.state && e.state.state !== void 0) {
                     var index_1 = _this.index;
                     _this.go(e.state.state, e.state.link, function () {
-                        if (_this.index > index_1) {
-                            history.back(_this.index - index_1);
-                        }
-                        else if (_this.index < index_1) {
-                            history.forward(index_1 - _this.index);
-                        }
+                        history.go(index_1 - _this.index);
                     });
                 }
                 else if (e.state && e.state.link) {
@@ -210,7 +206,6 @@ define(["require", "exports", "jquery", "i18n!rabbitcms/nls/backend", "jquery.co
         RabbitCMS.getToken = function () {
             return _token;
         };
-        ;
         RabbitCMS.loadModuleByHandler = function (handler, widget, state) {
             if (widget.data('loaded')) {
                 return;
