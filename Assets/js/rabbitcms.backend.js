@@ -469,7 +469,7 @@ define(['jquery', 'bootbox'], function ($, bootbox) {
                         label: 'Так',
                         className: 'btn-sm btn-success',
                         callback: function () {
-                            _this.ajaxPost(link, {}, function () {
+                            _this.ajaxPost(link, {_token: _TOKEN}, function () {
                                 if ($.isFunction(callback))
                                     callback();
                             });
