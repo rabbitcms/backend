@@ -196,7 +196,7 @@ export class RabbitCMS {
             return false;
         });
 
-        $body.on('click', 'a', (event:JQueryEventObject) => {
+        $body.on('click', 'a:not([href^="#"])', (event:JQueryEventObject) => {
             if ($(event.target).attr('rel') === 'back') {
                 return false;
             }

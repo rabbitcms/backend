@@ -70,14 +70,7 @@ declare module "rabbitcms/backend" {
         static setMenu(menu: string): void;
         static blockUI(target?: JQuery | string, options?: BlockUIOptions): void;
         static unblockUI(target?: any): void;
-        static submitForm(form: any, callback: any): void;
-        static ajaxPost(link: string, data: Object, callback: any): void;
         static ajax(options: AjaxSettings): void;
-        static validate(form: JQuery, options?: ValidationOptions): void;
-        static Dialogs: {
-            onDelete: (link: any, callback: any) => void;
-            onConfirm: (message: any, callback: any) => void;
-        };
         static select2(selector: JQuery, options?: Select2Options): void;
     }
     export class Tools {

@@ -17,9 +17,9 @@ define(["require", "exports", "jquery", "rabbitcms/backend", "rabbitcms/datatabl
             });
             portlet.on('click', '[rel="destroy"]', function (e) {
                 e.preventDefault();
-                backend_1.RabbitCMS.Dialogs.onDelete($(e.target).attr('href'), function () {
-                    dataTable.submitFilter();
-                });
+                backend_1.Dialogs.onDelete({
+                    url: $(e.currentTarget).attr('href')
+                }).then(function () { return dataTable.submitFilter(); });
             });
         };
         Groups.prototype.form = function (portlet, state) {
@@ -34,44 +34,16 @@ define(["require", "exports", "jquery", "rabbitcms/backend", "rabbitcms/datatabl
                     _this.trigger('updated');
                 }
             });
-            portlet.on('change', '.write-rule', function () {
-                if ($(this).is(':checked')) {
-                    $(this).parents('tr').find('.read-rule').prop('checked', true);
-                }
-            });
-            portlet.on('change', '.read-rule', function () {
-                var _write = $(this).parents('tr').find('.write-rule');
-                if (_write.is(':checked')) {
-                    $(this).prop('checked', true);
-                }
-            });
-            portlet.on('change', '.module-read-rule', function () {
-                var _module = $(this).data('module');
-                var _write = $(this).parents('tr').find('.module-write-rule');
-                if (_write.is(':checked')) {
-                    $(this).prop('checked', true);
-                }
-                $('.' + _module + '.read-rule').prop('checked', $(this).prop('checked')).trigger('change');
-            });
-            portlet.on('change', '.module-write-rule', function () {
-                var _module = $(this).data('module');
-                if ($(this).is(':checked')) {
-                    $(this).parents('tr').find('.module-read-rule').prop('checked', true);
-                }
-                $('.' + _module + '.write-rule').prop('checked', $(this).prop('checked')).trigger('change');
-            });
             if ($form.data('type') == 'update') {
                 var dataTable_1 = new datatable_1.DataTable({
-                    src: $('.data-table', portlet),
-                    dataTable: {
-                        ordering: false
-                    }
+                    src: $('.data-table', portlet)
                 });
                 portlet.on('click', '[rel="destroy"]', function (e) {
                     e.preventDefault();
-                    backend_1.RabbitCMS.Dialogs.onDelete($(e.target).attr('href'), function () {
-                        dataTable_1.submitFilter();
-                    });
+                    backend_1.Dialogs.onDelete({
+                        url: $(e.currentTarget).attr('href'),
+                        method: 'POST'
+                    }).then(function () { return dataTable_1.submitFilter(); });
                 });
             }
         };

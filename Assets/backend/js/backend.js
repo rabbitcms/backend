@@ -159,7 +159,7 @@ define(["require", "exports", "jquery", "i18n!rabbitcms/nls/backend", "jquery.co
                 }
                 return false;
             });
-            $body.on('click', 'a', function (event) {
+            $body.on('click', 'a:not([href^="#"])', function (event) {
                 if ($(event.target).attr('rel') === 'back') {
                     return false;
                 }
