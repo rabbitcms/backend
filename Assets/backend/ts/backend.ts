@@ -164,6 +164,8 @@ export class RabbitCMS {
 
     private static menu:string = '';
 
+    private static _locale:string = 'en';
+
     /**
      * Init RabbitCMS backend.
      */
@@ -270,6 +272,23 @@ export class RabbitCMS {
         return _token;
     }
 
+    /**
+     * Set current locale.
+     * @param {string} locale
+     */
+    static setLocale(locale:string) {
+        this._locale = locale;
+    }
+
+    /**
+     * Get current locale.
+     * @param {Map<string,string>}map
+     * @returns {string}
+     */
+    static getLocale(map?:Map<string,string>):string {
+        return map && map.has(this._locale) ? map.get(this._locale) : this._locale;
+    }
+
     static loadModuleByHandler(handler:Handler, widget:JQuery, state:State):void {
         if (widget.data('loaded')) {
             return;
@@ -331,7 +350,6 @@ export class RabbitCMS {
                 }, ()=> {
                     reject();
                 });
-
             } else if (link !== void 0) {
                 current.check(replay).then(()=> {
                     this.ajax({
@@ -566,9 +584,7 @@ export class RabbitCMS {
     static updatePlugins(target?:JQuery) {
         let select2 = $('.select2', target);
         if (select2.length) {
-            require(['select2'], ()=> {
-                select2.select2();
-            });
+            this.select2(select2);
         }
     }
 
@@ -789,15 +805,6 @@ export class RabbitCMS {
      */
     static validate(form:JQuery, options?:ValidationOptions):void {
         options = $.extend(true, {
-            focusInvalid: true,
-            highlight (element:HTMLElement) {
-                $(element).closest('.form-group').addClass('has-error');
-            },
-            unhighlight(element:HTMLElement) {
-                $(element).closest('.form-group').removeClass('has-error');
-            },
-            errorPlacement() {
-            },
             submitHandler: (form:HTMLFormElement) => {
                 this.submitForm(form, options.completeSubmit);
             },
@@ -858,10 +865,8 @@ export class RabbitCMS {
     };
 
     static select2(selector:JQuery, options:Select2Options = {}) {
-        require(['select2'], function () {
-            $.fn.select2.defaults.set("theme", "bootstrap");
-            options.allowClear = true;
-            options.width = 'auto';
+        require(['rabbitcms/loader/jquery.select2'], function () {
+
             selector.select2(options);
         });
     }
@@ -933,7 +938,7 @@ export class Form {
                 if (!this.match && this.data !== this.getData()) {
                     require(['bootbox'], (bootbox:BootboxStatic)=> {
                         let dialog:BootboxDialogOptions = <BootboxDialogOptions>$.extend(true, <BootboxDialogOptions>{
-                            message: '<h4>'+i18n.dataHasBeenModified+'</h4>',
+                            message: '<h4>' + i18n.dataHasBeenModified + '</h4>',
                             closeButton: false,
                             buttons: {
                                 save: {
@@ -971,17 +976,8 @@ export class Form {
         }
 
         if (this.options.validation !== false) {
-            require(['jquery.validation'], ()=> {
+            require(['rabbitcms/loader/validation'], ()=> {
                 let options = $.extend(true, {
-                    focusInvalid: true,
-                    highlight (element:HTMLElement) {
-                        $(element).closest('.form-group').addClass('has-error');
-                    },
-                    unhighlight(element:HTMLElement) {
-                        $(element).closest('.form-group').removeClass('has-error');
-                    },
-                    errorPlacement() {
-                    },
                     submitHandler: () => {
                         this.submitForm();
                     }

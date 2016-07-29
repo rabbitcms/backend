@@ -1,6 +1,6 @@
 import * as $ from "jquery";
-import {MicroEvent, RabbitCMS, State, Form} from "rabbitcms.backend";
-import {DataTable} from "rabbitcms.datatable";
+import {MicroEvent, RabbitCMS, State, Form} from "rabbitcms/backend";
+import {DataTable} from "rabbitcms/datatable";
 
 class User extends MicroEvent {
     /**

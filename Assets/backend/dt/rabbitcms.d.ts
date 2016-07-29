@@ -1,5 +1,6 @@
 /// <reference path="../../../typings/index.d.ts" />
-
+declare module "select2" {}
+declare module "jquery.select2" {}
 declare module DataTables {
     interface LanguagePaginateSettings {
         page:string;
@@ -7,7 +8,7 @@ declare module DataTables {
     }
 }
 
-declare module "rabbitcms.backend" {
+declare module "rabbitcms/backend" {
     export interface RabbitCMSOptions {
         handlers?: Handler[];
         path?: string;
@@ -41,7 +42,8 @@ declare module "rabbitcms.backend" {
         static ready(): void;
         static findHandler(link: string): Handler;
         static setPath(path: string): void;
-        static getPath(): string;
+        static getPath(): string
+        static getLocale(map?:Map<string,string>):string;
         static setToken(value: string): void;
         static getToken(): string;
         static loadModuleByHandler(handler: Handler, widget: JQuery, state: State): void;
@@ -131,7 +133,7 @@ declare module "rabbitcms.backend" {
 }
 
 
-declare module "rabbitcms.datatable" {
+declare module "rabbitcms/datatable" {
 
     export interface DataTableOptions {
         dataTable?:DataTables.Settings;

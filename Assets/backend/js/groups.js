@@ -1,4 +1,4 @@
-define(["require", "exports", "jquery", "rabbitcms.backend", "rabbitcms.datatable"], function (require, exports, $, rabbitcms_backend_1, rabbitcms_datatable_1) {
+define(["require", "exports", "jquery", "rabbitcms/backend", "rabbitcms/datatable"], function (require, exports, $, backend_1, datatable_1) {
     "use strict";
     var Groups = (function (_super) {
         __extends(Groups, _super);
@@ -6,7 +6,7 @@ define(["require", "exports", "jquery", "rabbitcms.backend", "rabbitcms.datatabl
             _super.apply(this, arguments);
         }
         Groups.prototype.table = function (portlet) {
-            var dataTable = new rabbitcms_datatable_1.DataTable({
+            var dataTable = new datatable_1.DataTable({
                 src: $('.data-table', portlet),
                 dataTable: {
                     ordering: false
@@ -17,7 +17,7 @@ define(["require", "exports", "jquery", "rabbitcms.backend", "rabbitcms.datatabl
             });
             portlet.on('click', '[rel="destroy"]', function (e) {
                 e.preventDefault();
-                rabbitcms_backend_1.RabbitCMS.Dialogs.onDelete($(e.target).attr('href'), function () {
+                backend_1.RabbitCMS.Dialogs.onDelete($(e.target).attr('href'), function () {
                     dataTable.submitFilter();
                 });
             });
@@ -25,7 +25,7 @@ define(["require", "exports", "jquery", "rabbitcms.backend", "rabbitcms.datatabl
         Groups.prototype.form = function (portlet, state) {
             var _this = this;
             var $form = $('form', portlet);
-            new rabbitcms_backend_1.Form($form, {
+            new backend_1.Form($form, {
                 state: state,
                 validation: {
                     rules: { "groups[caption]": { required: true } }
@@ -61,7 +61,7 @@ define(["require", "exports", "jquery", "rabbitcms.backend", "rabbitcms.datatabl
                 $('.' + _module + '.write-rule').prop('checked', $(this).prop('checked')).trigger('change');
             });
             if ($form.data('type') == 'update') {
-                var dataTable_1 = new rabbitcms_datatable_1.DataTable({
+                var dataTable_1 = new datatable_1.DataTable({
                     src: $('.data-table', portlet),
                     dataTable: {
                         ordering: false
@@ -69,14 +69,14 @@ define(["require", "exports", "jquery", "rabbitcms.backend", "rabbitcms.datatabl
                 });
                 portlet.on('click', '[rel="destroy"]', function (e) {
                     e.preventDefault();
-                    rabbitcms_backend_1.RabbitCMS.Dialogs.onDelete($(e.target).attr('href'), function () {
+                    backend_1.RabbitCMS.Dialogs.onDelete($(e.target).attr('href'), function () {
                         dataTable_1.submitFilter();
                     });
                 });
             }
         };
         return Groups;
-    }(rabbitcms_backend_1.MicroEvent));
+    }(backend_1.MicroEvent));
     return new Groups();
 });
-//# sourceMappingURL=rabbitcms.groups.js.map
+//# sourceMappingURL=groups.js.map

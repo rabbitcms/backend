@@ -1,6 +1,6 @@
 @extends(\Request::ajax() ? 'backend::layouts.empty' : 'backend::layouts.master')
 @section('content')
-    <div class="portlet box blue-hoki ajax-portlet" data-require="rabbitcms.users:form">
+    <div class="portlet box blue-hoki ajax-portlet" data-require="rabbitcms/users:form">
         <div class="portlet-title">
             <div class="caption">
                 {{$model->exists ? trans('backend::common.edit_user') : trans('backend::common.create_user')}}</div>

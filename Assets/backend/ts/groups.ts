@@ -1,6 +1,6 @@
 import * as $ from "jquery";
-import {MicroEvent, RabbitCMS, Form, State} from "rabbitcms.backend";
-import {DataTable} from "rabbitcms.datatable";
+import {MicroEvent, RabbitCMS, Form, State} from "rabbitcms/backend";
+import {DataTable} from "rabbitcms/datatable";
 
 class Groups extends MicroEvent {
     table(portlet:JQuery) {

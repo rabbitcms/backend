@@ -1,4 +1,4 @@
-define(["require", "exports", "jquery", "rabbitcms.backend", "rabbitcms.datatable"], function (require, exports, $, rabbitcms_backend_1, rabbitcms_datatable_1) {
+define(["require", "exports", "jquery", "rabbitcms/backend", "rabbitcms/datatable"], function (require, exports, $, backend_1, datatable_1) {
     "use strict";
     var User = (function (_super) {
         __extends(User, _super);
@@ -6,7 +6,7 @@ define(["require", "exports", "jquery", "rabbitcms.backend", "rabbitcms.datatabl
             _super.apply(this, arguments);
         }
         User.prototype.table = function (portlet) {
-            var dataTable = new rabbitcms_datatable_1.DataTable({
+            var dataTable = new datatable_1.DataTable({
                 src: $('.data-table', portlet),
                 dataTable: {
                     ordering: false
@@ -17,7 +17,7 @@ define(["require", "exports", "jquery", "rabbitcms.backend", "rabbitcms.datatabl
             });
             portlet.on('click', '[rel="destroy"]', function (e) {
                 e.preventDefault();
-                rabbitcms_backend_1.RabbitCMS.Dialogs.onDelete($(e.target).attr('href'), function () {
+                backend_1.RabbitCMS.Dialogs.onDelete($(e.target).attr('href'), function () {
                     dataTable.submitFilter();
                 });
             });
@@ -32,7 +32,7 @@ define(["require", "exports", "jquery", "rabbitcms.backend", "rabbitcms.datatabl
             if ($form.data('type') !== 'update') {
                 _validationRules["password"] = { required: true };
             }
-            new rabbitcms_backend_1.Form($form, {
+            new backend_1.Form($form, {
                 state: state,
                 validation: {
                     rules: _validationRules,
@@ -43,7 +43,7 @@ define(["require", "exports", "jquery", "rabbitcms.backend", "rabbitcms.datatabl
             });
         };
         return User;
-    }(rabbitcms_backend_1.MicroEvent));
+    }(backend_1.MicroEvent));
     return new User();
 });
-//# sourceMappingURL=rabbitcms.users.js.map
+//# sourceMappingURL=users.js.map

@@ -206,6 +206,12 @@ define(["require", "exports", "jquery", "i18n!rabbitcms/nls/backend", "jquery.co
         RabbitCMS.getToken = function () {
             return _token;
         };
+        RabbitCMS.setLocale = function (locale) {
+            this._locale = locale;
+        };
+        RabbitCMS.getLocale = function (map) {
+            return map && map.has(this._locale) ? map.get(this._locale) : this._locale;
+        };
         RabbitCMS.loadModuleByHandler = function (handler, widget, state) {
             if (widget.data('loaded')) {
                 return;
@@ -465,9 +471,7 @@ define(["require", "exports", "jquery", "i18n!rabbitcms/nls/backend", "jquery.co
         RabbitCMS.updatePlugins = function (target) {
             var select2 = $('.select2', target);
             if (select2.length) {
-                require(['select2'], function () {
-                    select2.select2();
-                });
+                this.select2(select2);
             }
         };
         RabbitCMS.initSidebar = function () {
@@ -653,15 +657,6 @@ define(["require", "exports", "jquery", "i18n!rabbitcms/nls/backend", "jquery.co
         RabbitCMS.validate = function (form, options) {
             var _this = this;
             options = $.extend(true, {
-                focusInvalid: true,
-                highlight: function (element) {
-                    $(element).closest('.form-group').addClass('has-error');
-                },
-                unhighlight: function (element) {
-                    $(element).closest('.form-group').removeClass('has-error');
-                },
-                errorPlacement: function () {
-                },
                 submitHandler: function (form) {
                     _this.submitForm(form, options.completeSubmit);
                 },
@@ -674,15 +669,13 @@ define(["require", "exports", "jquery", "i18n!rabbitcms/nls/backend", "jquery.co
         };
         RabbitCMS.select2 = function (selector, options) {
             if (options === void 0) { options = {}; }
-            require(['select2'], function () {
-                $.fn.select2.defaults.set("theme", "bootstrap");
-                options.allowClear = true;
-                options.width = 'auto';
+            require(['rabbitcms/loader/jquery.select2'], function () {
                 selector.select2(options);
             });
         };
         RabbitCMS._stack = new Stack();
         RabbitCMS.menu = '';
+        RabbitCMS._locale = 'en';
         RabbitCMS.Dialogs = {
             onDelete: function (link, callback) {
                 require(['bootbox'], function (bootbox) {
@@ -825,17 +818,8 @@ define(["require", "exports", "jquery", "i18n!rabbitcms/nls/backend", "jquery.co
                 }); });
             }
             if (this.options.validation !== false) {
-                require(['jquery.validation'], function () {
+                require(['rabbitcms/loader/validation'], function () {
                     var options = $.extend(true, {
-                        focusInvalid: true,
-                        highlight: function (element) {
-                            $(element).closest('.form-group').addClass('has-error');
-                        },
-                        unhighlight: function (element) {
-                            $(element).closest('.form-group').removeClass('has-error');
-                        },
-                        errorPlacement: function () {
-                        },
                         submitHandler: function () {
                             _this.submitForm();
                         }
@@ -916,4 +900,4 @@ define(["require", "exports", "jquery", "i18n!rabbitcms/nls/backend", "jquery.co
     }());
     exports.MicroEvent = MicroEvent;
 });
-//# sourceMappingURL=rabbitcms.backend.js.map
+//# sourceMappingURL=backend.js.map

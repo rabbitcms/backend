@@ -3,7 +3,7 @@
 import * as $ from "jquery";
 import "jquery.backstretch";
 import "jquery.validation";
-import {RabbitCMS} from "rabbitcms.backend";
+import {RabbitCMS} from "rabbitcms/backend";
 
 export function init(portlet) {
     var _imgPath = RabbitCMS.getPath()+'/img/bg/';

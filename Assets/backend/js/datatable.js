@@ -1,11 +1,11 @@
-define(["require", "exports", "jquery", "rabbitcms.backend", "i18n!rabbitcms/nls/datatable", "datatables.net", "datatables.net-bt"], function (require, exports, $, rabbitcms_backend_1, i18n) {
+define(["require", "exports", "jquery", "rabbitcms/backend", "i18n!rabbitcms/nls/datatable", "datatables.net", "datatables.net-bt"], function (require, exports, $, backend_1, i18n) {
     "use strict";
     var DataTable = (function () {
         function DataTable(options) {
             var _this = this;
             this.tableInitialized = false;
             this.ajaxParams = {};
-            this.setAjaxParam('_token', rabbitcms_backend_1.RabbitCMS.getToken());
+            this.setAjaxParam('_token', backend_1.RabbitCMS.getToken());
             options = $.extend(true, {
                 src: "",
                 filterApplyAction: "filter",
@@ -33,7 +33,7 @@ define(["require", "exports", "jquery", "rabbitcms.backend", "i18n!rabbitcms/nls
                             $.each(_this.ajaxParams, function (key, value) {
                                 data[key] = value;
                             });
-                            rabbitcms_backend_1.RabbitCMS.blockUI(_this.tableContainer, {
+                            backend_1.RabbitCMS.blockUI(_this.tableContainer, {
                                 message: _this.tableOptions.loadingMessage,
                                 overlayColor: 'none',
                                 cenrerY: true,
@@ -42,7 +42,7 @@ define(["require", "exports", "jquery", "rabbitcms.backend", "i18n!rabbitcms/nls
                         },
                         dataSrc: function (res) {
                             if (res.customActionMessage) {
-                                rabbitcms_backend_1.RabbitCMS.alert({
+                                backend_1.RabbitCMS.alert({
                                     type: (res.customActionStatus == 'OK' ? 'success' : 'danger'),
                                     icon: (res.customActionStatus == 'OK' ? 'check' : 'warning'),
                                     message: res.customActionMessage,
@@ -61,21 +61,21 @@ define(["require", "exports", "jquery", "rabbitcms.backend", "i18n!rabbitcms/nls
                             if (_this.tableOptions.onSuccess) {
                                 _this.tableOptions.onSuccess.call(undefined, _this, res);
                             }
-                            rabbitcms_backend_1.RabbitCMS.unblockUI(_this.tableContainer);
+                            backend_1.RabbitCMS.unblockUI(_this.tableContainer);
                             return res.data;
                         },
                         error: function () {
                             if (_this.tableOptions.onError) {
                                 _this.tableOptions.onError.call(undefined, _this);
                             }
-                            rabbitcms_backend_1.RabbitCMS.alert({
+                            backend_1.RabbitCMS.alert({
                                 type: 'danger',
                                 icon: 'warning',
                                 message: i18n.ajaxRequestGeneralError,
                                 container: _this.tableWrapper,
                                 place: 'prepend'
                             });
-                            rabbitcms_backend_1.RabbitCMS.unblockUI(_this.tableContainer);
+                            backend_1.RabbitCMS.unblockUI(_this.tableContainer);
                         }
                     },
                     drawCallback: function () {
@@ -164,7 +164,7 @@ define(["require", "exports", "jquery", "rabbitcms.backend", "i18n!rabbitcms/nls
                 $(this).prop("checked", false);
             });
             this.clearAjaxParams();
-            this.setAjaxParam('_token', rabbitcms_backend_1.RabbitCMS.getToken());
+            this.setAjaxParam('_token', backend_1.RabbitCMS.getToken());
             this.addAjaxParam("action", this.tableOptions.filterCancelAction);
             this.dataTable.ajax.reload();
         };
@@ -214,4 +214,4 @@ define(["require", "exports", "jquery", "rabbitcms.backend", "i18n!rabbitcms/nls
     }());
     exports.DataTable = DataTable;
 });
-//# sourceMappingURL=rabbitcms.datatable.js.map
+//# sourceMappingURL=datatable.js.map

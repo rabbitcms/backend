@@ -49,8 +49,9 @@
                     locale: "{{str_replace('_','-',Lang::getLocale())}}"
             }}
         });
-        require(["jquery", "rabbitcms.backend"], function ($, rbc) {
+        require(["jquery", "rabbitcms/backend"], function ($, rbc) {
             rbc.RabbitCMS.setPath('{{asset_module('backend','backend')}}');
+            rbc.RabbitCMS.setLocale('{{\Lang::getLocale()}}');
             rbc.RabbitCMS.setToken('{{csrf_token()}}');
             $('body').removeClass('loading');
         });

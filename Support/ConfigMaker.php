@@ -22,11 +22,12 @@ class ConfigMaker
             'baseUrl' => rtrim($baseUrl, '/') . '/',
             'shim' => [],
             'bundles' => [],
-            'paths' => []
+            'paths' => [],
+            'packages' => []
         ];
         $opts = [
-            'path'=>asset_module("backend","backend"),
-            'handlers'=> []
+            'path' => asset_module("backend", "backend"),
+            'handlers' => []
         ];
         $prefix = $cfg->get('module.backend.path');
         $dir = public_path('backend');
@@ -64,25 +65,36 @@ class ConfigMaker
                         }
                     }
                     if (array_key_exists('requirejs', $value) && is_array($value['requirejs'])) {
-                        foreach ($value['requirejs'] as $m => $c) {
-                            if (is_string($c)) {
-                                $config['paths'][$m] = $module->getLowerName() . '/backend/' . ltrim($c, '/');
-                            } elseif (is_array($c)) {
-                                if (array_key_exists('path', $c)) {
-                                    $config['paths'][$m] = $module->getLowerName() . '/backend/' . ltrim($c['path'],
-                                            '/');
-                                }
-                                if (array_key_exists('deps', $c)) {
-                                    $config['shim'][$m] = ['deps' => (array)$c['deps']];
-                                }
-                                if (array_key_exists('bundles', $c)) {
-                                    $config['bundles'][$m] = (array)$c['bundles'];
-                                }
-                                if (array_key_exists('css', $c)) {
-                                    $config['shim'][$m]['deps'] = $config['shim'][$m]['deps'] ?? [];
-                                    foreach ((array)$c['css'] as $css) {
-                                        $config['shim'][$m]['deps'][] =
-                                            'css!' . $module->getLowerName() . '/backend/' . ltrim($css, '/');
+                        if (array_key_exists('packages', $value['requirejs'])) {
+                            foreach ($value['requirejs']['packages'] as $package => $path) {
+                                $config['packages'][] = [
+                                    'name' => $package,
+                                    'location' => $module->getLowerName() . '/backend/' . ltrim(is_string($path) ? $path : $path['location'], '/'),
+                                    'main' => is_array($path) && array_key_exists('main', $path) ? $path['main'] : 'main'
+                                ];
+                            }
+                        }
+                        if (array_key_exists('modules', $value['requirejs'])) {
+                            foreach ($value['requirejs']['modules'] as $m => $c) {
+                                if (is_string($c)) {
+                                    $config['paths'][$m] = $module->getLowerName() . '/backend/' . ltrim($c, '/');
+                                } elseif (is_array($c)) {
+                                    if (array_key_exists('path', $c)) {
+                                        $config['paths'][$m] = $module->getLowerName() . '/backend/' . ltrim($c['path'],
+                                                '/');
+                                    }
+                                    if (array_key_exists('deps', $c)) {
+                                        $config['shim'][$m] = ['deps' => (array)$c['deps']];
+                                    }
+                                    if (array_key_exists('bundles', $c)) {
+                                        $config['bundles'][$m] = (array)$c['bundles'];
+                                    }
+                                    if (array_key_exists('css', $c)) {
+                                        $config['shim'][$m]['deps'] = $config['shim'][$m]['deps'] ?? [];
+                                        foreach ((array)$c['css'] as $css) {
+                                            $config['shim'][$m]['deps'][] =
+                                                'css!' . $module->getLowerName() . '/backend/' . ltrim($css, '/');
+                                        }
                                     }
                                 }
                             }
@@ -108,7 +120,7 @@ class ConfigMaker
     if (window.jQuery !== void 0) {
         define('jquery', [], function() { return jQuery; });
     }
-    require(['rabbitcms.backend'], function(rbc) {
+    require(['rabbitcms/backend'], function(rbc) {
         rbc.RabbitCMS.init(${opts});
     });
 })();

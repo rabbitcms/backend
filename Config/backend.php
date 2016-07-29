@@ -57,84 +57,74 @@ return [
         });
     },
     'requirejs' => [
-        "css" => "plugins/require-css",
-        "i18n" => "plugins/i18n",
-        "rabbitcms.backend" => "js/rabbitcms.backend",
-        "rabbitcms.backend.login" => "js/rabbitcms.backend.login",
-        "rabbitcms.datatable" => "js/rabbitcms.datatable",
-        "rabbitcms.users" => "js/rabbitcms.users",
-        "rabbitcms.groups" => "js/rabbitcms.groups",
-
-        "rabbitcms/nls/datatable" => "js/nls/datatable",
-        "rabbitcms/nls/backend" => "js/nls/backend",
-        "rabbitcms/nls/ru/datatable" => "js/nls/ru/datatable",
-        "rabbitcms/nls/uk/datatable" => "js/nls/uk/datatable",
-        "jquery" => "plugins/jquery.min",
-        "bootbox" => "plugins/bootbox",
-        'jquery.cookie' => 'plugins/jquery.cokie.min',
-        "jquery.backstretch" => 'plugins/backstretch/jquery.backstretch.min',
-        "jquery.validation.additional" => "plugins/jquery-validation/additional-methods.min",
-        "jquery.validation" => "plugins/jquery-validation/jquery.validate.min",
-        "jquery.uniform" => [
-            "path" => "plugins/uniform/jquery.uniform.min",
-            "css" => "plugins/uniform/css/uniform.default.css"
-        ],
-        "jquery.blockui" => "plugins/jquery.blockui.min",
-        "datatables.net" => [
-            "path" => "plugins/datatables/jquery.dataTables.min",
-            "css" => "plugins/datatables/css/jquery.dataTables.min.css",
-        ],
-        "datatables.net-bt" => [
-            "path" => "plugins/datatables/plugins/bootstrap/datatables.bootstrap",
-            "css" => [
-                "plugins/datatables/plugins/bootstrap/datatables.bootstrap.css",
-                "css/plugins/datatable.css"
+        'packages' => [
+            'rabbitcms' => 'js',
+            'styles' => 'css',
+            'jquery.validation' => [
+                'location' => 'plugins/jquery-validation/js',
+                'main' => 'jquery.validate.min'
             ],
-        ],
-        "select2" => [
-            "path" => "plugins/select2/js/select2.min",
-            "css" => [
-                "plugins/select2/css/select2.min.css",
-                "plugins/select2/css/select2-bootstrap.min.css",
-                "css/plugins/select2.css"
+            'select2'=>[
+                'location'=>'plugins/select2',
+                'main'=>'js/select2.min'
             ]
         ],
-        "jquery.colorbox" => [
-            "path" => "plugins/colorbox/jquery.colorbox",
-            "css" => "plugins/colorbox/colorbox.css"
+        'modules' => [
+            "css" => "plugins/require-css",
+            "i18n" => "plugins/i18n",
+            "jquery" => "plugins/jquery.min",
+            "bootbox" => "plugins/bootbox",
+            'jquery.cookie' => 'plugins/jquery.cokie.min',
+            "jquery.backstretch" => 'plugins/backstretch/jquery.backstretch.min',
+            "jquery.blockui" => "plugins/jquery.blockui.min",
+            "datatables.net" => [
+                "path" => "plugins/datatables/jquery.dataTables.min",
+                "css" => "plugins/datatables/css/jquery.dataTables.min.css",
+            ],
+            "datatables.net-bt" => [
+                "path" => "plugins/datatables/plugins/bootstrap/datatables.bootstrap",
+                "css" => [
+                    "plugins/datatables/plugins/bootstrap/datatables.bootstrap.css",
+                    "css/plugins/datatable.css"
+                ],
+            ],
+            "jquery.colorbox" => [
+                "path" => "plugins/colorbox/jquery.colorbox",
+                "css" => "plugins/colorbox/colorbox.css"
+            ]
         ]
     ],
     'handlers' => [
-        '' => 'rabbitcms.backend.dashboard:init',
+        '' => 'rabbitcms/dashboard:init',
         'groups' => [
-            'module' => 'rabbitcms.groups',
+            'module' => 'rabbitcms/groups',
             'exec' => 'table',
             'permanent' => true,
             'menuPath' => 'system.groups'
         ],
         'groups\/create' => [
-            'module' => 'rabbitcms.groups',
+            'module' => 'rabbitcms/groups',
             'exec' => 'form',
             'menuPath' => 'system.users'
         ],
         'groups\/edit\/(\d+)' => [
-            'module' => 'rabbitcms.groups',
+            'module' => 'rabbitcms/groups',
             'exec' => 'form',
             'menuPath' => 'system.users'
         ],
         'users' => [
-            'module' => 'rabbitcms.users',
+            'module' => 'rabbitcms/users',
             'exec' => 'table',
             'permanent' => true,
             'menuPath' => 'system.users'
         ],
         'users\/create' => [
-            'module' => 'rabbitcms.users',
+            'module' => 'rabbitcms/users',
             'exec' => 'form',
             'menuPath' => 'system.users'
         ],
         'users\/edit\/(\d+)' => [
-            'module' => 'rabbitcms.users',
+            'module' => 'rabbitcms/users',
             'exec' => 'form',
             'menuPath' => 'system.users'
         ],

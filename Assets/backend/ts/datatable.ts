@@ -5,7 +5,7 @@
 import * as $ from "jquery";
 import "datatables.net";
 import "datatables.net-bt";
-import {RabbitCMS} from "rabbitcms.backend";
+import {RabbitCMS} from "rabbitcms/backend";
 import * as i18n from "i18n!rabbitcms/nls/datatable";
 
 export interface DataTableOptions {

@@ -1,7 +1,7 @@
-define(["require", "exports", "jquery", "rabbitcms.backend", "jquery.backstretch", "jquery.validation"], function (require, exports, $, rabbitcms_backend_1) {
+define(["require", "exports", "jquery", "rabbitcms/backend", "jquery.backstretch", "jquery.validation"], function (require, exports, $, backend_1) {
     "use strict";
     function init(portlet) {
-        var _imgPath = rabbitcms_backend_1.RabbitCMS.getPath() + '/img/bg/';
+        var _imgPath = backend_1.RabbitCMS.getPath() + '/img/bg/';
         var _images = [_imgPath + '1.jpg', _imgPath + '2.jpg', _imgPath + '3.jpg', _imgPath + '4.jpg'];
         $.backstretch(_images, { fade: 1000, duration: 8000 });
         var loginForm = $('form', portlet);
@@ -50,4 +50,4 @@ define(["require", "exports", "jquery", "rabbitcms.backend", "jquery.backstretch
     }
     exports.init = init;
 });
-//# sourceMappingURL=rabbitcms.backend.login.js.map
+//# sourceMappingURL=login.js.map

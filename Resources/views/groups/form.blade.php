@@ -1,6 +1,6 @@
 @extends(\Request::ajax() ? 'backend::layouts.empty' : 'backend::layouts.master')
 @section('content')
-    <div class="portlet box blue-hoki ajax-portlet" data-require="rabbitcms.users.groups:form">
+    <div class="portlet box blue-hoki ajax-portlet" data-require="rabbitcms/groups:form">
         <div class="portlet-title">
             <div class="caption">
                 {{$model->exists ? trans('backend::common.edit_group') : trans('backend::common.create_group')}}</div>
