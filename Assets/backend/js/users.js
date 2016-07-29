@@ -17,9 +17,9 @@ define(["require", "exports", "jquery", "rabbitcms/backend", "rabbitcms/datatabl
             });
             portlet.on('click', '[rel="destroy"]', function (e) {
                 e.preventDefault();
-                backend_1.RabbitCMS.Dialogs.onDelete($(e.target).attr('href'), function () {
-                    dataTable.submitFilter();
-                });
+                backend_1.Dialogs.onDelete({
+                    url: $(e.target).attr('href')
+                }).then(function () { return dataTable.submitFilter(); });
             });
         };
         User.prototype.form = function (portlet, state) {

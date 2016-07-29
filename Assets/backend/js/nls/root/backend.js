@@ -3,6 +3,7 @@ define(["require", "exports"], function (require, exports) {
     return {
         pageNotFound: 'Page not found.',
         accessDenied: 'Access denied. Please ...',
+        youWantDeleteThis: 'Are you sure you want to delete this account?',
         close: 'Close',
         save: 'Save',
         dontSave: 'Don\'t save',

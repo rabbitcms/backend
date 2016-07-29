@@ -1,5 +1,5 @@
 import * as $ from "jquery";
-import {MicroEvent, RabbitCMS, State, Form} from "rabbitcms/backend";
+import {MicroEvent, State, Form, Dialogs} from "rabbitcms/backend";
 import {DataTable} from "rabbitcms/datatable";
 
 class User extends MicroEvent {
@@ -21,9 +21,9 @@ class User extends MicroEvent {
 
         portlet.on('click', '[rel="destroy"]', (e:JQueryEventObject) => {
             e.preventDefault();
-            RabbitCMS.Dialogs.onDelete($(e.target).attr('href'), () => {
-                dataTable.submitFilter();
-            });
+            Dialogs.onDelete({
+                url: $(e.target).attr('href')
+            }).then(()=>dataTable.submitFilter());
         });
     }
 

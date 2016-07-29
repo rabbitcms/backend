@@ -132,6 +132,12 @@ declare module "rabbitcms/backend" {
     export interface ValidationOptions extends JQueryValidation.ValidationOptions {
         completeSubmit?: () => void;
     }
+
+    export class Dialogs {
+        static confirm(message:string, options?:BootboxDialogOptions):Promise<void>;
+
+        static onDelete(ajax:AjaxSettings, message?:string, options?:BootboxDialogOptions):Promise<void>;
+    }
 }
 
 
@@ -207,6 +213,7 @@ declare module "i18n!rabbitcms/nls/backend" {
     var _default:{
         pageNotFound:string;
         accessDenied:string;
+        youWantDeleteThis:string;
 
         save:string;
         dontSave:string;

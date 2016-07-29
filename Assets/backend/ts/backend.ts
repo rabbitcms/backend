@@ -1,4 +1,3 @@
-/// <reference path="../../../typings/index.d.ts" />
 import * as $ from "jquery";
 import "jquery.cookie";
 import * as i18n from "i18n!rabbitcms/nls/backend";
@@ -238,7 +237,7 @@ export class RabbitCMS {
     static findHandler(link:string):Handler {
         link = link.length > 1 ? link.replace(/\/$/, '') : link;
         return _handlers.find((h:Handler) => {
-                return new RegExp('^' + h.handler).exec(link) !== null;
+                return new RegExp('^' + h.handler+'$').exec(link) !== null;
             }) || null;
     }
 
@@ -372,7 +371,7 @@ export class RabbitCMS {
      * @param {string} link
      * @param {boolean} pushState
      * @param {ReplayFunc} replay
-     * @returns {boolean}
+     * @returns {Promise<boolean>}
      */
     static navigate(link:string, pushState:StateType = StateType.Push, replay?:ReplayFunc):Promise<boolean> {
         let h = this.findHandler(link);
@@ -775,7 +774,7 @@ export class RabbitCMS {
 }
 
 export class Dialogs {
-    static dialog(message:string, options?:BootboxDialogOptions):Promise<void> {
+    static confirm(message:string, options?:BootboxDialogOptions):Promise<void> {
         return new Promise<void>((resolve, reject)=> {
             require(['bootbox'], (bootbox)=> {
                 bootbox.dialog($.extend(true, <BootboxDialogOptions>{
@@ -798,11 +797,9 @@ export class Dialogs {
         });
     }
 
-    // static onDelete(options?:BootboxDialogOptions) {
-    //
-    //     // this.dialog(, options).then();
-    //
-    // }
+    static onDelete(ajax:AjaxSettings, message?:string, options?:BootboxDialogOptions):Promise<void> {
+        return this.confirm(message || i18n.youWantDeleteThis, options).then(()=>RabbitCMS.ajax(ajax));
+    }
 }
 export class Tools {
     static transliterate(string:string, spase = '-') {

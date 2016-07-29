@@ -187,7 +187,7 @@ define(["require", "exports", "jquery", "i18n!rabbitcms/nls/backend", "jquery.co
         RabbitCMS.findHandler = function (link) {
             link = link.length > 1 ? link.replace(/\/$/, '') : link;
             return _handlers.find(function (h) {
-                return new RegExp('^' + h.handler).exec(link) !== null;
+                return new RegExp('^' + h.handler + '$').exec(link) !== null;
             }) || null;
         };
         RabbitCMS.setPath = function (path) {
@@ -653,7 +653,7 @@ define(["require", "exports", "jquery", "i18n!rabbitcms/nls/backend", "jquery.co
     var Dialogs = (function () {
         function Dialogs() {
         }
-        Dialogs.dialog = function (message, options) {
+        Dialogs.confirm = function (message, options) {
             return new Promise(function (resolve, reject) {
                 require(['bootbox'], function (bootbox) {
                     bootbox.dialog($.extend(true, {
@@ -674,6 +674,9 @@ define(["require", "exports", "jquery", "i18n!rabbitcms/nls/backend", "jquery.co
                     }, options));
                 });
             });
+        };
+        Dialogs.onDelete = function (ajax, message, options) {
+            return this.confirm(message || i18n.youWantDeleteThis, options).then(function () { return RabbitCMS.ajax(ajax); });
         };
         return Dialogs;
     }());

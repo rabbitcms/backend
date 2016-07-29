@@ -3,6 +3,7 @@ define(["require", "exports"], function (require, exports) {
     return {
         pageNotFound: 'Страницу не найдено.',
         accessDenied: 'Доступ запрещен. Обратитесь к администратору.',
+        youWantDeleteThis: 'Вы уверены, что хотите удалить эту запись?',
         close: 'Закрыть',
         save: 'Сохранить',
         dontSave: 'Не сохранять',
