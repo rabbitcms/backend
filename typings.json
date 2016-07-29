@@ -6,6 +6,7 @@
     "jasmine": "registry:dt/jasmine#2.2.0+20160621224255",
     "jquery": "registry:dt/jquery#1.10.0+20160704162008",
     "jquery.blockui": "registry:dt/jquery.blockui#0.0.0+20160316155526",
+    "jquery.colorbox": "registry:dt/jquery.colorbox#1.4.15+20160316155526",
     "jquery.cookie": "registry:dt/jquery.cookie#1.4.1+20160316155526",
     "jquery.datatables": "registry:dt/jquery.datatables#1.10.5+20160310140355",
     "jquery.uniform": "registry:dt/jquery.uniform#0.0.0+20160316155526",

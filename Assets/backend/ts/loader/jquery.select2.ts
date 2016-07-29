@@ -8,12 +8,12 @@ import "css!select2/css/select2.min.css";
 import "css!select2/css/select2-bootstrap.min.css";
 import "css!styles/plugins/select2.css";
 
-let lang:string = RabbitCMS.getLocale(new Map<string,string>([
-    ['pt_BR', 'pt-BR'],
-    ['pt_PT', 'pt'],
-    ['zn_CN','zn_CN'],
-    ['zn_TW','zn_TW'],
-]));
+let lang:string = RabbitCMS.getLocale(new Map<string,string>()
+    .set('pt_BR', 'pt-BR')
+    .set('pt_PT', 'pt')
+    .set('zn_CN','zn_CN')
+    .set('zn_TW','zn_TW')
+);
 require(['select2/js/i18n/' + lang]);
 
 export = select2;
