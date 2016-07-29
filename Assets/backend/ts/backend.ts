@@ -147,6 +147,7 @@ class Stack extends Array<State> {
 export interface AjaxSettings extends JQueryAjaxSettings {
     warningTarget?:JQuery;
     blockTarget?:JQuery;
+    blockOptions?:BlockUIOptions;
 }
 
 export class RabbitCMS {
@@ -712,36 +713,6 @@ export class RabbitCMS {
         });
     }
 
-    /* all ajax methods */
-    /**
-     * @deprecated
-     * @param form
-     * @param callback
-     */
-    static submitForm(form, callback) {
-        form = (form instanceof $) ? form : $(form);
-        var link = form.attr('action');
-        var data = form.serialize();
-
-
-        this.ajaxPost(link, data, (data) => {
-            $('[rel="back"]:first', _visiblePortlet).trigger('click');
-
-            if ($.isFunction(callback))
-                callback(data);
-        });
-    }
-
-    /**
-     * @deprecated
-     * @param link
-     * @param data
-     * @param callback
-     */
-    static ajaxPost(link:string, data:Object, callback) {
-        this.ajax({url: link, method: 'POST', data: data, success: callback});
-    }
-
     /**
      * Ajax wrapper.
      * @param {JQueryAjaxSettings} options
@@ -801,27 +772,8 @@ export class RabbitCMS {
             }
         };
 
-        this.blockUI(options.blockTarget);
+        this.blockUI(options.blockTarget, options.blockOptions);
         return $.ajax(options);
-    }
-
-    /**
-     * @dedrecated
-     * @param form
-     * @param options
-     */
-    static validate(form:JQuery, options?:ValidationOptions):void {
-        options = $.extend(true, {
-            submitHandler: (form:HTMLFormElement) => {
-                this.submitForm(form, options.completeSubmit);
-            },
-            completeSubmit(){
-            }
-        }, options);
-
-        require(['jquery.validation'], ()=> {
-            form.validate(options);
-        });
     }
 
     static select2(selector:JQuery, options:Select2Options = {}) {
@@ -855,11 +807,11 @@ export class Dialogs {
         });
     }
 
-    static onDelete(options?:BootboxDialogOptions) {
-
-        // this.dialog(, options).then();
-
-    }
+    // static onDelete(options?:BootboxDialogOptions) {
+    //
+    //     // this.dialog(, options).then();
+    //
+    // }
 }
 export class Tools {
     static transliterate(string:string, spase = '-') {

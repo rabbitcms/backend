@@ -34,6 +34,7 @@ declare module "rabbitcms/backend" {
     export interface AjaxSettings extends JQueryAjaxSettings {
         warningTarget?: JQuery;
         blockTarget?:JQuery;
+        blockOptions?:BlockUIOptions;
     }
     export class RabbitCMS {
         private static _path;

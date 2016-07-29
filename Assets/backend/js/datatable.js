@@ -5,7 +5,6 @@ define(["require", "exports", "jquery", "rabbitcms/backend", "i18n!rabbitcms/nls
             var _this = this;
             this.tableInitialized = false;
             this.ajaxParams = {};
-            this.setAjaxParam('_token', backend_1.RabbitCMS.getToken());
             options = $.extend(true, {
                 src: "",
                 filterApplyAction: "filter",
@@ -17,66 +16,64 @@ define(["require", "exports", "jquery", "rabbitcms/backend", "i18n!rabbitcms/nls
                     pageLength: 10,
                     language: i18n.dataTable,
                     orderCellsTop: true,
-                    columnDefs: [{
-                            orderable: false,
-                            targets: [0]
-                        }],
+                    columnDefs: [],
                     pagingType: "bootstrap_extended",
                     autoWidth: false,
                     processing: false,
                     serverSide: true,
-                    ajax: {
-                        url: "",
-                        type: "POST",
-                        timeout: 20000,
-                        data: function (data) {
-                            $.each(_this.ajaxParams, function (key, value) {
-                                data[key] = value;
-                            });
-                            backend_1.RabbitCMS.blockUI(_this.tableContainer, {
+                    stateSave: true,
+                    stateLoadParams: function (settings, data) {
+                    },
+                    stateSaveParams: function (settings, data) {
+                    },
+                    ajax: function (data, callback, settings) {
+                        console.log(settings);
+                        $.each(_this.ajaxParams, function (key, value) {
+                            data[key] = value;
+                        });
+                        backend_1.RabbitCMS.ajax({
+                            url: _this.table.data('link'),
+                            method: 'post',
+                            timeout: 10000,
+                            data: data,
+                            dataType: 'json',
+                            warningTarget: _this.tableContainer,
+                            blockTarget: _this.tableContainer,
+                            blockOptions: {
                                 message: _this.tableOptions.loadingMessage,
                                 overlayColor: 'none',
                                 cenrerY: true,
                                 boxed: true
-                            });
-                        },
-                        dataSrc: function (res) {
-                            if (res.customActionMessage) {
-                                backend_1.RabbitCMS.alert({
-                                    type: (res.customActionStatus == 'OK' ? 'success' : 'danger'),
-                                    icon: (res.customActionStatus == 'OK' ? 'check' : 'warning'),
-                                    message: res.customActionMessage,
-                                    container: _this.tableWrapper,
-                                    place: 'prepend'
-                                });
-                            }
-                            if (res.customActionStatus) {
-                                if (_this.tableOptions.resetGroupActionInputOnSuccess) {
-                                    $('.table-group-action-input', _this.tableWrapper).val("");
+                            },
+                            success: function (res) {
+                                if (res.customActionMessage) {
+                                    backend_1.RabbitCMS.alert({
+                                        type: (res.customActionStatus == 'OK' ? 'success' : 'danger'),
+                                        icon: (res.customActionStatus == 'OK' ? 'check' : 'warning'),
+                                        message: res.customActionMessage,
+                                        container: _this.tableWrapper,
+                                        place: 'prepend'
+                                    });
+                                }
+                                if (res.customActionStatus) {
+                                    if (_this.tableOptions.resetGroupActionInputOnSuccess) {
+                                        $('.table-group-action-input', _this.tableWrapper).val("");
+                                    }
+                                }
+                                if ($('.group-checkable', _this.table).length === 1) {
+                                    $('.group-checkable', _this.table).prop("checked", false);
+                                }
+                                if (_this.tableOptions.onSuccess) {
+                                    _this.tableOptions.onSuccess.call(undefined, _this, res);
+                                }
+                                callback(res);
+                            },
+                            error: function () {
+                                if (_this.tableOptions.onError) {
+                                    _this.tableOptions.onError.call(undefined, _this);
                                 }
                             }
-                            if ($('.group-checkable', _this.table).length === 1) {
-                                $('.group-checkable', _this.table).prop("checked", false);
-                            }
-                            if (_this.tableOptions.onSuccess) {
-                                _this.tableOptions.onSuccess.call(undefined, _this, res);
-                            }
-                            backend_1.RabbitCMS.unblockUI(_this.tableContainer);
-                            return res.data;
-                        },
-                        error: function () {
-                            if (_this.tableOptions.onError) {
-                                _this.tableOptions.onError.call(undefined, _this);
-                            }
-                            backend_1.RabbitCMS.alert({
-                                type: 'danger',
-                                icon: 'warning',
-                                message: i18n.ajaxRequestGeneralError,
-                                container: _this.tableWrapper,
-                                place: 'prepend'
-                            });
-                            backend_1.RabbitCMS.unblockUI(_this.tableContainer);
-                        }
+                        });
                     },
                     drawCallback: function () {
                         if (_this.tableInitialized === false) {
@@ -92,9 +89,6 @@ define(["require", "exports", "jquery", "rabbitcms/backend", "i18n!rabbitcms/nls
             }, options);
             this.tableOptions = options;
             this.table = $(options.src);
-            if (options.dataTable.ajax.url === '' && this.table.data('link')) {
-                options.dataTable.ajax.url = this.table.data('link');
-            }
             this.tableContainer = this.table.parents(".table-container");
             var tmp = $.fn.dataTableExt.oStdClasses;
             $.fn.dataTableExt.oStdClasses.sWrapper = $.fn.dataTableExt.oStdClasses.sWrapper + " dataTables_extended_wrapper";
@@ -164,7 +158,6 @@ define(["require", "exports", "jquery", "rabbitcms/backend", "i18n!rabbitcms/nls
                 $(this).prop("checked", false);
             });
             this.clearAjaxParams();
-            this.setAjaxParam('_token', backend_1.RabbitCMS.getToken());
             this.addAjaxParam("action", this.tableOptions.filterCancelAction);
             this.dataTable.ajax.reload();
         };

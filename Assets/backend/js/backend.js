@@ -593,19 +593,6 @@ define(["require", "exports", "jquery", "i18n!rabbitcms/nls/backend", "jquery.co
                     $.unblockUI();
             });
         };
-        RabbitCMS.submitForm = function (form, callback) {
-            form = (form instanceof $) ? form : $(form);
-            var link = form.attr('action');
-            var data = form.serialize();
-            this.ajaxPost(link, data, function (data) {
-                $('[rel="back"]:first', _visiblePortlet).trigger('click');
-                if ($.isFunction(callback))
-                    callback(data);
-            });
-        };
-        RabbitCMS.ajaxPost = function (link, data, callback) {
-            this.ajax({ url: link, method: 'POST', data: data, success: callback });
-        };
         RabbitCMS.ajax = function (options) {
             var _this = this;
             var originalOptions = options;
@@ -658,21 +645,8 @@ define(["require", "exports", "jquery", "i18n!rabbitcms/nls/backend", "jquery.co
                     originalOptions.complete(jqXHR, textStatus);
                 }
             };
-            this.blockUI(options.blockTarget);
+            this.blockUI(options.blockTarget, options.blockOptions);
             return $.ajax(options);
-        };
-        RabbitCMS.validate = function (form, options) {
-            var _this = this;
-            options = $.extend(true, {
-                submitHandler: function (form) {
-                    _this.submitForm(form, options.completeSubmit);
-                },
-                completeSubmit: function () {
-                }
-            }, options);
-            require(['jquery.validation'], function () {
-                form.validate(options);
-            });
         };
         RabbitCMS.select2 = function (selector, options) {
             if (options === void 0) { options = {}; }
@@ -710,8 +684,6 @@ define(["require", "exports", "jquery", "i18n!rabbitcms/nls/backend", "jquery.co
                     }, options));
                 });
             });
-        };
-        Dialogs.onDelete = function (options) {
         };
         return Dialogs;
     }());

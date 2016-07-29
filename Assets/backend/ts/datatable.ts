@@ -56,9 +56,6 @@ export class DataTable {
 
     //main function to initiate the module
     constructor(options:DataTableOptions) {
-
-        this.setAjaxParam('_token', RabbitCMS.getToken());
-
         // default settings
         options = $.extend(true, {
             src: "", // actual table
@@ -66,82 +63,137 @@ export class DataTable {
             filterCancelAction: "filter_cancel",
             resetGroupActionInputOnSuccess: true,
             loadingMessage: 'Loading...',
-            dataTable: {
+            dataTable: <DataTables.Settings>{
                 dom: "<'row'<'col-md-8 col-sm-12'pli><'col-md-4 col-sm-12'<'table-group-actions pull-right'>>r><'table-responsive't><'row'<'col-md-8 col-sm-12'pli><'col-md-4 col-sm-12'>>", // datatable layout
                 pageLength: 10, // default records per page
                 language: i18n.dataTable,
 
                 orderCellsTop: true,
-                columnDefs: [{ // define columns sorting options(by default all columns are sortable extept the first checkbox column)
-                    orderable: false,
-                    targets: [0]
-                }],
+                columnDefs: [],
 
                 pagingType: "bootstrap_extended", // pagination type(bootstrap, bootstrap_full_number or bootstrap_extended)
                 autoWidth: false, // disable fixed width and enable fluid table
                 processing: false, // enable/disable display message box on record load
                 serverSide: true, // enable/disable server side ajax loading
+                stateSave: true,
+                stateLoadParams: (settings:DataTables.SettingsLegacy, data:Object):void => {
 
-                ajax: { // define ajax settings
-                    url: "", // ajax URL
-                    type: "POST", // request type
-                    timeout: 20000,
-                    data: (data:AjaxParams) => { // add request parameters before submit
-                        $.each(this.ajaxParams, (key:string, value:any) => {
-                            data[key] = value;
-                        });
-                        RabbitCMS.blockUI(this.tableContainer, {
+                },
+                stateSaveParams: (settings:DataTables.SettingsLegacy, data:Object):void => {
+                    // data.filters = settings.;
+                },
+                ajax: (data:Object, callback:Function, settings:DataTables.SettingsLegacy) => {
+                    console.log(settings);
+                    $.each(this.ajaxParams, (key:string, value:any) => {
+                        data[key] = value;
+                    });
+                    RabbitCMS.ajax({
+                        url: this.table.data('link'),
+                        method: 'post',
+                        timeout: 10000,
+                        data: data,
+                        dataType: 'json',
+                        warningTarget: this.tableContainer,
+                        blockTarget: this.tableContainer,
+                        blockOptions: {
                             message: this.tableOptions.loadingMessage,
                             overlayColor: 'none',
                             cenrerY: true,
                             boxed: true
-                        });
-                    },
-                    dataSrc: (res:DataTableResponseData) => { // Manipulate the data returned from the server
-                        if (res.customActionMessage) {
-                            RabbitCMS.alert({
-                                type: (res.customActionStatus == 'OK' ? 'success' : 'danger'),
-                                icon: (res.customActionStatus == 'OK' ? 'check' : 'warning'),
-                                message: res.customActionMessage,
-                                container: this.tableWrapper,
-                                place: 'prepend'
-                            });
-                        }
+                        },
+                        success: (res:DataTableResponseData):any => {
+                            if (res.customActionMessage) {
+                                RabbitCMS.alert({
+                                    type: (res.customActionStatus == 'OK' ? 'success' : 'danger'),
+                                    icon: (res.customActionStatus == 'OK' ? 'check' : 'warning'),
+                                    message: res.customActionMessage,
+                                    container: this.tableWrapper,
+                                    place: 'prepend'
+                                });
+                            }
 
-                        if (res.customActionStatus) {
-                            if (this.tableOptions.resetGroupActionInputOnSuccess) {
-                                $('.table-group-action-input', this.tableWrapper).val("");
+                            if (res.customActionStatus) {
+                                if (this.tableOptions.resetGroupActionInputOnSuccess) {
+                                    $('.table-group-action-input', this.tableWrapper).val("");
+                                }
+                            }
+
+                            if ($('.group-checkable', this.table).length === 1) {
+                                $('.group-checkable', this.table).prop("checked", false);
+                            }
+
+                            if (this.tableOptions.onSuccess) {
+                                this.tableOptions.onSuccess.call(undefined, this, res);
+                            }
+                            callback(res);
+                        },
+                        error: () => { // handle general connection errors
+                            if (this.tableOptions.onError) {
+                                this.tableOptions.onError.call(undefined, this);
                             }
                         }
-
-                        if ($('.group-checkable', this.table).length === 1) {
-                            $('.group-checkable', this.table).prop("checked", false);
-                        }
-
-                        if (this.tableOptions.onSuccess) {
-                            this.tableOptions.onSuccess.call(undefined, this, res);
-                        }
-
-                        RabbitCMS.unblockUI(this.tableContainer);
-
-                        return res.data;
-                    },
-                    error: () => { // handle general connection errors
-                        if (this.tableOptions.onError) {
-                            this.tableOptions.onError.call(undefined, this);
-                        }
-
-                        RabbitCMS.alert({
-                            type: 'danger',
-                            icon: 'warning',
-                            message: i18n.ajaxRequestGeneralError,
-                            container: this.tableWrapper,
-                            place: 'prepend'
-                        });
-
-                        RabbitCMS.unblockUI(this.tableContainer);
-                    }
+                    });
                 },
+                // ajax: { // define ajax settings
+                //     url: "", // ajax URL
+                //     type: "POST", // request type
+                //     timeout: 20000,
+                //     data: (data:AjaxParams) => { // add request parameters before submit
+                //         $.each(this.ajaxParams, (key:string, value:any) => {
+                //             data[key] = value;
+                //         });
+                //         RabbitCMS.blockUI(this.tableContainer, {
+                //             message: this.tableOptions.loadingMessage,
+                //             overlayColor: 'none',
+                //             cenrerY: true,
+                //             boxed: true
+                //         });
+                //     },
+                //     dataSrc: (res:DataTableResponseData) => { // Manipulate the data returned from the server
+                //         if (res.customActionMessage) {
+                //             RabbitCMS.alert({
+                //                 type: (res.customActionStatus == 'OK' ? 'success' : 'danger'),
+                //                 icon: (res.customActionStatus == 'OK' ? 'check' : 'warning'),
+                //                 message: res.customActionMessage,
+                //                 container: this.tableWrapper,
+                //                 place: 'prepend'
+                //             });
+                //         }
+                //
+                //         if (res.customActionStatus) {
+                //             if (this.tableOptions.resetGroupActionInputOnSuccess) {
+                //                 $('.table-group-action-input', this.tableWrapper).val("");
+                //             }
+                //         }
+                //
+                //         if ($('.group-checkable', this.table).length === 1) {
+                //             $('.group-checkable', this.table).prop("checked", false);
+                //         }
+                //
+                //         if (this.tableOptions.onSuccess) {
+                //             this.tableOptions.onSuccess.call(undefined, this, res);
+                //         }
+                //
+                //         RabbitCMS.unblockUI(this.tableContainer);
+                //
+                //         return res.data;
+                //     },
+                //     error: () => { // handle general connection errors
+                //         if (this.tableOptions.onError) {
+                //             this.tableOptions.onError.call(undefined, this);
+                //         }
+                //
+                //         RabbitCMS.alert({
+                //             type: 'danger',
+                //             icon: 'warning',
+                //             message: i18n.ajaxRequestGeneralError,
+                //             container: this.tableWrapper,
+                //             place: 'prepend'
+                //         });
+                //
+                //         RabbitCMS.unblockUI(this.tableContainer);
+                //     }
+                // },
 
                 drawCallback: ()=> { // run some code on table redraw
                     if (this.tableInitialized === false) { // check if table has been initialized
@@ -164,9 +216,9 @@ export class DataTable {
         this.table = $(options.src);
 
 
-        if ((<DataTables.AjaxSettings>options.dataTable.ajax).url === '' && this.table.data('link')) {
-            (<DataTables.AjaxSettings>options.dataTable.ajax).url = this.table.data('link');
-        }
+        // if ((<DataTables.AjaxSettings>options.dataTable.ajax).url === '' && this.table.data('link')) {
+        //     (<DataTables.AjaxSettings>options.dataTable.ajax).url = this.table.data('link');
+        // }
 
 
         this.tableContainer = this.table.parents(".table-container");
@@ -255,7 +307,6 @@ export class DataTable {
             $(this).prop("checked", false);
         });
         this.clearAjaxParams();
-        this.setAjaxParam('_token', RabbitCMS.getToken());
         this.addAjaxParam("action", this.tableOptions.filterCancelAction);
         this.dataTable.ajax.reload();
     }
