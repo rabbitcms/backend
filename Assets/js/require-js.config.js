@@ -61,7 +61,7 @@ require.config({
 
         "dtkt.webinars": "webinars/backend/js/dtkt.webinars"
     },
-    "urlArgs": "0000000028"
+    "urlArgs": "0000000031"
 });
 
 define('jquery', [], function() { return jQuery; });
