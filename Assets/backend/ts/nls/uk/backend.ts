@@ -8,5 +8,7 @@ export =  <typeof i18n>{
     close: 'Закрити',
     save: 'Зберегти',
     dontSave: 'Не зберігати',
-    dataHasBeenModified: 'Дані було змінено. Зберегти внесені зміни?'
+    dataHasBeenModified: 'Дані було змінено. Зберегти внесені зміни?',
+    yes: 'Так',
+    no: 'Ні'
 };

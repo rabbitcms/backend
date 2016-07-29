@@ -33,6 +33,7 @@ declare module "rabbitcms/backend" {
     }
     export interface AjaxSettings extends JQueryAjaxSettings {
         warningTarget?: JQuery;
+        blockTarget?:JQuery;
     }
     export class RabbitCMS {
         private static _path;
@@ -210,6 +211,8 @@ declare module "i18n!rabbitcms/nls/backend" {
         dontSave:string;
         close:string;
         dataHasBeenModified:string;
+        yes:string;
+        no:string;
     };
     export = _default;
 }

@@ -39,7 +39,6 @@ define(["require", "exports", "jquery", "i18n!rabbitcms/nls/backend", "jquery.co
             this.index = 0;
             if (history.state && history.state.index) {
                 this.index = history.state.index;
-                console.log('index', this.index);
             }
             window.addEventListener('popstate', function (e) {
                 _this.handleEvent = null;
@@ -81,13 +80,11 @@ define(["require", "exports", "jquery", "i18n!rabbitcms/nls/backend", "jquery.co
             switch (type) {
                 case StateType.Push:
                     history.pushState({ state: this._position, link: state.link, index: ++this.index }, null, state.link);
-                    console.log('index', this.index);
                     break;
                 case StateType.Replace:
                     history.replaceState({ state: this._position, link: state.link, index: this.index }, null, state.link);
                     break;
             }
-            console.log(this);
             return this._position;
         };
         Stack.prototype.fetch = function (index) {
@@ -106,7 +103,6 @@ define(["require", "exports", "jquery", "i18n!rabbitcms/nls/backend", "jquery.co
             }
             var s = this.fetch(index);
             if (s && s.link == link) {
-                console.log(this._position);
                 RabbitCMS.navigateByHandler(s.handler, s.link, StateType.NoPush, replay).then(function () {
                     _this._position = index;
                 }, function () {
@@ -520,7 +516,6 @@ define(["require", "exports", "jquery", "i18n!rabbitcms/nls/backend", "jquery.co
         };
         RabbitCMS.setMenu = function (menu) {
             this.menu = menu;
-            console.log(menu);
             $('li[data-path]', '.page-sidebar-menu').removeClass('active open').each(function (i, e) {
                 var el = $(e);
                 if ((menu + '.').startsWith($(e).data('path') + '.')) {
@@ -588,9 +583,9 @@ define(["require", "exports", "jquery", "i18n!rabbitcms/nls/backend", "jquery.co
         RabbitCMS.unblockUI = function (target) {
             require(['jquery.blockui'], function () {
                 if (target) {
-                    $(target).unblock({
+                    target.unblock({
                         onUnblock: function () {
-                            $(target).css({ position: '', zoom: '' });
+                            target.css({ position: '', zoom: '' });
                         }
                     });
                 }
@@ -615,6 +610,22 @@ define(["require", "exports", "jquery", "i18n!rabbitcms/nls/backend", "jquery.co
             var _this = this;
             var originalOptions = options;
             options = $.extend(true, {}, options);
+            options.beforeSend = function (jqXHR, settings) {
+                if (settings.data && settings.processData) {
+                    if (typeof settings.data == "string") {
+                        settings.data = settings.data + (settings.data.length ? '&' : '') + jQuery.param({ _token: _this.getToken() }, settings.traditional);
+                    }
+                    else if (settings.data) {
+                        settings.data._token = _this.getToken();
+                    }
+                    else {
+                        settings.data = { _token: _this.getToken() };
+                    }
+                }
+                if ($.isFunction(originalOptions.beforeSend)) {
+                    return originalOptions.beforeSend(jqXHR, settings);
+                }
+            };
             options.error = function (jqXHR, textStatus, errorThrown) {
                 if ($.isFunction(originalOptions.error) && originalOptions.error(jqXHR, textStatus, errorThrown)) {
                     return;
@@ -642,17 +653,13 @@ define(["require", "exports", "jquery", "i18n!rabbitcms/nls/backend", "jquery.co
                 }
             };
             options.complete = function (jqXHR, textStatus) {
-                var menu = jqXHR.getResponseHeader('X-Backend-Menu');
-                if (menu) {
-                    _this.setMenu(menu);
-                }
-                RabbitCMS.unblockUI();
+                RabbitCMS.unblockUI(options.blockTarget);
                 if ($.isFunction(originalOptions.complete)) {
                     originalOptions.complete(jqXHR, textStatus);
                 }
             };
-            this.blockUI();
-            $.ajax(options);
+            this.blockUI(options.blockTarget);
+            return $.ajax(options);
         };
         RabbitCMS.validate = function (form, options) {
             var _this = this;
@@ -676,54 +683,39 @@ define(["require", "exports", "jquery", "i18n!rabbitcms/nls/backend", "jquery.co
         RabbitCMS._stack = new Stack();
         RabbitCMS.menu = '';
         RabbitCMS._locale = 'en';
-        RabbitCMS.Dialogs = {
-            onDelete: function (link, callback) {
+        return RabbitCMS;
+    }());
+    exports.RabbitCMS = RabbitCMS;
+    var Dialogs = (function () {
+        function Dialogs() {
+        }
+        Dialogs.dialog = function (message, options) {
+            return new Promise(function (resolve, reject) {
                 require(['bootbox'], function (bootbox) {
-                    bootbox.dialog({
-                        message: '<h4>Ви впевнені, що хочете видалити цей запис?</h4>',
-                        closeButton: false,
-                        buttons: {
-                            yes: {
-                                label: 'Так',
-                                className: 'btn-sm btn-success',
-                                callback: function () {
-                                    RabbitCMS.ajaxPost(link, {}, function () {
-                                        if ($.isFunction(callback))
-                                            callback();
-                                    });
-                                }
-                            },
-                            no: {
-                                label: 'Ні',
-                                className: 'btn-sm btn-danger'
-                            }
-                        }
-                    });
-                });
-            },
-            onConfirm: function (message, callback) {
-                require(['bootbox'], function (bootbox) {
-                    bootbox.dialog({
+                    bootbox.dialog($.extend(true, {
                         message: '<h4>' + message + '</h4>',
                         closeButton: false,
                         buttons: {
                             yes: {
-                                label: 'Так',
+                                label: i18n.yes,
                                 className: 'btn-sm btn-success',
-                                callback: callback
+                                callback: resolve
                             },
                             no: {
-                                label: 'Ні',
-                                className: 'btn-sm btn-danger'
+                                label: i18n.no,
+                                className: 'btn-sm btn-danger',
+                                callback: reject
                             }
                         }
-                    });
+                    }, options));
                 });
-            }
+            });
         };
-        return RabbitCMS;
+        Dialogs.onDelete = function (options) {
+        };
+        return Dialogs;
     }());
-    exports.RabbitCMS = RabbitCMS;
+    exports.Dialogs = Dialogs;
     var Tools = (function () {
         function Tools() {
         }
@@ -808,12 +800,10 @@ define(["require", "exports", "jquery", "i18n!rabbitcms/nls/backend", "jquery.co
                             bootbox.dialog(dialog);
                         });
                         reject();
-                        console.log('1.reject');
                     }
                     else {
                         _this.match = false;
                         resolve();
-                        console.log('1.resolve');
                     }
                 }); });
             }

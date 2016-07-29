@@ -8,5 +8,7 @@ export = <typeof i18n>{
     close: 'Close',
     save: 'Save',
     dontSave: 'Don\'t save',
-    dataHasBeenModified: 'The data has been modified. Save changes?'
+    dataHasBeenModified: 'The data has been modified. Save changes?',
+    yes:'Yes',
+    no:'No'
 };

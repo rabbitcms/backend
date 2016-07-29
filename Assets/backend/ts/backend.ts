@@ -70,7 +70,6 @@ class Stack extends Array<State> {
         super();
         if (history.state && history.state.index) {
             this.index = history.state.index;
-            console.log('index', this.index);
         }
 
         window.addEventListener('popstate', (e:PopStateEvent) => {
@@ -97,14 +96,11 @@ class Stack extends Array<State> {
         switch (type) {
             case StateType.Push:
                 history.pushState({state: this._position, link: state.link, index: ++this.index}, null, state.link);
-                console.log('index', this.index);
                 break;
             case StateType.Replace:
                 history.replaceState({state: this._position, link: state.link, index: this.index}, null, state.link);
                 break;
         }
-
-        console.log(this);
 
         return this._position;
     }
@@ -126,7 +122,6 @@ class Stack extends Array<State> {
         }
         let s:State = this.fetch(index);
         if (s && s.link == link) {
-            console.log(this._position);
             RabbitCMS.navigateByHandler(s.handler, s.link, StateType.NoPush, replay).then(()=> {
                 this._position = index;
             }, ()=> {
@@ -138,7 +133,6 @@ class Stack extends Array<State> {
             });
         } else {
             RabbitCMS.navigate(link, StateType.Replace, replay).then(()=> {
-                //history.replaceState({state: this._position, link: this.current.link}, null, this.current.link);
             }, ()=> {
                 if (index > this._position) {
                     history.back();
@@ -152,6 +146,7 @@ class Stack extends Array<State> {
 
 export interface AjaxSettings extends JQueryAjaxSettings {
     warningTarget?:JQuery;
+    blockTarget?:JQuery;
 }
 
 export class RabbitCMS {
@@ -643,7 +638,6 @@ export class RabbitCMS {
 
     static setMenu(menu:string) {
         this.menu = menu;
-        console.log(menu);
         $('li[data-path]', '.page-sidebar-menu').removeClass('active open').each((i, e)=> {
             let el = $(e);
             if ((menu + '.').startsWith($(e).data('path') + '.')) {
@@ -705,12 +699,12 @@ export class RabbitCMS {
         });
     }
 
-    static unblockUI(target?:any) {
+    static unblockUI(target?:JQuery) {
         require(['jquery.blockui'], ()=> {
             if (target) {
-                $(target).unblock({
+                target.unblock({
                     onUnblock: ()=> {
-                        $(target).css({position: '', zoom: ''});
+                        target.css({position: '', zoom: ''});
                     }
                 });
             } else
@@ -752,9 +746,26 @@ export class RabbitCMS {
      * Ajax wrapper.
      * @param {JQueryAjaxSettings} options
      */
-    static ajax(options:AjaxSettings) {
+    static ajax(options:AjaxSettings):JQueryXHR {
         var originalOptions = options;
+
         options = $.extend(true, {}, options);
+
+        options.beforeSend = (jqXHR:JQueryXHR, settings:JQueryAjaxSettings)=> {
+            if (settings.data && settings.processData) {
+                if (typeof settings.data == "string") {
+                    settings.data = settings.data + (settings.data.length ? '&' : '') + jQuery.param({_token: this.getToken()}, settings.traditional);
+                } else if (settings.data) {
+                    settings.data._token = this.getToken();
+                } else {
+                    settings.data = {_token: this.getToken()};
+                }
+            }
+
+            if ($.isFunction(originalOptions.beforeSend)) {
+                return originalOptions.beforeSend(jqXHR, settings);
+            }
+        };
 
         options.error = (jqXHR:JQueryXHR, textStatus:string, errorThrown:string) => {
             if ($.isFunction(originalOptions.error) && originalOptions.error(jqXHR, textStatus, errorThrown)) {
@@ -784,18 +795,14 @@ export class RabbitCMS {
         };
 
         options.complete = (jqXHR:JQueryXHR, textStatus:string):any => {
-            let menu = jqXHR.getResponseHeader('X-Backend-Menu');
-            if (menu) {
-                this.setMenu(menu);
-            }
-            RabbitCMS.unblockUI();
+            RabbitCMS.unblockUI(options.blockTarget);
             if ($.isFunction(originalOptions.complete)) {
                 originalOptions.complete(jqXHR, textStatus);
             }
         };
 
-        this.blockUI();
-        $.ajax(options);
+        this.blockUI(options.blockTarget);
+        return $.ajax(options);
     }
 
     /**
@@ -817,61 +824,43 @@ export class RabbitCMS {
         });
     }
 
-    /* Dialogs */
-    static Dialogs = {
-        onDelete: function (link, callback) {
-            require(['bootbox'], (bootbox)=> {
-                bootbox.dialog({
-                    message: '<h4>Ви впевнені, що хочете видалити цей запис?</h4>',
-                    closeButton: false,
-                    buttons: {
-                        yes: {
-                            label: 'Так',
-                            className: 'btn-sm btn-success',
-                            callback: function () {
-                                RabbitCMS.ajaxPost(link, {}, function () {
-                                    if ($.isFunction(callback))
-                                        callback();
-                                });
-                            }
-                        },
-                        no: {
-                            label: 'Ні',
-                            className: 'btn-sm btn-danger'
-                        }
-                    }
-                });
-            });
-        },
-        onConfirm: function (message, callback) {
-            require(['bootbox'], (bootbox)=> {
-                bootbox.dialog({
-                    message: '<h4>' + message + '</h4>',
-                    closeButton: false,
-                    buttons: {
-                        yes: {
-                            label: 'Так',
-                            className: 'btn-sm btn-success',
-                            callback: callback
-                        },
-                        no: {
-                            label: 'Ні',
-                            className: 'btn-sm btn-danger'
-                        }
-                    }
-                });
-            });
-        }
-    };
-
     static select2(selector:JQuery, options:Select2Options = {}) {
         require(['rabbitcms/loader/jquery.select2'], function () {
-
             selector.select2(options);
         });
     }
 }
 
+export class Dialogs {
+    static dialog(message:string, options?:BootboxDialogOptions):Promise<void> {
+        return new Promise<void>((resolve, reject)=> {
+            require(['bootbox'], (bootbox)=> {
+                bootbox.dialog($.extend(true, <BootboxDialogOptions>{
+                    message: '<h4>' + message + '</h4>',
+                    closeButton: false,
+                    buttons: {
+                        yes: {
+                            label: i18n.yes,
+                            className: 'btn-sm btn-success',
+                            callback: resolve
+                        },
+                        no: {
+                            label: i18n.no,
+                            className: 'btn-sm btn-danger',
+                            callback: reject
+                        }
+                    }
+                }, options));
+            });
+        });
+    }
+
+    static onDelete(options?:BootboxDialogOptions) {
+
+        // this.dialog(, options).then();
+
+    }
+}
 export class Tools {
     static transliterate(string:string, spase = '-') {
         var text = $.trim(string.toLowerCase());
@@ -966,11 +955,9 @@ export class Form {
                         bootbox.dialog(dialog);
                     });
                     reject();
-                    console.log('1.reject');
                 } else {
                     this.match = false;
                     resolve();
-                    console.log('1.resolve');
                 }
             }));
         }
