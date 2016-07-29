@@ -411,6 +411,7 @@ define(['jquery', 'bootbox'], function ($, bootbox) {
     };
 
     RabbitCMS.prototype.ajaxPost = function (link, data, callback) {
+        data._token = _TOKEN;
         var options = {url: link, method: 'POST', data: data};
 
         this._ajax(options, callback);
