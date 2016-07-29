@@ -83,7 +83,6 @@ export class DataTable {
                     // data.filters = settings.;
                 },
                 ajax: (data:Object, callback:Function, settings:DataTables.SettingsLegacy) => {
-                    console.log(settings);
                     $.each(this.ajaxParams, (key:string, value:any) => {
                         data[key] = value;
                     });
@@ -134,67 +133,6 @@ export class DataTable {
                         }
                     });
                 },
-                // ajax: { // define ajax settings
-                //     url: "", // ajax URL
-                //     type: "POST", // request type
-                //     timeout: 20000,
-                //     data: (data:AjaxParams) => { // add request parameters before submit
-                //         $.each(this.ajaxParams, (key:string, value:any) => {
-                //             data[key] = value;
-                //         });
-                //         RabbitCMS.blockUI(this.tableContainer, {
-                //             message: this.tableOptions.loadingMessage,
-                //             overlayColor: 'none',
-                //             cenrerY: true,
-                //             boxed: true
-                //         });
-                //     },
-                //     dataSrc: (res:DataTableResponseData) => { // Manipulate the data returned from the server
-                //         if (res.customActionMessage) {
-                //             RabbitCMS.alert({
-                //                 type: (res.customActionStatus == 'OK' ? 'success' : 'danger'),
-                //                 icon: (res.customActionStatus == 'OK' ? 'check' : 'warning'),
-                //                 message: res.customActionMessage,
-                //                 container: this.tableWrapper,
-                //                 place: 'prepend'
-                //             });
-                //         }
-                //
-                //         if (res.customActionStatus) {
-                //             if (this.tableOptions.resetGroupActionInputOnSuccess) {
-                //                 $('.table-group-action-input', this.tableWrapper).val("");
-                //             }
-                //         }
-                //
-                //         if ($('.group-checkable', this.table).length === 1) {
-                //             $('.group-checkable', this.table).prop("checked", false);
-                //         }
-                //
-                //         if (this.tableOptions.onSuccess) {
-                //             this.tableOptions.onSuccess.call(undefined, this, res);
-                //         }
-                //
-                //         RabbitCMS.unblockUI(this.tableContainer);
-                //
-                //         return res.data;
-                //     },
-                //     error: () => { // handle general connection errors
-                //         if (this.tableOptions.onError) {
-                //             this.tableOptions.onError.call(undefined, this);
-                //         }
-                //
-                //         RabbitCMS.alert({
-                //             type: 'danger',
-                //             icon: 'warning',
-                //             message: i18n.ajaxRequestGeneralError,
-                //             container: this.tableWrapper,
-                //             place: 'prepend'
-                //         });
-                //
-                //         RabbitCMS.unblockUI(this.tableContainer);
-                //     }
-                // },
-
                 drawCallback: ()=> { // run some code on table redraw
                     if (this.tableInitialized === false) { // check if table has been initialized
                         this.tableInitialized = true; // set table initialized
@@ -214,12 +152,6 @@ export class DataTable {
 
         // create table's jquery object
         this.table = $(options.src);
-
-
-        // if ((<DataTables.AjaxSettings>options.dataTable.ajax).url === '' && this.table.data('link')) {
-        //     (<DataTables.AjaxSettings>options.dataTable.ajax).url = this.table.data('link');
-        // }
-
 
         this.tableContainer = this.table.parents(".table-container");
 

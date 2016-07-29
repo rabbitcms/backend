@@ -27,7 +27,6 @@ define(["require", "exports", "jquery", "rabbitcms/backend", "i18n!rabbitcms/nls
                     stateSaveParams: function (settings, data) {
                     },
                     ajax: function (data, callback, settings) {
-                        console.log(settings);
                         $.each(_this.ajaxParams, function (key, value) {
                             data[key] = value;
                         });

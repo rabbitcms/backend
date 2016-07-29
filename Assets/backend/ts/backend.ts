@@ -723,16 +723,7 @@ export class RabbitCMS {
         options = $.extend(true, {}, options);
 
         options.beforeSend = (jqXHR:JQueryXHR, settings:JQueryAjaxSettings)=> {
-            if (settings.data && settings.processData) {
-                if (typeof settings.data == "string") {
-                    settings.data = settings.data + (settings.data.length ? '&' : '') + jQuery.param({_token: this.getToken()}, settings.traditional);
-                } else if (settings.data) {
-                    settings.data._token = this.getToken();
-                } else {
-                    settings.data = {_token: this.getToken()};
-                }
-            }
-
+            jqXHR.setRequestHeader('X-CSRF-TOKEN', this.getToken());
             if ($.isFunction(originalOptions.beforeSend)) {
                 return originalOptions.beforeSend(jqXHR, settings);
             }

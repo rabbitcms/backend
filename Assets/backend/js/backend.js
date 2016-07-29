@@ -598,17 +598,7 @@ define(["require", "exports", "jquery", "i18n!rabbitcms/nls/backend", "jquery.co
             var originalOptions = options;
             options = $.extend(true, {}, options);
             options.beforeSend = function (jqXHR, settings) {
-                if (settings.data && settings.processData) {
-                    if (typeof settings.data == "string") {
-                        settings.data = settings.data + (settings.data.length ? '&' : '') + jQuery.param({ _token: _this.getToken() }, settings.traditional);
-                    }
-                    else if (settings.data) {
-                        settings.data._token = _this.getToken();
-                    }
-                    else {
-                        settings.data = { _token: _this.getToken() };
-                    }
-                }
+                jqXHR.setRequestHeader('X-CSRF-TOKEN', _this.getToken());
                 if ($.isFunction(originalOptions.beforeSend)) {
                     return originalOptions.beforeSend(jqXHR, settings);
                 }
