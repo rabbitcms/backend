@@ -13,8 +13,6 @@
         <div class="portlet-body">
             <form id="users-form" method="post" class="form" data-type="{{$model->exists ? 'update' : 'create'}}"
                   action="{{$model->exists ? relative_route('backend.backend.users.update', ['id' => $model->id]) : relative_route('backend.backend.users.store')}}">
-                <input type="hidden" name="_token" value="{{csrf_token()}}">
-
                 <div class="form-body">
                     <div class="row">
                         <div class="col-md-6">

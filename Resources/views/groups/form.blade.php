@@ -12,8 +12,6 @@
 
         <div class="portlet-body">
             <form method="post" class="form" data-type="{{$model->exists ? 'update' : 'create'}}" action="{{$model->exists ? relative_route('backend.backend.groups.update', ['id' => $model->id]) : relative_route('backend.backend.groups.store')}}">
-                <input type="hidden" name="_token" value="{{csrf_token()}}">
-
                 <div class="tabbable-custom">
                     <ul class="nav nav-tabs">
                         <li class="active">
@@ -54,36 +52,6 @@
                                                                 <input class="{{$rule}} read-rule" type="checkbox"
                                                                        @if($model->exists && array_key_exists($rule, $model->permissions)) checked="checked" @endif
                                                                        name="permissions[{{$rule}}]" value="1"> {{$caption}}</label><br>
-                                                            {{--<td>
-                                                                <input class="{{$module}} read-rule" type="checkbox"
-                                                                       @if($model->exists && array_key_exists($module . '.' . $section . '.read', $model->permissions)) checked="checked" @endif
-                                                                       name="permissions[{{$module . '.' . $section . '.read'}}]" value="1">
-                                                            </td>
-                                                            <td>
-                                                                <input class="{{$module}} write-rule" type="checkbox"
-                                                                       @if($model->exists && array_key_exists($module . '.' . $section . '.write', $model->permissions)) checked="checked" @endif
-                                                                       name="permissions[{{$module . '.' . $section . '.write'}}]" value="1">
-                                                            </td>--}}
-                                                        {{--@if(is_array($list))
-                                                            @foreach($list as $key => $val)
-                                                                @if($key === '*')
-                                                                    <tr>
-                                                                        <td></td>
-                                                                        <td>{{$val}}</td>
-                                                                        <td>
-                                                                            <input class="{{$module}} read-rule" type="checkbox"
-                                                                                   @if($model->exists && array_key_exists($module . '.' . $section . '.read', $model->permissions)) checked="checked" @endif
-                                                                                   name="permissions[{{$module . '.' . $section . '.read'}}]" value="1">
-                                                                        </td>
-                                                                        <td>
-                                                                            <input class="{{$module}} write-rule" type="checkbox"
-                                                                                   @if($model->exists && array_key_exists($module . '.' . $section . '.write', $model->permissions)) checked="checked" @endif
-                                                                                   name="permissions[{{$module . '.' . $section . '.write'}}]" value="1">
-                                                                        </td>
-                                                                    </tr>
-                                                                @endif
-                                                            @endforeach
-                                                        @endif--}}
                                                         @endforeach
                                                         </td>
                                                     </tr>
