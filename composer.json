@@ -2,8 +2,8 @@
     "name": "rabbitcms/backend",
     "description": "Backend for RabbitCMS",
     "require": {
-        "rabbitcms/carrot": "^0.2",
-        "doctrine/annotations": "1.*"
+        "doctrine/annotations": "1.*",
+        "rabbitcms/carrot": "^0.2.0"
     },
     "type": "october-module",
     "authors": [
