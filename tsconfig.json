@@ -11,10 +11,13 @@
     "noImplicitAny": false,
     "preserveConstEnums": true,
     "noEmitHelpers": true,
+    "rootDirs": [
+      "Assets/backend/ts"
+    ],
     "outDir":"Assets/backend/js"
   },
   "filesGlob": [
-    "Assets/backend/ts/**",
+    "Assets/backend/ts/rabbitcms/**",
     "typings/*"
   ]
 }

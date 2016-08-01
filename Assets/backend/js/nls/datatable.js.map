@@ -1,1 +1,1 @@
-{"version":3,"file":"datatable.js","sourceRoot":"","sources":["../../ts/nls/datatable.ts"],"names":[],"mappings":";;IAAA,OAAS;QACL,IAAI,EAAE,IAAI;QACV,EAAE,EAAE,IAAI;QACR,EAAE,EAAE,IAAI;KACX,CAAC"}
+{"version":3,"file":"datatable.js","sourceRoot":"","sources":["../../ts/rabbitcms/nls/datatable.ts"],"names":[],"mappings":";;IAAA,OAAS;QACL,IAAI,EAAE,IAAI;QACV,EAAE,EAAE,IAAI;QACR,EAAE,EAAE,IAAI;KACX,CAAC"}

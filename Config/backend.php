@@ -64,9 +64,37 @@ return [
                 'location' => 'plugins/jquery-validation/js',
                 'main' => 'jquery.validate.min'
             ],
-            'select2'=>[
-                'location'=>'plugins/select2',
-                'main'=>'js/select2.min'
+            'select2' => [
+                'location' => 'plugins/select2',
+                'main' => 'js/select2.min'
+            ],
+            'icheck' => [
+                'location' => 'plugins/icheck',
+                'main' => 'icheck.min'
+            ],
+            'bootstrap-switch' => [
+                'location' => 'plugins/bootstrap-switch',
+                'main' => 'js/bootstrap-switch.min'
+            ],
+            'slimScroll' => [
+                'location' => 'plugins/jquery-slimscroll',
+                'main' => 'jquery.slimscroll.min'
+            ],
+            'jquery.fancybox' => [
+                'location' => 'plugins/fancybox/source',
+                'main' => 'jquery.fancybox.pack'
+            ],
+            'bootstrap-tabdrop' => [
+                'location' => 'plugins/bootstrap-tabdrop',
+                'main' => 'js/bootstrap-tabdrop'
+            ],
+            'bootstrap-confirmation' => [
+                'location' => 'pugins/bootstrap-confirmation',
+                'main' => 'bootstrap-confirmation.min'
+            ],
+            'jquery.counterup'=>[
+                'location' => 'plugins/counterup',
+                'main'=>'jquery.counterup.min'
             ]
         ],
         'modules' => [

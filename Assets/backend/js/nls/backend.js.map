@@ -1,1 +1,1 @@
-{"version":3,"file":"backend.js","sourceRoot":"","sources":["../../ts/nls/backend.ts"],"names":[],"mappings":";;IAGA,OAAS;QACL,IAAI,EAAE,IAAI;QACV,EAAE,EAAE,IAAI;QACR,EAAE,EAAE,IAAI;KACX,CAAA"}
+{"version":3,"file":"backend.js","sourceRoot":"","sources":["../../ts/rabbitcms/nls/backend.ts"],"names":[],"mappings":";;IAGA,OAAS;QACL,IAAI,EAAE,IAAI;QACV,EAAE,EAAE,IAAI;QACR,EAAE,EAAE,IAAI;KACX,CAAA"}
