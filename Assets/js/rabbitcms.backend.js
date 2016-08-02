@@ -418,8 +418,10 @@ define(['jquery', 'bootbox'], function ($, bootbox) {
 
     RabbitCMS.prototype._ajax = function (options, callback) {
         var _this = this;
-
         options = $.extend(true, {
+            headers: {
+                'X-CSRF-TOKEN':_TOKEN
+            },
             success: function(data) {
                 if ($.isFunction(callback))
                     callback(data);
