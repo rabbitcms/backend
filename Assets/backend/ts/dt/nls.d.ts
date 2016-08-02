@@ -1,4 +1,4 @@
-/// <reference path="../../../typings/index.d.ts" />
+/// <reference path="../../../../typings/index.d.ts" />
 
 declare module "i18n!rabbitcms/nls/datatable" {
     var _default:{

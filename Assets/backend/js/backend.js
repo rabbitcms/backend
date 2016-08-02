@@ -507,13 +507,11 @@ define(["require", "exports", "jquery", "i18n!rabbitcms/nls/backend", "rabbitcms
         RabbitCMS.ajax = function (options) {
             var _this = this;
             var originalOptions = options;
-            options = $.extend(true, {}, options);
-            options.beforeSend = function (jqXHR, settings) {
-                jqXHR.setRequestHeader('X-CSRF-TOKEN', _this.getToken());
-                if ($.isFunction(originalOptions.beforeSend)) {
-                    return originalOptions.beforeSend(jqXHR, settings);
+            options = $.extend(true, {
+                headers: {
+                    'X-CSRF-TOKEN': this.getToken()
                 }
-            };
+            }, options);
             options.error = function (jqXHR, textStatus, errorThrown) {
                 if ($.isFunction(originalOptions.error) && originalOptions.error(jqXHR, textStatus, errorThrown)) {
                     return;
@@ -628,102 +626,6 @@ define(["require", "exports", "jquery", "i18n!rabbitcms/nls/backend", "rabbitcms
         return Tools;
     }());
     exports.Tools = Tools;
-    var Form = (function () {
-        function Form(form, options) {
-            var _this = this;
-            this.match = false;
-            this.form = form;
-            this.options = $.extend(true, {
-                validate: null,
-                completeSubmit: function () {
-                }
-            }, options);
-            if (this.options.state && this.options.dialog !== false) {
-                this.options.state.addChecker(function (replay) { return new Promise(function (resolve, reject) {
-                    if (!_this.match && _this.data !== _this.getData()) {
-                        require(['bootbox'], function (bootbox) {
-                            var dialog = $.extend(true, {
-                                message: '<h4>' + i18n.dataHasBeenModified + '</h4>',
-                                closeButton: false,
-                                buttons: {
-                                    save: {
-                                        label: i18n.save,
-                                        className: 'btn-sm btn-success btn-green',
-                                        callback: function () {
-                                            _this.form.submit();
-                                        }
-                                    },
-                                    cancel: {
-                                        label: i18n.dontSave,
-                                        className: 'btn-sm btn-danger',
-                                        callback: function () {
-                                            _this.match = true;
-                                            (replay || function () {
-                                            })();
-                                        }
-                                    },
-                                    close: {
-                                        label: i18n.close,
-                                        className: 'btn-sm'
-                                    }
-                                }
-                            }, _this.options.dialog);
-                            bootbox.dialog(dialog);
-                        });
-                        reject();
-                    }
-                    else {
-                        _this.match = false;
-                        resolve();
-                    }
-                }); });
-            }
-            if (this.options.validation !== false) {
-                require(['rabbitcms/loader/validation'], function () {
-                    var options = $.extend(true, {
-                        submitHandler: function () {
-                            _this.submitForm();
-                        }
-                    }, _this.options.validation);
-                    form.validate(options);
-                });
-            }
-            else {
-                form.on('submit', function () {
-                    _this.submitForm();
-                });
-            }
-            this.syncOriginal();
-        }
-        Form.prototype.syncOriginal = function () {
-            this.data = this.getData();
-        };
-        Form.prototype.getData = function () {
-            return $('input:not(.ignore-scan),select:not(.ignore-scan),textarea:not(.ignore-scan)', this.form).serialize();
-        };
-        Form.prototype.submitForm = function () {
-            var _this = this;
-            this.syncOriginal();
-            if (this.options.ajax !== false) {
-                RabbitCMS.ajax({
-                    url: this.form.attr('action'),
-                    method: this.form.attr('method'),
-                    data: this.data,
-                    success: function () {
-                        if (!_this.options.completeSubmit()) {
-                            history.back();
-                        }
-                    }
-                });
-            }
-            else {
-                this.form[0].submit();
-                this.options.completeSubmit();
-            }
-        };
-        return Form;
-    }());
-    exports.Form = Form;
     var MicroEvent = (function () {
         function MicroEvent(object) {
             var _this = this;

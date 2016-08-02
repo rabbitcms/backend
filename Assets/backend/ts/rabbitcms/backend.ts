@@ -610,14 +610,11 @@ export class RabbitCMS extends Metronic {
     static ajax(options:AjaxSettings):JQueryXHR {
         var originalOptions = options;
 
-        options = $.extend(true, {}, options);
-
-        options.beforeSend = (jqXHR:JQueryXHR, settings:JQueryAjaxSettings)=> {
-            jqXHR.setRequestHeader('X-CSRF-TOKEN', this.getToken());
-            if ($.isFunction(originalOptions.beforeSend)) {
-                return originalOptions.beforeSend(jqXHR, settings);
+        options = $.extend(true, {
+            headers:{
+                'X-CSRF-TOKEN':this.getToken()
             }
-        };
+        }, options);
 
         options.error = (jqXHR:JQueryXHR, textStatus:string, errorThrown:string) => {
             if ($.isFunction(originalOptions.error) && originalOptions.error(jqXHR, textStatus, errorThrown)) {

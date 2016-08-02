@@ -1,4 +1,4 @@
-define(["require", "exports", "jquery", "rabbitcms/backend", "rabbitcms/datatable"], function (require, exports, $, backend_1, datatable_1) {
+define(["require", "exports", "jquery", "rabbitcms/backend", "rabbitcms/datatable", "Assets/backend/ts/rabbitcms/form"], function (require, exports, $, backend_1, datatable_1, form_1) {
     "use strict";
     var Groups = (function (_super) {
         __extends(Groups, _super);
@@ -25,7 +25,7 @@ define(["require", "exports", "jquery", "rabbitcms/backend", "rabbitcms/datatabl
         Groups.prototype.form = function (portlet, state) {
             var _this = this;
             var $form = $('form', portlet);
-            new backend_1.Form($form, {
+            new form_1.Form($form, {
                 state: state,
                 validation: {
                     rules: { "groups[caption]": { required: true } }

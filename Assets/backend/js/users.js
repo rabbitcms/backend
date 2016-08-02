@@ -1,4 +1,4 @@
-define(["require", "exports", "jquery", "rabbitcms/backend", "rabbitcms/datatable"], function (require, exports, $, backend_1, datatable_1) {
+define(["require", "exports", "jquery", "rabbitcms/backend", "rabbitcms/datatable", "rabbitcms/form"], function (require, exports, $, backend_1, datatable_1, form_1) {
     "use strict";
     var User = (function (_super) {
         __extends(User, _super);
@@ -32,7 +32,7 @@ define(["require", "exports", "jquery", "rabbitcms/backend", "rabbitcms/datatabl
             if ($form.data('type') !== 'update') {
                 _validationRules["password"] = { required: true };
             }
-            new backend_1.Form($form, {
+            new form_1.Form($form, {
                 state: state,
                 validation: {
                     rules: _validationRules,

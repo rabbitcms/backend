@@ -3,8 +3,6 @@
 // Definitions by: Dmytro Kulyk <https://github.com/dkulyk>
 // Definitions: https://github.com/DefinitelyTyped/DefinitelyTyped
 
-/// <reference path="../../../typings/globals/jquery/index.d.ts" />
-
 declare namespace JQueryBackStretch {
 
     interface BackStretchOptions {

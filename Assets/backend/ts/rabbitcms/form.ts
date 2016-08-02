@@ -2,6 +2,9 @@
  * Created by lnkvisitor on 01.08.16.
  */
 import * as $ from 'jquery';
+import {RabbitCMS, State, ValidationOptions} from "rabbitcms/backend";
+import AjaxSettings = DataTables.AjaxSettings;
+import * as i18n from "i18n!rabbitcms/nls/backend";
 
 export interface FormOptions {
     validation?:ValidationOptions;
