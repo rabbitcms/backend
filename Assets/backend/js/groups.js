@@ -1,4 +1,4 @@
-define(["require", "exports", "jquery", "rabbitcms/backend", "rabbitcms/datatable", "Assets/backend/ts/rabbitcms/form"], function (require, exports, $, backend_1, datatable_1, form_1) {
+define(["require", "exports", "jquery", "rabbitcms/backend", "rabbitcms/datatable", "rabbitcms/form"], function (require, exports, $, backend_1, datatable_1, form_1) {
     "use strict";
     var Groups = (function (_super) {
         __extends(Groups, _super);
