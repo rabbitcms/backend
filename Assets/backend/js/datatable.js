@@ -1,5 +1,6 @@
-define(["require", "exports", "jquery", "rabbitcms/backend", "i18n!rabbitcms/nls/datatable", "datatables.net", "datatables.net-bt"], function (require, exports, $, backend_1, i18n) {
+define(["require", "exports", "jquery", "jszip", "rabbitcms/backend", "i18n!rabbitcms/nls/datatable", "pdfmake", "pdfmake/vfs_fonts", "datatables.net", "datatables.net-bs", "datatables.net-buttons", "datatables.net-buttons/js/buttons.bootstrap.min", "datatables.net-buttons/js/buttons.colVis.min", "datatables.net-buttons/js/buttons.html5.min", "datatables.net-buttons/js/buttons.print.min", "datatables.net-colReorder", "datatables.net-colReorder", "css!datatables.net-buttons/css/buttons.bootstrap.min.css"], function (require, exports, $, jszip, backend_1, i18n) {
     "use strict";
+    window['JSZip'] = jszip;
     var DataTable = (function () {
         function DataTable(options) {
             var _this = this;
@@ -12,11 +13,12 @@ define(["require", "exports", "jquery", "rabbitcms/backend", "i18n!rabbitcms/nls
                 resetGroupActionInputOnSuccess: true,
                 loadingMessage: 'Loading...',
                 dataTable: {
-                    dom: "<'row'<'col-md-8 col-sm-12'pli><'col-md-4 col-sm-12'<'table-group-actions pull-right'>>r><'table-responsive't><'row'<'col-md-8 col-sm-12'pli><'col-md-4 col-sm-12'>>",
+                    dom: "<'row'<'col-md-8 col-sm-12'pli><'col-md-4 col-sm-12'<'table-group-actions pull-right'B>>r><'table-responsive't><'row'<'col-md-8 col-sm-12'pli><'col-md-4 col-sm-12'>>",
                     pageLength: 10,
                     language: i18n.dataTable,
                     orderCellsTop: true,
                     columnDefs: [],
+                    buttons: [],
                     pagingType: "bootstrap_extended",
                     autoWidth: false,
                     processing: false,

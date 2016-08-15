@@ -165,7 +165,7 @@ a.dt-button:last-child {
 .portlet.light .dataTables_wrapper .dt-buttons {
     margin-top: -64px; }
 .portlet.box .dataTables_wrapper .dt-buttons {
-    margin-top: -50px; }
+    margin-top: 0; }
 
 /***
 Rot Details

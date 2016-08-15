@@ -1,7 +1,7 @@
 (function( factory ){
     if ( typeof define === 'function' && define.amd ) {
         // AMD
-        define('datatables.net-bt', ['jquery', 'datatables.net'], function ( $ ) {
+        define('datatables.net-bs', ['jquery', 'datatables.net'], function ( $ ) {
             return factory( $, window, document );
         } );
     }

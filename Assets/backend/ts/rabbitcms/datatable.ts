@@ -3,10 +3,23 @@
  */
 
 import * as $ from "jquery";
+import * as jszip from "jszip";
+import "pdfmake";
+import "pdfmake/vfs_fonts";
 import "datatables.net";
-import "datatables.net-bt";
+import "datatables.net-bs";
+import "datatables.net-buttons";
+import "datatables.net-buttons/js/buttons.bootstrap.min";
+import "datatables.net-buttons/js/buttons.colVis.min";
+import "datatables.net-buttons/js/buttons.html5.min";
+import "datatables.net-buttons/js/buttons.print.min";
+import "datatables.net-colReorder";
+import "datatables.net-colReorder";
 import {RabbitCMS} from "rabbitcms/backend";
 import * as i18n from "i18n!rabbitcms/nls/datatable";
+import "css!datatables.net-buttons/css/buttons.bootstrap.min.css";
+
+window['JSZip'] = jszip;
 
 export interface DataTableOptions {
     dataTable?:DataTables.Settings;
@@ -64,12 +77,13 @@ export class DataTable {
             resetGroupActionInputOnSuccess: true,
             loadingMessage: 'Loading...',
             dataTable: <DataTables.Settings>{
-                dom: "<'row'<'col-md-8 col-sm-12'pli><'col-md-4 col-sm-12'<'table-group-actions pull-right'>>r><'table-responsive't><'row'<'col-md-8 col-sm-12'pli><'col-md-4 col-sm-12'>>", // datatable layout
+                dom: "<'row'<'col-md-8 col-sm-12'pli><'col-md-4 col-sm-12'<'table-group-actions pull-right'B>>r><'table-responsive't><'row'<'col-md-8 col-sm-12'pli><'col-md-4 col-sm-12'>>", // datatable layout
                 pageLength: 10, // default records per page
                 language: i18n.dataTable,
 
                 orderCellsTop: true,
                 columnDefs: [],
+                buttons: [],
 
                 pagingType: "bootstrap_extended", // pagination type(bootstrap, bootstrap_full_number or bootstrap_extended)
                 autoWidth: false, // disable fixed width and enable fluid table
