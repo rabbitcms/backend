@@ -58,10 +58,11 @@ require.config({
         "dtkt.users.agencies": "users/backend/js/dtkt.users.agencies",
         "dtkt.users.managers": "users/backend/js/dtkt.users.managers",
         "dtkt.users.firms": "users/backend/js/dtkt.users.firms",
+        "dtkt.users.asp": "users/backend/js/dtkt.users.asp",
 
         "dtkt.webinars": "webinars/backend/js/dtkt.webinars"
     },
-    "urlArgs": "0000000031"
+    "urlArgs": "0000000034"
 });
 
 define('jquery', [], function() { return jQuery; });
