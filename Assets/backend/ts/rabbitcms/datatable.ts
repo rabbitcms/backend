@@ -303,7 +303,7 @@ export class DataTable {
         return this.tableWrapper;
     }
 
-    gettableContainer() {
+    getTableContainer() {
         return this.tableContainer;
     }
 
