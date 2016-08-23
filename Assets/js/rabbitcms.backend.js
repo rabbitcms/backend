@@ -416,12 +416,10 @@ define(['jquery', 'bootbox'], function ($, bootbox) {
         this._ajax(options, callback);
     };
 
-    RabbitCMS.prototype._ajax = function (options, callback) {
+    RabbitCMS.prototype._ajax = function (options, callback, token) {
         var _this = this;
-        options = $.extend(true, {
-            headers: {
-                'X-CSRF-TOKEN':_TOKEN
-            },
+
+        var settings = {
             success: function(data) {
                 if ($.isFunction(callback))
                     callback(data);
@@ -454,7 +452,17 @@ define(['jquery', 'bootbox'], function ($, bootbox) {
 
                 _this.unblockUI();
             }
-        }, options);
+        };
+
+        if (token !== false) {
+            settings = $.extend(true, {
+                headers: {
+                    'X-CSRF-TOKEN': _TOKEN
+                }
+            }, settings);
+        }
+
+        options = $.extend(true, settings, options);
 
         _this.blockUI();
         $.ajax(options);
