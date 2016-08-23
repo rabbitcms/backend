@@ -1,2 +1,2 @@
 *.js.map
-ts/typings
+/typings

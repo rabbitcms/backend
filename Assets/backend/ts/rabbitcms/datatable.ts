@@ -1,3 +1,6 @@
+/// <reference path="../../dt/datatables.d.ts" />
+/// <reference path="../../dt/nls.d.ts" />
+/// <reference path="../../dt/jszip.d.ts" />
 /**
  * Created by lnkvisitor on 23.07.16.
  */

@@ -24,14 +24,6 @@ export function init(portlet:JQuery) {
                 required: true
             }
         },
-        messages: {
-            email: {
-                required: "Поле Логін обов'язкове для заповнення"
-            },
-            password: {
-                required: "Поле Пароль обов'язкове для заповнення"
-            }
-        },
         highlight (element:HTMLElement) {
             $(element).closest('.form-group').addClass('has-error');
         },
