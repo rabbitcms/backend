@@ -1,3 +1,4 @@
+/// <reference path="../../typings/index.d.ts" />
 /**
  * Created by lnkvisitor on 30.07.16.
  */

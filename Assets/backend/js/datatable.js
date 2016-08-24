@@ -198,7 +198,7 @@ define(["require", "exports", "jquery", "jszip", "rabbitcms/backend", "i18n!rabb
         DataTable.prototype.getTableWrapper = function () {
             return this.tableWrapper;
         };
-        DataTable.prototype.gettableContainer = function () {
+        DataTable.prototype.getTableContainer = function () {
             return this.tableContainer;
         };
         DataTable.prototype.getTable = function () {

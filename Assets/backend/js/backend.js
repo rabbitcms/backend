@@ -445,18 +445,6 @@ define(["require", "exports", "jquery", "i18n!rabbitcms/nls/backend", "rabbitcms
             var options = { container: target, type: 'danger', message: message, icon: 'fa-warning' };
             this.message(options);
         };
-        RabbitCMS.getViewPort = function () {
-            var e = window;
-            var a = 'inner';
-            if (!('innerWidth' in window)) {
-                a = 'client';
-                e = document.documentElement || document.body;
-            }
-            return {
-                width: e[a + 'Width'],
-                height: e[a + 'Height']
-            };
-        };
         RabbitCMS.initSidebar = function () {
             if ($.cookie && $.cookie('sidebar_closed') === '1' && this.getViewPort().width >= 992) {
                 $body.addClass('page-sidebar-closed');

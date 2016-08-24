@@ -3,12 +3,11 @@
  */
 import * as $ from 'jquery';
 import {RabbitCMS, State, ValidationOptions} from "rabbitcms/backend";
-import AjaxSettings = DataTables.AjaxSettings;
 import * as i18n from "i18n!rabbitcms/nls/backend";
 
 export interface FormOptions {
     validation?:ValidationOptions;
-    ajax?:AjaxSettings|boolean;
+    ajax?:DataTables.AjaxSettings|boolean;
     completeSubmit:()=>void;
     state?:State;
     dialog?:BootboxDialogOptions|boolean

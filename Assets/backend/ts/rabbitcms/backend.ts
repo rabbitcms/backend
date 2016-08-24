@@ -20,7 +20,7 @@ export interface RabbitCMSOptions extends MetronicOptions {
 export class State {
     link:string;
     handler:Handler;
-    checkers:((replay:ReplayFunc)=>Promise<void>)[] = [];
+    private checkers:((replay:ReplayFunc)=>Promise<void>)[] = [];
     widget:JQuery;
 
     constructor(link:string, handler:Handler, widget:JQuery) {
@@ -530,21 +530,6 @@ export class RabbitCMS extends Metronic {
     static dangerMessage(message:string, target?:JQuery) {
         var options = {container: target, type: 'danger', message: message, icon: 'fa-warning'};
         this.message(options);
-    }
-
-    static getViewPort():{width:number,height:number} {
-        var e:Element|Window = window;
-        var a = 'inner';
-
-        if (!('innerWidth' in window)) {
-            a = 'client';
-            e = document.documentElement || document.body;
-        }
-
-        return {
-            width: e[a + 'Width'],
-            height: e[a + 'Height']
-        };
     }
 
     static initSidebar() {

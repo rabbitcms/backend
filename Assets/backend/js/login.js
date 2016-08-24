@@ -17,14 +17,6 @@ define(["require", "exports", "jquery", "rabbitcms/backend", "jquery.backstretch
                     required: true
                 }
             },
-            messages: {
-                email: {
-                    required: "Поле Логін обов'язкове для заповнення"
-                },
-                password: {
-                    required: "Поле Пароль обов'язкове для заповнення"
-                }
-            },
             highlight: function (element) {
                 $(element).closest('.form-group').addClass('has-error');
             },
