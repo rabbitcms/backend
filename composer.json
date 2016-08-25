@@ -1,12 +1,6 @@
 {
   "name": "rabbitcms/backend",
   "description": "Backend for RabbitCMS",
-  "require": {
-    "doctrine/annotations": "1.*",
-    "rabbitcms/carrot": "^0.3.0",
-    "rabbitcms/modules": "^0.1.0"
-  },
-  "type": "october-module",
   "authors": [
     {
       "name": "Kulyk Dmytro",
@@ -17,6 +11,11 @@
       "email": "dmytro.zhurakovsky@gmail.com"
     }
   ],
+  "require": {
+    "doctrine/annotations": "1.*",
+    "rabbitcms/carrot": "^0.3.0",
+    "rabbitcms/modules": "^0.1.0"
+  },
   "autoload": {
     "classmap": [
       "Database"
