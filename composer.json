@@ -3,7 +3,8 @@
   "description": "Backend for RabbitCMS",
   "require": {
     "doctrine/annotations": "1.*",
-    "rabbitcms/carrot": "^0.3.0"
+    "rabbitcms/carrot": "^0.3.0",
+    "rabbitcms/modules": "^0.1.0"
   },
   "type": "october-module",
   "authors": [
@@ -32,7 +33,7 @@
       "name": "backend",
       "namespace": "RabbitCMS\\Backend",
       "enabled": true,
-      "providers": "RabbitCMS\\Backend\\Providers\\ModuleProvider",
+      "providers": "RabbitCMS\\Backend\\Providers\\BackendModuleProvider",
       "system": true
     }
   }

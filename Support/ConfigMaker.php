@@ -2,8 +2,8 @@
 namespace RabbitCMS\Backend\Support;
 
 use Illuminate\Config\Repository as ConfigRepository;
-use RabbitCMS\Carrot\Modules\Contracts\ModulesManager;
-use RabbitCMS\Carrot\Modules\Module;
+use RabbitCMS\Modules\Contracts\ModulesManager;
+use RabbitCMS\Modules\Module;
 
 /**
  * Class ConfigMaker.

@@ -21,11 +21,11 @@ use RabbitCMS\Backend\Http\Middleware\AuthenticateWithBasicAuth;
 use RabbitCMS\Backend\Http\Middleware\StartSession;
 use RabbitCMS\Backend\Support\Backend;
 use RabbitCMS\Backend\Support\ConfigMaker;
-use RabbitCMS\Carrot\Modules\Contracts\ModulesManager;
-use RabbitCMS\Carrot\Modules\Module;
-use RabbitCMS\Carrot\Providers\ModuleProvider as CarrotModuleProvider;
+use RabbitCMS\Modules\Contracts\ModulesManager;
+use RabbitCMS\Modules\Module;
+use RabbitCMS\Modules\ModuleProvider;
 
-class ModuleProvider extends CarrotModuleProvider
+class BackendModuleProvider extends ModuleProvider
 {
     /**
      * Boot the application events.
