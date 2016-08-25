@@ -3,7 +3,7 @@
   "description": "Backend for RabbitCMS",
   "require": {
     "doctrine/annotations": "1.*",
-    "rabbitcms/carrot": "^0.2.0"
+    "rabbitcms/carrot": "^0.3.0"
   },
   "type": "october-module",
   "authors": [
