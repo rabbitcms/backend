@@ -63,10 +63,10 @@ class BackendModuleProvider extends ModuleProvider
             }
         );
 
+
         $router->group([
             'as' => 'backend.config.js',
             'domain' => $config->get('module.backend.domain'),
-            //'middleware' => ['backend']
         ], function (Router $router) use ($dispatcher) {
             $router->get('backend/config.js', function () use ($dispatcher) {
                 $response = new Response($dispatcher->dispatchNow(new ConfigMaker()), 200, [
@@ -136,28 +136,29 @@ class BackendModuleProvider extends ModuleProvider
 
         $this->commands(MakeConfigCommand::class);
 
-        $this->app->make('auth')->extend('backend', function () {
-            $provider = $this->app->make('auth')->createUserProvider('backend');
-
-            $guard = new SessionGuard('backend', $provider, $this->app->make('session.store'));
-
-            // When using the remember me functionality of the authentication services we
-            // will need to be set the encryption instance of the guard, which allows
-            // secure, encrypted cookie values to get generated for those cookies.
-            if (method_exists($guard, 'setCookieJar')) {
-                $guard->setCookieJar($this->app->make('cookie'));
-            }
-
-            if (method_exists($guard, 'setDispatcher')) {
-                $guard->setDispatcher($this->app->make('events'));
-            }
-
-            if (method_exists($guard, 'setRequest')) {
-                $guard->setRequest($this->app->refresh('request', $guard, 'setRequest'));
-            }
-
-            return $guard;
-        });
+        //$this->app->make('auth')->extend('backend', function () {
+        //
+        //    $provider = $this->app->make('auth')->createUserProvider('backend');
+        //
+        //    $guard = new SessionGuard('backend', $provider, $this->app->make('session.store'));
+        //
+        //    // When using the remember me functionality of the authentication services we
+        //    // will need to be set the encryption instance of the guard, which allows
+        //    // secure, encrypted cookie values to get generated for those cookies.
+        //    if (method_exists($guard, 'setCookieJar')) {
+        //        $guard->setCookieJar($this->app->make('cookie'));
+        //    }
+        //
+        //    if (method_exists($guard, 'setDispatcher')) {
+        //        $guard->setDispatcher($this->app->make('events'));
+        //    }
+        //
+        //    if (method_exists($guard, 'setRequest')) {
+        //        $guard->setRequest($this->app->refresh('request', $guard, 'setRequest'));
+        //    }
+        //
+        //    return $guard;
+        //});
 
         // Register the middleware with the container using the container's singleton method.
         $this->app->singleton(StartSession::class);
@@ -170,12 +171,11 @@ class BackendModuleProvider extends ModuleProvider
             VerifyCsrfToken::class
         ]);
 
+
         $this->app->make('router')->middleware('backend.auth', Authenticate::class);
         $this->app->make('router')->middleware('backend.auth.base', AuthenticateWithBasicAuth::class);
 
-
-        $loader = AliasLoader::getInstance();
-        $loader->alias('Backend', BackendFacade::class);
+        AliasLoader::getInstance(['Backend'=> BackendFacade::class]);
     }
 
     /**
