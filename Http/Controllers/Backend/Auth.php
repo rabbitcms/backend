@@ -30,7 +30,7 @@ class Auth extends Controller
 
         $credentials = $request->only('email', 'password');
         $credentials['active'] = 1;
-        if ($this->auth->attempt($credentials, $request->has('remember'))) {
+        if ($this->auth()->attempt($credentials, $request->has('remember'))) {
             return \Redirect::intended();
         }
 
@@ -41,7 +41,7 @@ class Auth extends Controller
 
     public function getLogout()
     {
-        $this->auth->logout();
+        $this->auth()->logout();
 
         return redirect()->route('backend.index');
     }
