@@ -115,6 +115,14 @@ return [
                 'location' => 'plugins/datatables/plugins/buttons',
                 'main'     => 'js/dataTables.buttons.min',
             ],
+            'bootstrap-daterangepicker' => [
+                'location' => 'plugins/bootstrap-daterangepicker',
+                'main'     => 'js/daterangepicker',
+            ],
+            'bootstrap-editable' => [
+                'location' => 'plugins/bootstrap-editable',
+                'main'     => 'js/bootstrap-editable',
+            ],
         ],
         'modules'  => [
             'css'                => 'plugins/require-css',
@@ -124,7 +132,6 @@ return [
             'jquery.cookie'      => 'plugins/jquery.cokie.min',
             'jquery.backstretch' => 'plugins/backstretch/jquery.backstretch.min',
             'jquery.blockui'     => 'plugins/jquery.blockui.min',
-
             'datatables.net'            => [
                 'path' => 'plugins/datatables/jquery.dataTables.min',
                 'css'  => 'plugins/datatables/css/jquery.dataTables.min.css',
@@ -137,11 +144,11 @@ return [
                 ],
             ],
             'datatables.net-colReorder' => 'plugins/datatables/plugins/colReorder/dataTables.colReorder.min',
-
             'jquery.colorbox' => [
                 'path' => 'plugins/colorbox/jquery.colorbox',
                 'css'  => 'plugins/colorbox/colorbox.css',
             ],
+            'moment' => 'plugins/moment'
         ],
     ],
     'handlers'  => [

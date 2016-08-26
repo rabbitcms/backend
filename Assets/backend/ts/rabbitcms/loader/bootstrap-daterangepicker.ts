@@ -1,13 +1,9 @@
-/// <reference path="../../../dt/select2.d.ts" />
-/**
- * Created by lnkvisitor on 28.07.16.
- */
+
 import * as $ from "jquery";
+//import * as moment from "moment";
+import "bootstrap-daterangepicker";
 import {RabbitCMS} from "rabbitcms/backend";
-import * as select2 from "select2";
-import "css!select2/css/select2.min.css";
-import "css!select2/css/select2-bootstrap.min.css";
-import "css!styles/plugins/select2.css";
+import "css!bootstrap-daterangepicker/css/daterangepicker.css";
 
 let lang:string = RabbitCMS.getLocale(new Map<string,string>()
     .set('pt_BR', 'pt-BR')
@@ -15,11 +11,15 @@ let lang:string = RabbitCMS.getLocale(new Map<string,string>()
     .set('zn_CN','zn_CN')
     .set('zn_TW','zn_TW')
 );
-require(['select2/js/i18n/' + lang]);
 
-export = select2;
+//export = moment;
 
+//require(['select2/js/i18n/' + lang]);
+
+//
+/*
 $.fn.select2.defaults.set('language',lang);
 $.fn.select2.defaults.set("theme", "bootstrap");
 $.fn.select2.defaults.set("width", "auto");
 $.fn.select2.defaults.set("allowClear", true);
+*/
