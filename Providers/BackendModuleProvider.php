@@ -12,31 +12,30 @@ use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Http\Response;
 use Illuminate\Routing\Router;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
-use Pingpong\Modules\Module;
-use Pingpong\Modules\Repository as ModulesRepository;
 use RabbitCMS\Backend\Console\Commands\MakeConfigCommand;
 use RabbitCMS\Backend\Entities\User as UserEntity;
 use RabbitCMS\Backend\Facades\Backend as BackendFacade;
 use RabbitCMS\Backend\Http\Controllers\Backend\Auth as AuthController;
 use RabbitCMS\Backend\Http\Middleware\Authenticate;
 use RabbitCMS\Backend\Http\Middleware\AuthenticateWithBasicAuth;
-use RabbitCMS\Backend\Http\Middleware\BackendMenu;
 use RabbitCMS\Backend\Http\Middleware\StartSession;
 use RabbitCMS\Backend\Support\Backend;
 use RabbitCMS\Backend\Support\ConfigMaker;
-use RabbitCMS\Carrot\Providers\ModuleProvider as CarrotModuleProvider;
+use RabbitCMS\Modules\Contracts\ModulesManager;
+use RabbitCMS\Modules\Module;
+use RabbitCMS\Modules\ModuleProvider;
 
-class ModuleProvider extends CarrotModuleProvider
+class BackendModuleProvider extends ModuleProvider
 {
     /**
      * Boot the application events.
      *
      * @param ConfigRepository $config
      * @param Router $router
-     * @param ModulesRepository $modules
+     * @param ModulesManager $modules
      * @param Dispatcher $dispatcher
      */
-    public function boot(ConfigRepository $config, Router $router, ModulesRepository $modules, Dispatcher $dispatcher)
+    public function boot(ConfigRepository $config, Router $router, ModulesManager $modules, Dispatcher $dispatcher)
     {
         $this->app->make('config')->set('auth.guards.backend', [
             'driver' => 'session',
@@ -48,9 +47,9 @@ class ModuleProvider extends CarrotModuleProvider
             'model' => UserEntity::class,
         ]);
 
-        array_map(
+        $modules->enabled()->each(
             function (Module $module) use ($router) {
-                $path = $module->getExtraPath('Config/backend.php');
+                $path = $module->getPath('Config/backend.php');
                 if (file_exists($path)) {
                     $value = require_once($path);
                     if (is_callable($value)) {
@@ -61,7 +60,7 @@ class ModuleProvider extends CarrotModuleProvider
                         }
                     }
                 }
-            }, $modules->enabled()
+            }
         );
 
         $router->group([
@@ -97,17 +96,14 @@ class ModuleProvider extends CarrotModuleProvider
                     'as' => 'index'
                 ]);
 
-                array_map(
-                    function (Module $module) use ($router) {
-                        $path = $module->getExtraPath('Config/backend.php');
+                $modules->enabled()->each(function (Module $module) use ($router) {
+                        $path = $module->getPath('Config/backend.php');
                         if (file_exists($path)) {
-                            $namespace = $module->get('namespace');
                             $router->group(
                                 [
-                                    'prefix' => $module->getAlias(),
-                                    'as' => $module->getAlias() . '.',
-                                    'namespace' => $namespace === null ? '' : trim($namespace,
-                                            '\\') . '\\Http\\Controllers\\Backend'
+                                    'prefix' => $module->getName(),
+                                    'as' => $module->getName() . '.',
+                                    'namespace' => $module->getNamespace() . '\\Http\\Controllers\\Backend'
                                 ],
                                 function (Router $router) use ($path) {
                                     $value = require($path); //todo cache module backend config
@@ -119,7 +115,7 @@ class ModuleProvider extends CarrotModuleProvider
                                 }
                             );
                         }
-                    }, $modules->enabled()
+                    }
                 );
             });
         });

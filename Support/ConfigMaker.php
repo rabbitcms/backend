@@ -2,8 +2,8 @@
 namespace RabbitCMS\Backend\Support;
 
 use Illuminate\Config\Repository as ConfigRepository;
-use Pingpong\Modules\Module;
-use Pingpong\Modules\Repository as ModulesRepository;
+use RabbitCMS\Modules\Contracts\ModulesManager;
+use RabbitCMS\Modules\Module;
 
 /**
  * Class ConfigMaker.
@@ -11,13 +11,13 @@ use Pingpong\Modules\Repository as ModulesRepository;
 class ConfigMaker
 {
     /**
-     * @param ModulesRepository $modules
+     * @param ModulesManager $modules
      * @param ConfigRepository $cfg
      * @return string
      */
-    public function handle(ModulesRepository $modules, ConfigRepository $cfg): string
+    public function handle(ModulesManager $modules, ConfigRepository $cfg): string
     {
-        $baseUrl = str_replace(public_path(), '', $modules->getAssetsPath());
+        $baseUrl = str_replace(public_path(), '', public_path('modules'));
         $config = [
             'baseUrl' => rtrim($baseUrl, '/') . '/',
             'shim' => [],
@@ -37,13 +37,13 @@ class ConfigMaker
 
         /* @var Module $module */
         foreach ($modules->enabled() as $module) {
-            $path = $module->getExtraPath('Config/backend.php');
+            $path = $module->getPath('Config/backend.php');
             if (file_exists($path)) {
                 $value = require($path);
                 if (is_array($value)) {
                     if (array_key_exists('handlers', $value)) {
                         foreach ($value['handlers'] as $handler => $options) {
-                            $path = '/' . ltrim($prefix . '/' . $module->getLowerName() . ($handler ? '/' : ''), '/');
+                            $path = '/' . ltrim($prefix . '/' . $module->getName() . ($handler ? '/' : ''), '/');
                             $handler = preg_quote($path, '/.') . $handler;
                             if (!is_array($options)) {
                                 if (is_bool($options)) {
@@ -69,7 +69,7 @@ class ConfigMaker
                             foreach ($value['requirejs']['packages'] as $package => $path) {
                                 $config['packages'][] = [
                                     'name' => $package,
-                                    'location' => $module->getLowerName() . '/backend/' . ltrim(is_string($path) ? $path : $path['location'], '/'),
+                                    'location' => $module->getName() . '/backend/' . ltrim(is_string($path) ? $path : $path['location'], '/'),
                                     'main' => is_array($path) && array_key_exists('main', $path) ? $path['main'] : 'main'
                                 ];
                             }
@@ -77,10 +77,10 @@ class ConfigMaker
                         if (array_key_exists('modules', $value['requirejs'])) {
                             foreach ($value['requirejs']['modules'] as $m => $c) {
                                 if (is_string($c)) {
-                                    $config['paths'][$m] = $module->getLowerName() . '/backend/' . ltrim($c, '/');
+                                    $config['paths'][$m] = $module->getName() . '/backend/' . ltrim($c, '/');
                                 } elseif (is_array($c)) {
                                     if (array_key_exists('path', $c)) {
-                                        $config['paths'][$m] = $module->getLowerName() . '/backend/' . ltrim($c['path'],
+                                        $config['paths'][$m] = $module->getName() . '/backend/' . ltrim($c['path'],
                                                 '/');
                                     }
                                     if (array_key_exists('deps', $c)) {
@@ -93,7 +93,7 @@ class ConfigMaker
                                         $config['shim'][$m]['deps'] = $config['shim'][$m]['deps'] ?? [];
                                         foreach ((array)$c['css'] as $css) {
                                             $config['shim'][$m]['deps'][] =
-                                                'css!' . $module->getLowerName() . '/backend/' . ltrim($css, '/');
+                                                'css!' . $module->getName() . '/backend/' . ltrim($css, '/');
                                         }
                                     }
                                 }
