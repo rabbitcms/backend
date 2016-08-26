@@ -370,15 +370,13 @@ export class RabbitCMS extends Metronic {
             this.setMenu(h.menuPath);
         }
 
-        if (!h.modal) {
-            let previous = this._stack.previous;
-            if (previous) {
-                if (previous.handler.permanent) {
-                    previous.handler.widget = this._stack.previous.widget;
-                    previous.widget.detach();
-                } else {
-                    previous.widget.remove();
-                }
+        let previous = this._stack.previous;
+        if (previous) {
+            if (previous.handler.permanent) {
+                previous.handler.widget = this._stack.previous.widget;
+                previous.widget.detach();
+            } else {
+                previous.widget.remove();
             }
         }
 

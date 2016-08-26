@@ -1,5 +1,6 @@
+
 import * as $ from "jquery";
-import * as moment from "moment";
+//import * as moment from "moment";
 import "bootstrap-daterangepicker";
 import {RabbitCMS} from "rabbitcms/backend";
 import "css!bootstrap-daterangepicker/css/daterangepicker.css";
@@ -11,7 +12,7 @@ let lang:string = RabbitCMS.getLocale(new Map<string,string>()
     .set('zn_TW','zn_TW')
 );
 
-export = moment;
+//export = moment;
 
 //require(['select2/js/i18n/' + lang]);
 

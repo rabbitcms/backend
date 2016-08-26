@@ -1,4 +1,8 @@
 /// <reference path="../../typings/index.d.ts" />
+/// <reference path="../../dt/tabdrops.d.ts" />
+/// <reference path="../../dt/bootstrap-confirmation.d.ts" />
+/// <reference path="../../dt/counterup.d.ts" />
+
 /**
  * Created by lnkvisitor on 30.07.16.
  */

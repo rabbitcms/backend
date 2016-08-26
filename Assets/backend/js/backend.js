@@ -305,16 +305,14 @@ define(["require", "exports", "jquery", "i18n!rabbitcms/nls/backend", "rabbitcms
             if (h.menuPath) {
                 this.setMenu(h.menuPath);
             }
-            if (!h.modal) {
-                var previous = this._stack.previous;
-                if (previous) {
-                    if (previous.handler.permanent) {
-                        previous.handler.widget = this._stack.previous.widget;
-                        previous.widget.detach();
-                    }
-                    else {
-                        previous.widget.remove();
-                    }
+            var previous = this._stack.previous;
+            if (previous) {
+                if (previous.handler.permanent) {
+                    previous.handler.widget = this._stack.previous.widget;
+                    previous.widget.detach();
+                }
+                else {
+                    previous.widget.remove();
                 }
             }
             widget.appendTo(defaultTarget);

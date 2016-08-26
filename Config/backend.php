@@ -119,6 +119,10 @@ return [
                 'location' => 'plugins/bootstrap-daterangepicker',
                 'main'     => 'js/daterangepicker',
             ],
+            'bootstrap-editable' => [
+                'location' => 'plugins/bootstrap-editable',
+                'main'     => 'js/bootstrap-editable',
+            ],
         ],
         'modules'  => [
             'css'                => 'plugins/require-css',
