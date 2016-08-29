@@ -115,6 +115,10 @@ return [
                 'location' => 'plugins/datatables/plugins/buttons',
                 'main'     => 'js/dataTables.buttons.min',
             ],
+            'bootstrap-datepicker' => [
+                'location' => 'plugins/bootstrap-datepicker',
+                'main'     => 'js/bootstrap-datepicker',
+            ],
         ],
         'modules'  => [
             'css'                => 'plugins/require-css',

@@ -1,19 +1,24 @@
 /// <reference path="../../typings/index.d.ts" />
+/// <reference path="../../dt/bootstrap-datepicker.d.ts" />
+/// <reference path="../../dt/tabdrops.d.ts" />
+/// <reference path="../../dt/counterup.d.ts" />
+/// <reference path="../../dt/bootstrap-confirmation.d.ts" />
+
 /**
  * Created by lnkvisitor on 30.07.16.
  */
 import * as $ from "jquery";
 
 export interface BlockUIOptions {
-    message?:string;
-    boxed?:boolean;
-    animate?:boolean;
-    iconOnly?:boolean;
-    textOnly?:boolean;
-    target?:JQuery|string;
-    zIndex?:number;
-    cenrerY?:boolean;
-    overlayColor?:string;
+    message?: string;
+    boxed?: boolean;
+    animate?: boolean;
+    iconOnly?: boolean;
+    textOnly?: boolean;
+    target?: JQuery|string;
+    zIndex?: number;
+    cenrerY?: boolean;
+    overlayColor?: string;
 }
 
 export enum ResponsiveBreakpointSize{
@@ -33,14 +38,14 @@ export class BrandColors {
 }
 
 export interface MetronicOptions {
-    assetsPath?:string;
-    rtl?:boolean;
+    assetsPath?: string;
+    rtl?: boolean;
 }
 
 export class Metronic {
-    private static _isRTL:boolean = false;
+    private static _isRTL: boolean = false;
 
-    private static resizeHandlers:Function[] = [];
+    private static resizeHandlers: Function[] = [];
 
     private static assetsPath = '../assets/';
 
@@ -57,9 +62,9 @@ export class Metronic {
         });
     }
 
-    static init(options?:MetronicOptions) {
+    static init(options?: MetronicOptions) {
         options = $.extend(<MetronicOptions>{
-            assetsPath:'../assets/'
+            assetsPath: '../assets/'
         }, options);
 
         this.assetsPath = options.assetsPath;
@@ -94,7 +99,7 @@ export class Metronic {
             // Material design click effect
             // credit where credit's due; http://thecodeplayer.com/walkthrough/ripple-click-effect-google-material-design
             var element, circle, d, x, y;
-            $body.on('click', 'a.btn, button.btn, input.btn, label.btn',  (e:JQueryMouseEventObject) =>{
+            $body.on('click', 'a.btn, button.btn, input.btn, label.btn', (e: JQueryMouseEventObject) => {
                 element = $(e.currentTarget);
 
                 if (element.find(".md-click-circle").length == 0) {
@@ -143,7 +148,7 @@ export class Metronic {
         });
     }
 
-    static handleiCheck(target?:JQuery) {
+    static handleiCheck(target?: JQuery) {
         let iCheck = $('.icheck', target);
         if (iCheck.length > 0) {
             require(['rabbitcms/loader/icheck'], ()=> {
@@ -169,7 +174,7 @@ export class Metronic {
         }
     }
 
-    static handleBootstrapSwitch(target?:JQuery) {
+    static handleBootstrapSwitch(target?: JQuery) {
         let bSwitch = $('.make-switch', target);
         if (bSwitch.length > 0) {
             require(['rabbitcms/loader/bootstrap-switch'], ()=> {
@@ -178,7 +183,7 @@ export class Metronic {
         }
     }
 
-    static handleSelect2(target:JQuery, options:Select2Options = {}) {
+    static handleSelect2(target: JQuery, options: Select2Options = {}) {
         let select2 = $('.select2me', target);
         if (select2.length > 0) {
             require(['rabbitcms/loader/jquery.select2'], ()=> {
@@ -187,11 +192,11 @@ export class Metronic {
         }
     }
 
-    static handleScrollers(target?:JQuery) {
+    static handleScrollers(target?: JQuery) {
         this.initSlimScroll($('.scroller', target));
     }
 
-    static initSlimScroll(el:JQuery) {
+    static initSlimScroll(el: JQuery) {
         require(['slimScroll'], ()=> {
             el.each((index, elem) => {
                 let $elem = $(elem);
@@ -225,7 +230,7 @@ export class Metronic {
         });
     }
 
-    static destroySlimScroll(el:JQuery) {
+    static destroySlimScroll(el: JQuery) {
         require(['slimScroll'], ()=> {
             el.each((index, elem) => {
                 let $elem = $(elem);
@@ -269,7 +274,7 @@ export class Metronic {
         });
     }
 
-    static handleFancybox(target?:JQuery) {
+    static handleFancybox(target?: JQuery) {
         let fancybox = $(".fancybox-button", target);
         if (fancybox.length > 0) {
             require(['jquery.fancybox'], ()=> {
@@ -287,16 +292,25 @@ export class Metronic {
         }
     }
 
-    static select2(target:JQuery, options:Select2Options = {}) {
+    static select2(target: JQuery, options: Select2Options = {}) {
         require(['rabbitcms/loader/jquery.select2'], ()=> {
-            $(target).select2(options);
+            target.select2(options);
+        });
+    }
+
+    static datePicker(target: JQuery, options: DatepickerOptions = {}) {
+        require(['rabbitcms/loader/bootstrap-datepicker'], (promise: Promise<void>)=> {
+            promise.then(()=> {
+                target.datepicker(options);
+            });
+
         });
     }
 
     static handlePortletTools() {
         let $body = $('body');
         // handle portlet remove
-        $body.on('click', '.portlet > .portlet-title > .tools > a.remove', (e:JQueryEventObject) => {
+        $body.on('click', '.portlet > .portlet-title > .tools > a.remove', (e: JQueryEventObject) => {
             e.preventDefault();
             let portlet = $(e.currentTarget).closest(".portlet");
 
@@ -314,7 +328,7 @@ export class Metronic {
         });
 
         // handle portlet fullscreen
-        $body.on('click', '.portlet > .portlet-title .fullscreen', (e:JQueryEventObject)=> {
+        $body.on('click', '.portlet > .portlet-title .fullscreen', (e: JQueryEventObject)=> {
             let $elem = $(e.currentTarget);
             e.preventDefault();
             var portlet = $elem.closest(".portlet");
@@ -380,7 +394,7 @@ export class Metronic {
         });
     }
 
-    static handleTabDrops(target?:JQuery) {
+    static handleTabDrops(target?: JQuery) {
         let elms = $('.tabbable-tabdrop .nav-pills, .tabbable-tabdrop .nav-tabs', target);
         if (elms.length > 0) {
             require(['rabbitcms/loader/bootstrap-tabdrop'], ()=> {
@@ -406,7 +420,7 @@ export class Metronic {
         }
     };
 
-    static handleTooltips(target?:JQuery) {
+    static handleTooltips(target?: JQuery) {
         // global tooltips
         $('.tooltips', target).tooltip();
 
@@ -438,9 +452,9 @@ export class Metronic {
         });
     }
 
-    private static lastPopedPopover:JQuery;
+    private static lastPopedPopover: JQuery;
 
-    static handlePopovers(target?:JQuery) {
+    static handlePopovers(target?: JQuery) {
         $('.popovers', target).popover();
     }
 
@@ -452,12 +466,12 @@ export class Metronic {
         });
     }
 
-    static setLastPopedPopover(el:JQuery) {
+    static setLastPopedPopover(el: JQuery) {
         this.lastPopedPopover = el;
     }
 
     private static initAccordions() {
-        $('body').on('shown.bs.collapse', '.accordion.scrollable', (e:JQueryEventObject)=> {
+        $('body').on('shown.bs.collapse', '.accordion.scrollable', (e: JQueryEventObject)=> {
             this.scrollTo($(e.target));
         });
     }
@@ -466,7 +480,7 @@ export class Metronic {
         let $body = $('body');
         // fix stackable modal issue: when 2 or more modals opened, closing one of modal will remove .modal-open class.
         $body.on('hide.bs.modal', function () {
-            $('html').toggleClass('modal-open',$('.modal:visible').length > 1);
+            $('html').toggleClass('modal-open', $('.modal:visible').length > 1);
         });
 
         // fix page scrollbars issue
@@ -488,8 +502,8 @@ export class Metronic {
     }
 
 // Handles Bootstrap confirmations
-    static handleBootstrapConfirmation(target?:JQuery) {
-        let elms = $('[data-toggle=confirmation]',target);
+    static handleBootstrapConfirmation(target?: JQuery) {
+        let elms = $('[data-toggle=confirmation]', target);
         if (elms.length > 0) {
             require(['bootstrap-confirmation.d'], ()=> {
                 elms.confirmation({
@@ -500,7 +514,7 @@ export class Metronic {
         }
     }
 
-    static handleCounterup(target?:JQuery) {
+    static handleCounterup(target?: JQuery) {
         let elms = $("[data-counter='counterup']", target);
         if (elms.length > 0) {
             require(['rabbitcms/loader/counterup'], ()=> {
@@ -512,7 +526,7 @@ export class Metronic {
         }
     }
 
-    static updatePlugins(target?:JQuery) {
+    static updatePlugins(target?: JQuery) {
         this.handleiCheck(target);
         this.handleBootstrapSwitch(target);
         this.handleScrollers(target);
@@ -585,14 +599,14 @@ export class Metronic {
     }
 
     //public function to add callback a function which will be called on window resize
-    static addResizeHandler(func:Function) {
+    static addResizeHandler(func: Function) {
         this.resizeHandlers.push(func);
     }
 
     // runs callback functions set by App.addResponsiveHandler().
     private static _runResizeHandlers() {
         // reinitialize other subscribed elements
-        this.resizeHandlers.forEach((handler:Function)=>handler());
+        this.resizeHandlers.forEach((handler: Function)=>handler());
     }
 
     //public functon to call _runresizeHandlers
@@ -601,7 +615,7 @@ export class Metronic {
     }
 
     // wrApper function to scroll(focus) to an element
-    static scrollTo(el?:JQuery, offset = 0) {
+    static scrollTo(el?: JQuery, offset = 0) {
         var pos = (el && el.length > 0) ? el.offset().top : 0;
         let $body = $('body');
         if (el) {
@@ -626,7 +640,7 @@ export class Metronic {
         this.scrollTo();
     }
 
-    static blockUI(target?:JQuery|string, options:BlockUIOptions = {}) {
+    static blockUI(target?: JQuery|string, options: BlockUIOptions = {}) {
         require(['jquery.blockui'], ()=> {
             var html = '';
             if (options.animate) {
@@ -679,7 +693,7 @@ export class Metronic {
         });
     }
 
-    static unblockUI(target?:JQuery) {
+    static unblockUI(target?: JQuery) {
         require(['jquery.blockui'], ()=> {
             if (target) {
                 target.unblock({
@@ -787,7 +801,7 @@ export class Metronic {
 
     // To get the correct viewport width based on  http://andylangton.co.uk/articles/javascript/get-viewport-size-javascript/
     static getViewPort() {
-        var e:Window|HTMLElement = window,
+        var e: Window|HTMLElement = window,
             a = 'inner';
         if (!('innerWidth' in window)) {
             a = 'client';
@@ -800,7 +814,7 @@ export class Metronic {
         };
     }
 
-    static getUniqueID(prefix:string = '') {
+    static getUniqueID(prefix: string = '') {
         return prefix + '_' + Math.floor(Math.random() * (new Date()).getTime());
     }
 
@@ -809,24 +823,23 @@ export class Metronic {
         return this._isRTL;
     }
 
-    static getAssetsPath():string {
+    static getAssetsPath(): string {
         return this.assetsPath;
     }
 
-    static setAssetsPath(path:string) {
+    static setAssetsPath(path: string) {
         this.assetsPath = path;
     }
 
     // get layout color code by color name
-    static getBrandColor(name:string) {
+    static getBrandColor(name: string) {
         return name in BrandColors ? BrandColors[name] : '';
     }
 
-    static getResponsiveBreakpoint(size:string) {
+    static getResponsiveBreakpoint(size: string) {
         return size in ResponsiveBreakpointSize ? ResponsiveBreakpointSize[size] : 0;
     }
 }
-
 
 
 // function A() {
