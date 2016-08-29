@@ -369,6 +369,7 @@ export class RabbitCMS extends Metronic {
         if (h.menuPath) {
             this.setMenu(h.menuPath);
         }
+
         let previous = this._stack.previous;
         if (previous) {
             if (previous.handler.permanent) {
@@ -380,6 +381,11 @@ export class RabbitCMS extends Metronic {
         }
 
         widget.appendTo(defaultTarget);
+
+        if (h.modal) {
+            console.log(widget);
+            widget.modal();
+        }
 
         this.scrollTop();
         return true;
@@ -756,6 +762,7 @@ export interface Handler {
     permanent?:boolean;
     widget?:JQuery;
     menuPath?:string;
+    modal?:boolean;
 }
 
 export interface ValidationOptions extends JQueryValidation.ValidationOptions {

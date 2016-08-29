@@ -316,6 +316,10 @@ define(["require", "exports", "jquery", "i18n!rabbitcms/nls/backend", "rabbitcms
                 }
             }
             widget.appendTo(defaultTarget);
+            if (h.modal) {
+                console.log(widget);
+                widget.modal();
+            }
             this.scrollTop();
             return true;
         };
