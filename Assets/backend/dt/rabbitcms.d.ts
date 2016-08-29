@@ -1,3 +1,5 @@
+/// <reference path="bootstrap-datepicker.d.ts" />
+
 declare module 'rabbitcms/metronic' {
     export interface BlockUIOptions {
         message?: string;
@@ -23,7 +25,7 @@ declare module 'rabbitcms/metronic' {
 
         static handleBootstrapSwitch(target?: JQuery)
 
-        static handleSelect2(target: JQuery, options: Select2Options);
+        static handleSelect2(target: JQuery, options?: Select2Options);
 
         static handleScrollers(target?: JQuery)
 
@@ -33,7 +35,9 @@ declare module 'rabbitcms/metronic' {
 
         static handleFancybox(target?: JQuery)
 
-        static select2(target: JQuery, options: Select2Options)
+        static select2(target: JQuery, options?: Select2Options)
+
+        static datePicker(target:JQuery, options?:DatepickerOptions)
 
         static handlePortletTools()
 

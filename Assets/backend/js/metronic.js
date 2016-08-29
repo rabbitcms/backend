@@ -224,7 +224,15 @@ define(["require", "exports", "jquery"], function (require, exports, $) {
         Metronic.select2 = function (target, options) {
             if (options === void 0) { options = {}; }
             require(['rabbitcms/loader/jquery.select2'], function () {
-                $(target).select2(options);
+                target.select2(options);
+            });
+        };
+        Metronic.datePicker = function (target, options) {
+            if (options === void 0) { options = {}; }
+            require(['rabbitcms/loader/bootstrap-datepicker'], function (promise) {
+                promise.then(function () {
+                    target.datepicker(options);
+                });
             });
         };
         Metronic.handlePortletTools = function () {

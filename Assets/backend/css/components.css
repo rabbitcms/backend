@@ -12697,8 +12697,8 @@ Custom tabs
 .tabbable-custom.tabbable-noborder .tab-content {
   border: 0; }
 
-.portlet:not(.light) .tabbable-line {
-  padding-top: 15px; }
+/*.portlet:not(.light) .tabbable-line {
+  padding-top: 15px; }*/
 
 .tabbable-line > .nav-tabs {
   border: none;
