@@ -2,9 +2,9 @@
 
 namespace RabbitCMS\Backend\Http\Controllers\Backend;
 
+use Illuminate\Auth\AuthManager;
 use Illuminate\Contracts\Auth\StatefulGuard;
 use Illuminate\Foundation\Application;
-use Illuminate\Support\Facades\Auth;
 use RabbitCMS\Backend\Entities\User;
 use RabbitCMS\Modules\ModuleController;
 
@@ -26,16 +26,14 @@ abstract class Controller extends ModuleController
      */
     protected function user()
     {
-        return $this->auth()->user();
+        return $this->guard()->user();
     }
 
     /**
-     * Get backend auth guard.
-     *
      * @return StatefulGuard
      */
-    protected function auth()
+    protected function guard():StatefulGuard
     {
-        return Auth::guard('backend');
+        return $this->app->make(AuthManager::class)->guard('backend');
     }
 }
