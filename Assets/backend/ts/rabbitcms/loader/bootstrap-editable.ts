@@ -1,4 +1,4 @@
-/// <reference path="../../../dt/bootstrap-editable.d.ts" />
+/// <reference path="../../../dt/index.d.ts" />
 
 import * as $ from "jquery";
 import * as editable from "bootstrap-editable";

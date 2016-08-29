@@ -330,10 +330,10 @@ define(["require", "exports", "jquery", "i18n!rabbitcms/nls/backend", "rabbitcms
                 success: function (data, textStatus, jqXHR) {
                     var modal = $(data);
                     $('.page-content').append(modal);
+                    _this.showModal(modal);
                     if ($.isFunction(callback)) {
                         callback(modal, data, textStatus, jqXHR);
                     }
-                    _this.showModal(modal);
                 }
             });
         };
@@ -549,10 +549,11 @@ define(["require", "exports", "jquery", "i18n!rabbitcms/nls/backend", "rabbitcms
     var Dialogs = (function () {
         function Dialogs() {
         }
-        Dialogs.confirm = function (message, options) {
+        Dialogs.confirm = function (message, options, extend) {
+            if (extend === void 0) { extend = true; }
             return new Promise(function (resolve, reject) {
                 require(['bootbox'], function (bootbox) {
-                    bootbox.dialog($.extend(true, {
+                    bootbox.dialog($.extend(extend, {
                         message: '<h4>' + message + '</h4>',
                         closeButton: false,
                         buttons: {

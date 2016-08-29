@@ -1,8 +1,4 @@
-/// <reference path="../../typings/index.d.ts" />
-/// <reference path="../../dt/bootstrap-datepicker.d.ts" />
-/// <reference path="../../dt/tabdrops.d.ts" />
-/// <reference path="../../dt/counterup.d.ts" />
-/// <reference path="../../dt/bootstrap-confirmation.d.ts" />
+/// <reference path="../../dt/index.d.ts" />
 
 /**
  * Created by lnkvisitor on 30.07.16.
@@ -148,32 +144,6 @@ export class Metronic {
         });
     }
 
-    static handleiCheck(target?:JQuery) {
-        let iCheck = $('.icheck', target);
-        if (iCheck.length > 0) {
-            require(['rabbitcms/loader/icheck'], ()=> {
-                iCheck.each(function (index, elem) {
-                    let $elem = $(elem);
-                    var checkboxClass = $elem.attr('data-checkbox') ? $elem.attr('data-checkbox') : 'icheckbox_minimal-grey';
-                    var radioClass = $elem.attr('data-radio') ? $elem.attr('data-radio') : 'iradio_minimal-grey';
-
-                    if (checkboxClass.indexOf('_line') > -1 || radioClass.indexOf('_line') > -1) {
-                        $elem.iCheck({
-                            checkboxClass: checkboxClass,
-                            radioClass: radioClass,
-                            insert: '<div class="icheck_line-icon"></div>' + $elem.attr("data-label")
-                        });
-                    } else {
-                        $elem.iCheck({
-                            checkboxClass: checkboxClass,
-                            radioClass: radioClass
-                        });
-                    }
-                });
-            });
-        }
-    }
-
     static handleBootstrapSwitch(target?:JQuery) {
         let bSwitch = $('.make-switch', target);
         if (bSwitch.length > 0) {
@@ -295,6 +265,16 @@ export class Metronic {
     static select2(target:JQuery, options:Select2Options = {}) {
         require(['rabbitcms/loader/jquery.select2'], ()=> {
             $(target).select2(options);
+        });
+    }
+
+    static datePicker(target: JQuery, options: DatepickerOptions = {}): Promise<JQuery> {
+        return new Promise<JQuery>((resolve) => {
+            require(['rabbitcms/loader/bootstrap-datepicker'], (promise: Promise<void>) => {
+                promise.then(() => {
+                    resolve(target.datepicker(options));
+                });
+            });
         });
     }
 
@@ -518,7 +498,6 @@ export class Metronic {
     }
 
     static updatePlugins(target?:JQuery) {
-        this.handleiCheck(target);
         this.handleBootstrapSwitch(target);
         this.handleScrollers(target);
         this.handleSelect2(target);

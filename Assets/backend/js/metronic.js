@@ -94,31 +94,6 @@ define(["require", "exports", "jquery"], function (require, exports, $) {
                 }
             });
         };
-        Metronic.handleiCheck = function (target) {
-            var iCheck = $('.icheck', target);
-            if (iCheck.length > 0) {
-                require(['rabbitcms/loader/icheck'], function () {
-                    iCheck.each(function (index, elem) {
-                        var $elem = $(elem);
-                        var checkboxClass = $elem.attr('data-checkbox') ? $elem.attr('data-checkbox') : 'icheckbox_minimal-grey';
-                        var radioClass = $elem.attr('data-radio') ? $elem.attr('data-radio') : 'iradio_minimal-grey';
-                        if (checkboxClass.indexOf('_line') > -1 || radioClass.indexOf('_line') > -1) {
-                            $elem.iCheck({
-                                checkboxClass: checkboxClass,
-                                radioClass: radioClass,
-                                insert: '<div class="icheck_line-icon"></div>' + $elem.attr("data-label")
-                            });
-                        }
-                        else {
-                            $elem.iCheck({
-                                checkboxClass: checkboxClass,
-                                radioClass: radioClass
-                            });
-                        }
-                    });
-                });
-            }
-        };
         Metronic.handleBootstrapSwitch = function (target) {
             var bSwitch = $('.make-switch', target);
             if (bSwitch.length > 0) {
@@ -224,14 +199,16 @@ define(["require", "exports", "jquery"], function (require, exports, $) {
         Metronic.select2 = function (target, options) {
             if (options === void 0) { options = {}; }
             require(['rabbitcms/loader/jquery.select2'], function () {
-                target.select2(options);
+                $(target).select2(options);
             });
         };
         Metronic.datePicker = function (target, options) {
             if (options === void 0) { options = {}; }
-            require(['rabbitcms/loader/bootstrap-datepicker'], function (promise) {
-                promise.then(function () {
-                    target.datepicker(options);
+            return new Promise(function (resolve) {
+                require(['rabbitcms/loader/bootstrap-datepicker'], function (promise) {
+                    promise.then(function () {
+                        resolve(target.datepicker(options));
+                    });
                 });
             });
         };
@@ -419,7 +396,6 @@ define(["require", "exports", "jquery"], function (require, exports, $) {
             }
         };
         Metronic.updatePlugins = function (target) {
-            this.handleiCheck(target);
             this.handleBootstrapSwitch(target);
             this.handleScrollers(target);
             this.handleSelect2(target);

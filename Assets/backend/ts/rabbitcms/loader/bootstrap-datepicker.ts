@@ -1,4 +1,4 @@
-/// <reference path="../../../dt/bootstrap-datepicker.d.ts" />
+/// <reference path="../../../dt/index.d.ts" />
 
 import * as $ from "jquery";
 import {RabbitCMS} from "rabbitcms/backend";
@@ -13,7 +13,7 @@ let lang:string = RabbitCMS.getLocale(new Map<string,string>()
     .set('uk_UA', 'uk')
 );
 
-export = new Promise((resolve)=>{
+export = new Promise((resolve) => {
     require([`bootstrap-datepicker/locales/bootstrap-datepicker.${lang}.min`], function () {
         $.fn.datepicker.defaults.language = lang;
         $.fn.datepicker.defaults.autoclose = true;

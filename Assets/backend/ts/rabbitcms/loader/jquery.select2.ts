@@ -1,4 +1,4 @@
-/// <reference path="../../../dt/select2.d.ts" />
+/// <reference path="../../../dt/index.d.ts" />
 /**
  * Created by lnkvisitor on 28.07.16.
  */

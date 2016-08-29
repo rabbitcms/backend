@@ -1,4 +1,4 @@
-/// <reference path="../../dt/jquery-backstretch.d.ts" />
+/// <reference path="../../dt/index.d.ts" />
 
 import * as $ from "jquery";
 import "jquery.backstretch";

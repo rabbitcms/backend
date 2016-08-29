@@ -127,6 +127,11 @@ return [
                 'location' => 'plugins/bootstrap-editable',
                 'main'     => 'js/bootstrap-editable',
             ],
+            'fuelux-spinner' => [
+                'location' => 'plugins/fuelux-spinner',
+                'main'     => 'js/spinner',
+            ],
+
         ],
         'modules'  => [
             'css'                => 'plugins/require-css',

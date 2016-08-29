@@ -1,3 +1,5 @@
+/// <reference path="../../dt/index.d.ts" />
+
 import * as $ from "jquery";
 import "jquery.cookie";
 import * as i18n from "i18n!rabbitcms/nls/backend";
@@ -398,11 +400,11 @@ export class RabbitCMS extends Metronic {
                 let modal = $(data);
                 $('.page-content').append(modal);
 
+                this.showModal(modal);
+
                 if ($.isFunction(callback)) {
                     callback(modal, data, textStatus, jqXHR);
                 }
-
-                this.showModal(modal);
             }
         });
     }
@@ -647,10 +649,10 @@ export class RabbitCMS extends Metronic {
 }
 
 export class Dialogs {
-    static confirm(message:string, options?:BootboxDialogOptions):Promise<void> {
+    static confirm(message:string, options?:BootboxDialogOptions, extend:boolean = true):Promise<void> {
         return new Promise<void>((resolve, reject)=> {
             require(['bootbox'], (bootbox)=> {
-                bootbox.dialog($.extend(true, <BootboxDialogOptions>{
+                bootbox.dialog($.extend(extend, <BootboxDialogOptions>{
                     message: '<h4>' + message + '</h4>',
                     closeButton: false,
                     buttons: {
