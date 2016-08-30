@@ -25,11 +25,12 @@ class ConfigMaker
             'paths' => [],
             'packages' => []
         ];
+        $prefix = $cfg->get('module.backend.path');
         $opts = [
             'path' => asset_module("backend", "backend"),
+            'prefix' => $prefix,
             'handlers' => []
         ];
-        $prefix = $cfg->get('module.backend.path');
         $dir = public_path('backend');
         if (!is_dir($dir)) {
             mkdir($dir);

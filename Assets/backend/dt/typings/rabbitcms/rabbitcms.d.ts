@@ -138,6 +138,7 @@ declare module 'rabbitcms/backend' {
 
     export interface RabbitCMSOptions extends MetronicOptions {
         handlers?: Handler[];
+        prefix?: string;
     }
 
     export class State {
@@ -178,6 +179,8 @@ declare module 'rabbitcms/backend' {
 
         static getToken(): string;
 
+        static getPrefix() :string;
+
         /**
          * Set current locale.
          * @param {string} locale
@@ -206,9 +209,7 @@ declare module 'rabbitcms/backend' {
 
         static showPortlet(h: Handler, widget: JQuery);
 
-        static loadModalWindow(link: string, callback: (model: JQuery, data: any, textStatus: string, jqXHR: JQueryXHR)=> any): void;
-
-        static showModal(modal: JQuery);
+        static loadModalWindow(link: string): Promise<JQuery>;
 
         static getUniqueID(prefix?: string): string;
 
@@ -217,6 +218,8 @@ declare module 'rabbitcms/backend' {
         static message(options);
 
         static dangerMessage(message: string, target?: JQuery);
+
+        static customMessage(message: string, type: string, target?: JQuery);
 
         static initSidebar();
 
@@ -317,7 +320,7 @@ declare module 'rabbitcms/form' {
     export interface FormOptions {
         validation?: ValidationOptions;
         ajax?: DataTables.AjaxSettings|boolean;
-        completeSubmit: ()=>void;
+        completeSubmit: (data?)=>void;
         state?: State;
         dialog?: BootboxDialogOptions|boolean
     }

@@ -1,10 +1,15 @@
 define(["require", "exports", "jquery", "rabbitcms/backend", "jquery.validation", "jquery.validation/additional-methods"], function (require, exports, $, backend_1) {
     "use strict";
     var lang = backend_1.RabbitCMS.getLocale(new Map()
+        .set('en_US', 'en')
+        .set('ru_RU', 'ru')
+        .set('uk_UA', 'uk')
         .set('es', 'es_CL')
         .set('sr', 'sr_lat')
         .set('pt', 'pt_PT'));
-    require(['jquery.validation/localization/messages_' + lang]);
+    if (lang !== 'en') {
+        require(['jquery.validation/localization/messages_' + lang]);
+    }
     if (lang === 'pt_BR') {
         lang = 'pt';
     }

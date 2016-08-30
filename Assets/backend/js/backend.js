@@ -143,9 +143,11 @@ define(["require", "exports", "jquery", "i18n!rabbitcms/nls/backend", "rabbitcms
             _super.apply(this, arguments);
         }
         RabbitCMS.init = function (options) {
-            options = $.extend(true, {
+            options = $.extend({
                 handlers: [],
+                prefix: 'admin'
             }, options);
+            this.prefix = options.prefix;
             this._handlers = options.handlers.map(function (h) {
                 if (!(h.regex instanceof RegExp)) {
                     h.regex = new RegExp('^' + h.handler);
@@ -205,6 +207,9 @@ define(["require", "exports", "jquery", "i18n!rabbitcms/nls/backend", "rabbitcms
         };
         RabbitCMS.getToken = function () {
             return _token;
+        };
+        RabbitCMS.getPrefix = function () {
+            return this.prefix;
         };
         RabbitCMS.setLocale = function (locale) {
             this._locale = locale;
@@ -323,30 +328,20 @@ define(["require", "exports", "jquery", "i18n!rabbitcms/nls/backend", "rabbitcms
             this.scrollTop();
             return true;
         };
-        RabbitCMS.loadModalWindow = function (link, callback) {
+        RabbitCMS.loadModalWindow = function (link) {
             var _this = this;
-            this.ajax({
-                url: link,
-                success: function (data, textStatus, jqXHR) {
-                    var modal = $(data);
-                    $('.page-content').append(modal);
-                    _this.showModal(modal);
-                    if ($.isFunction(callback)) {
-                        callback(modal, data, textStatus, jqXHR);
-                    }
-                }
+            return new Promise(function (resolve, reject) {
+                _this.ajax({
+                    url: link,
+                    success: function (data) {
+                        var modal = $(data);
+                        $('.page-content').append(modal);
+                        modal.modal();
+                        resolve(modal);
+                    },
+                    error: reject
+                });
             });
-        };
-        RabbitCMS.showModal = function (modal) {
-            $('.ajax-modal').each(function (i, e) {
-                var el = $(e);
-                if (el != modal && el.data('permanent') === undefined)
-                    el.remove();
-            });
-            if (modal.length)
-                modal.modal();
-            else
-                this.dangerMessage('Помилка. RabbitCMS.prototype.showModal');
         };
         RabbitCMS.getUniqueID = function (prefix) {
             if (prefix === void 0) { prefix = ''; }
@@ -425,7 +420,7 @@ define(["require", "exports", "jquery", "i18n!rabbitcms/nls/backend", "rabbitcms
             html.append(options.message);
             if (options.reset)
                 $('.rabbit-alert').remove();
-            var _container = (!options.container) ? _visiblePortlet.find('.portlet-body')
+            var _container = (!options.container) ? this._stack.current.widget.find('.portlet-body')
                 : options.container;
             if (options.place == 'append')
                 _container.append(html);
@@ -441,6 +436,10 @@ define(["require", "exports", "jquery", "i18n!rabbitcms/nls/backend", "rabbitcms
         };
         RabbitCMS.dangerMessage = function (message, target) {
             var options = { container: target, type: 'danger', message: message, icon: 'fa-warning' };
+            this.message(options);
+        };
+        RabbitCMS.customMessage = function (message, type, target) {
+            var options = { container: target, type: type, message: message };
             this.message(options);
         };
         RabbitCMS.initSidebar = function () {
@@ -504,11 +503,16 @@ define(["require", "exports", "jquery", "i18n!rabbitcms/nls/backend", "rabbitcms
                     'X-CSRF-TOKEN': this.getToken()
                 }
             }, options);
-            options.error = function (jqXHR, textStatus, errorThrown) {
-                if ($.isFunction(originalOptions.error) && originalOptions.error(jqXHR, textStatus, errorThrown)) {
-                    return;
+            options.complete = function (jqXHR, textStatus) {
+                RabbitCMS.unblockUI(options.blockTarget);
+                if ($.isFunction(originalOptions.complete)) {
+                    originalOptions.complete(jqXHR, textStatus);
                 }
                 switch (jqXHR.status) {
+                    case 202:
+                    case 418:
+                        _this.customMessage(jqXHR.responseJSON.message, jqXHR.responseJSON.type, options.warningTarget);
+                        break;
                     case 404:
                         _this.dangerMessage(i18n.pageNotFound, options.warningTarget);
                         break;
@@ -518,22 +522,6 @@ define(["require", "exports", "jquery", "i18n!rabbitcms/nls/backend", "rabbitcms
                     case 401:
                         location.reload(true);
                         break;
-                    default:
-                        var responseText = void 0;
-                        try {
-                            responseText = $.parseJSON(jqXHR.responseText);
-                        }
-                        catch (message) {
-                            responseText = { message: message };
-                        }
-                        _this.dangerMessage('Error: ' + jqXHR.status + '. ' + responseText.message, options.warningTarget);
-                        break;
-                }
-            };
-            options.complete = function (jqXHR, textStatus) {
-                RabbitCMS.unblockUI(options.blockTarget);
-                if ($.isFunction(originalOptions.complete)) {
-                    originalOptions.complete(jqXHR, textStatus);
                 }
             };
             this.blockUI(options.blockTarget, options.blockOptions);
@@ -543,6 +531,7 @@ define(["require", "exports", "jquery", "i18n!rabbitcms/nls/backend", "rabbitcms
         RabbitCMS.menu = '';
         RabbitCMS._locale = 'en';
         RabbitCMS._handlers = [];
+        RabbitCMS.prefix = 'admin';
         return RabbitCMS;
     }(metronic_1.Metronic));
     exports.RabbitCMS = RabbitCMS;

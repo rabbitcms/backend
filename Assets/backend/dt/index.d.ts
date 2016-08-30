@@ -6,13 +6,16 @@
 /// <reference path="typings/es6-shim/index.d.ts" />
 /// <reference path="typings/require/index.d.ts" />
 /// <reference path="typings/select2/index.d.ts" />
-/// <reference path="typings/jquery.datatables/index.d.ts" />
 /// <reference path="typings/bootstrap/index.d.ts" />
 /// <reference path="typings/jquery.cookie/index.d.ts" />
 /// <reference path="typings/bootstrap-switch/index.d.ts" />
 /// <reference path="typings/jquery.slimscroll/index.d.ts" />
 /// <reference path="typings/fancybox/index.d.ts" />
 /// <reference path="typings/jquery.blockui/index.d.ts" />
+
+/// <reference path="typings/jquery.datatables/index.d.ts" />
+/// <reference path="typings/jquery.datatables/datatables-buttons.d.ts" />
+/// <reference path="typings/jquery.datatables/datatables-colreorder.d.ts" />
 
 /// <reference path="typings/rabbitcms/rabbitcms.d.ts" />
 /// <reference path="typings/rabbitcms/tabdrops.d.ts" />

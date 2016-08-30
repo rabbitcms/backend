@@ -2,13 +2,13 @@
  * Created by lnkvisitor on 01.08.16.
  */
 import * as $ from 'jquery';
-import {RabbitCMS, State, ValidationOptions} from "rabbitcms/backend";
+import {RabbitCMS, State, ValidationOptions, AjaxSettings} from "rabbitcms/backend";
 import * as i18n from "i18n!rabbitcms/nls/backend";
 
 export interface FormOptions {
     validation?:ValidationOptions;
-    ajax?:DataTables.AjaxSettings|boolean;
-    completeSubmit:()=>void;
+    ajax?:AjaxSettings|boolean;
+    completeSubmit:(data?:any)=>void;
     state?:State;
     dialog?:BootboxDialogOptions|boolean
 }
@@ -77,7 +77,8 @@ export class Form {
                 form.validate(options);
             });
         } else {
-            form.on('submit', ()=> {
+            form.on('submit', (e) => {
+                e.preventDefault();
                 this.submitForm();
             });
         }
@@ -95,16 +96,32 @@ export class Form {
     submitForm() {
         this.syncOriginal();
         if (this.options.ajax !== false) {
-            RabbitCMS.ajax({
+            let options = $.extend(true, {
+                blockTarget: this.form,
                 url: this.form.attr('action'),
                 method: this.form.attr('method'),
                 data: this.data,
-                success: ()=> {
-                    if (!this.options.completeSubmit()) {
+                success: (data) => {
+                    if (!this.options.completeSubmit(data)) {
                         history.back();
                     }
+                },
+                error: (jqXHR:JQueryXHR) => {
+                    let responseText = '<ul>';
+                    if (jqXHR.status === 422) {
+                        $.each(jqXHR.responseJSON, function(key, value) {
+                            responseText += '<li>' + value + '</li>'
+                        });
+                    } else {
+                        responseText += '<li>' + jqXHR.responseText + '</li>'
+                    }
+                    responseText += '</ul>';
+
+                    RabbitCMS.customMessage(responseText, 'danger', this.form.find('.form-body'));
                 }
-            });
+            }, this.options.ajax);
+
+            RabbitCMS.ajax(options);
         } else {
             (<HTMLFormElement>this.form[0]).submit();
             this.options.completeSubmit();

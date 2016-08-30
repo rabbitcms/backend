@@ -61,7 +61,8 @@ define(["require", "exports", 'jquery', "rabbitcms/backend", "i18n!rabbitcms/nls
                 });
             }
             else {
-                form.on('submit', function () {
+                form.on('submit', function (e) {
+                    e.preventDefault();
                     _this.submitForm();
                 });
             }
@@ -77,16 +78,31 @@ define(["require", "exports", 'jquery', "rabbitcms/backend", "i18n!rabbitcms/nls
             var _this = this;
             this.syncOriginal();
             if (this.options.ajax !== false) {
-                backend_1.RabbitCMS.ajax({
+                var options = $.extend(true, {
+                    blockTarget: this.form,
                     url: this.form.attr('action'),
                     method: this.form.attr('method'),
                     data: this.data,
-                    success: function () {
-                        if (!_this.options.completeSubmit()) {
+                    success: function (data) {
+                        if (!_this.options.completeSubmit(data)) {
                             history.back();
                         }
+                    },
+                    error: function (jqXHR) {
+                        var responseText = '<ul>';
+                        if (jqXHR.status === 422) {
+                            $.each(jqXHR.responseJSON, function (key, value) {
+                                responseText += '<li>' + value + '</li>';
+                            });
+                        }
+                        else {
+                            responseText += '<li>' + jqXHR.responseText + '</li>';
+                        }
+                        responseText += '</ul>';
+                        backend_1.RabbitCMS.customMessage(responseText, 'danger', _this.form.find('.form-body'));
                     }
-                });
+                }, this.options.ajax);
+                backend_1.RabbitCMS.ajax(options);
             }
             else {
                 this.form[0].submit();

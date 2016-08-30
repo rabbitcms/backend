@@ -17,6 +17,7 @@ const defaultTarget = '.page-content';
 
 export interface RabbitCMSOptions extends MetronicOptions {
     handlers?:Handler[];
+    prefix?:string;
 }
 
 export class State {
@@ -167,13 +168,18 @@ export class RabbitCMS extends Metronic {
 
     private static _handlers:Handler[] = [];
 
+    private static prefix:string = 'admin';
+
     /**
      * Init RabbitCMS backend.
      */
     static init(options?:RabbitCMSOptions):void {
-        options = $.extend(true, <RabbitCMSOptions>{
+        options = $.extend(<RabbitCMSOptions>{
             handlers: [],
+            prefix: 'admin'
         }, options);
+
+        this.prefix = options.prefix;
 
         this._handlers = options.handlers.map((h:Handler) => {
             if (!(h.regex instanceof RegExp)) {
@@ -251,6 +257,10 @@ export class RabbitCMS extends Metronic {
 
     static getToken():string {
         return _token;
+    }
+
+    static getPrefix():string {
+        return this.prefix;
     }
 
     /**
@@ -393,34 +403,22 @@ export class RabbitCMS extends Metronic {
         return true;
     }
 
-    static loadModalWindow(link:string, callback:(model:JQuery, data:any, textStatus:string, jqXHR:JQueryXHR)=> any):void {
-        this.ajax({
-            url: link,
-            success: (data, textStatus, jqXHR) => {
-                let modal = $(data);
-                $('.page-content').append(modal);
+    static loadModalWindow(link:string):Promise<JQuery> {
 
-                this.showModal(modal);
+        return new Promise<JQuery>((resolve, reject) => {
+            this.ajax({
+                url: link,
+                success: (data) => {
+                    let modal = $(data);
+                    $('.page-content').append(modal);
 
-                if ($.isFunction(callback)) {
-                    callback(modal, data, textStatus, jqXHR);
-                }
-            }
+                    modal.modal();
+
+                    resolve(modal);
+                },
+                error: reject
+            });
         });
-    }
-
-    static showModal(modal:JQuery) {
-        $('.ajax-modal').each((i, e:Element) => {
-            var el:JQuery = $(e);
-
-            if (el != modal && el.data('permanent') === undefined)
-                el.remove();
-        });
-
-        if (modal.length)
-            modal.modal();
-        else
-            this.dangerMessage('Помилка. RabbitCMS.prototype.showModal');
     }
 
     static getUniqueID(prefix:string = ''):string {
@@ -509,7 +507,7 @@ export class RabbitCMS extends Metronic {
         if (options.reset)
             $('.rabbit-alert').remove();
 
-        var _container = (!options.container) ? _visiblePortlet.find('.portlet-body')
+        var _container = (!options.container) ? this._stack.current.widget.find('.portlet-body')
             : options.container;
 
         if (options.place == 'append')
@@ -529,6 +527,11 @@ export class RabbitCMS extends Metronic {
 
     static dangerMessage(message:string, target?:JQuery) {
         var options = {container: target, type: 'danger', message: message, icon: 'fa-warning'};
+        this.message(options);
+    }
+
+    static customMessage(message:string, type:string, target?:JQuery) {
+        var options = {container: target, type: type, message: message};
         this.message(options);
     }
 
@@ -609,12 +612,18 @@ export class RabbitCMS extends Metronic {
             }
         }, options);
 
-        options.error = (jqXHR:JQueryXHR, textStatus:string, errorThrown:string) => {
-            if ($.isFunction(originalOptions.error) && originalOptions.error(jqXHR, textStatus, errorThrown)) {
-                return;
+        options.complete = (jqXHR:JQueryXHR, textStatus:string):any => {
+            RabbitCMS.unblockUI(options.blockTarget);
+
+            if ($.isFunction(originalOptions.complete)) {
+                originalOptions.complete(jqXHR, textStatus);
             }
 
             switch (jqXHR.status) {
+                case 202:
+                case 418:
+                    this.customMessage(jqXHR.responseJSON.message, jqXHR.responseJSON.type, options.warningTarget);
+                    break;
                 case 404:
                     this.dangerMessage(i18n.pageNotFound, options.warningTarget);
                     break;
@@ -624,22 +633,6 @@ export class RabbitCMS extends Metronic {
                 case 401:
                     location.reload(true);
                     break;
-                default:
-                    let responseText;
-                    try {
-                        responseText = $.parseJSON(jqXHR.responseText);
-                    } catch (message) {
-                        responseText = {message: message};
-                    }
-                    this.dangerMessage('Error: ' + jqXHR.status + '. ' + responseText.message, options.warningTarget);
-                    break;
-            }
-        };
-
-        options.complete = (jqXHR:JQueryXHR, textStatus:string):any => {
-            RabbitCMS.unblockUI(options.blockTarget);
-            if ($.isFunction(originalOptions.complete)) {
-                originalOptions.complete(jqXHR, textStatus);
             }
         };
 
@@ -673,7 +666,7 @@ export class Dialogs {
     }
 
     static onDelete(ajax:AjaxSettings, message?:string, options?:BootboxDialogOptions):Promise<void> {
-        return this.confirm(message || i18n.youWantDeleteThis, options).then(()=>RabbitCMS.ajax(ajax));
+        return this.confirm(message || i18n.youWantDeleteThis, options).then(() => RabbitCMS.ajax(ajax));
     }
 }
 export class Tools {

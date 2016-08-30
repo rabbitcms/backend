@@ -5,9 +5,9 @@ use RabbitCMS\Backend\Support\Backend;
 
 return [
     'boot'      => function (Backend $backend) {
+        $backend->addAclGroup('system', trans('backend::acl.system.title'));
         $backend->addAclResolver(
             function (Backend $acl) {
-                $acl->addAclGroup('system', trans('backend::acl.system.title'));
                 $acl->addAcl('system', 'users.read', trans('backend::acl.users.read'));
                 $acl->addAcl('system', 'users.write', trans('backend::acl.users.write'));
                 $acl->addAcl('system', 'groups.read', trans('backend::acl.groups.read'));

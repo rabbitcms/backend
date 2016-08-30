@@ -7,11 +7,17 @@ import "jquery.validation/additional-methods";
 import {RabbitCMS} from "rabbitcms/backend";
 
 let lang:string = RabbitCMS.getLocale(new Map<string,string>()
+    .set('en_US', 'en')
+    .set('ru_RU', 'ru')
+    .set('uk_UA', 'uk')
     .set('es', 'es_CL')
     .set('sr', 'sr_lat')
     .set('pt', 'pt_PT')
 );
-require(['jquery.validation/localization/messages_' + lang]);
+
+if (lang !== 'en') {
+    require(['jquery.validation/localization/messages_' + lang]);
+}
 
 if (lang === 'pt_BR') {
     lang = 'pt';
