@@ -212,6 +212,12 @@ define(["require", "exports", "jquery"], function (require, exports, $) {
                 });
             });
         };
+        Metronic.colorBox = function (options) {
+            if (options === void 0) { options = {}; }
+            require(['rabbitcms/loader/jquery.colorbox'], function () {
+                $.colorbox(options);
+            });
+        };
         Metronic.handlePortletTools = function () {
             var _this = this;
             var $body = $('body');

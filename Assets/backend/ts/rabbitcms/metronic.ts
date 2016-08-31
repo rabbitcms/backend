@@ -278,6 +278,12 @@ export class Metronic {
         });
     }
 
+    static colorBox(options: ColorboxSettings = {}) {
+        require(['rabbitcms/loader/jquery.colorbox'], () => {
+            $.colorbox(options);
+        });
+    }
+
     static handlePortletTools() {
         let $body = $('body');
         // handle portlet remove

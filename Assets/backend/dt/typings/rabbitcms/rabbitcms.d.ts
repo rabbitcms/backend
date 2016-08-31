@@ -39,6 +39,8 @@ declare module 'rabbitcms/metronic' {
 
         static datePicker(target: JQuery, options?: DatepickerOptions): Promise<JQuery>
 
+        static colorBox(options: ColorboxSettings)
+
         static handlePortletTools()
 
         static handleAlerts()

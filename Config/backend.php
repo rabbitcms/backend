@@ -65,57 +65,57 @@ return [
     },
     'requirejs' => [
         'packages' => [
-            'rabbitcms'              => 'js',
-            'styles'                 => 'css',
-            'jquery.validation'      => [
+            'rabbitcms'                 => 'js',
+            'styles'                    => 'css',
+            'jquery.validation'         => [
                 'location' => 'plugins/jquery-validation/js',
                 'main'     => 'jquery.validate.min',
             ],
-            'select2'                => [
+            'select2'                   => [
                 'location' => 'plugins/select2',
                 'main'     => 'js/select2.min',
             ],
-            'icheck'                 => [
+            'icheck'                    => [
                 'location' => 'plugins/icheck',
                 'main'     => 'icheck.min',
             ],
-            'bootstrap-switch'       => [
+            'bootstrap-switch'          => [
                 'location' => 'plugins/bootstrap-switch',
                 'main'     => 'js/bootstrap-switch.min',
             ],
-            'slimScroll'             => [
+            'slimScroll'                => [
                 'location' => 'plugins/jquery-slimscroll',
                 'main'     => 'jquery.slimscroll.min',
             ],
-            'jquery.fancybox'        => [
+            'jquery.fancybox'           => [
                 'location' => 'plugins/fancybox/source',
                 'main'     => 'jquery.fancybox.pack',
             ],
-            'bootstrap-tabdrop'      => [
+            'bootstrap-tabdrop'         => [
                 'location' => 'plugins/bootstrap-tabdrop',
                 'main'     => 'js/bootstrap-tabdrop',
             ],
-            'bootstrap-confirmation' => [
+            'bootstrap-confirmation'    => [
                 'location' => 'pugins/bootstrap-confirmation',
                 'main'     => 'bootstrap-confirmation.min',
             ],
-            'jquery.counterup'       => [
+            'jquery.counterup'          => [
                 'location' => 'plugins/counterup',
                 'main'     => 'jquery.counterup.min',
             ],
-            'jszip'                  => [
+            'jszip'                     => [
                 'location' => 'plugins/jszip',
                 'main'     => 'jszip.min',
             ],
-            'pdfmake'                => [
+            'pdfmake'                   => [
                 'location' => 'plugins/pdfmake',
                 'main'     => 'pdfmake.min',
             ],
-            'datatables.net-buttons' => [
+            'datatables.net-buttons'    => [
                 'location' => 'plugins/datatables/plugins/buttons',
                 'main'     => 'js/dataTables.buttons.min',
             ],
-            'bootstrap-datepicker' => [
+            'bootstrap-datepicker'      => [
                 'location' => 'plugins/bootstrap-datepicker',
                 'main'     => 'js/bootstrap-datepicker',
             ],
@@ -123,13 +123,17 @@ return [
                 'location' => 'plugins/bootstrap-daterangepicker',
                 'main'     => 'js/daterangepicker',
             ],
-            'bootstrap-editable' => [
+            'bootstrap-editable'        => [
                 'location' => 'plugins/bootstrap-editable',
                 'main'     => 'js/bootstrap-editable',
             ],
-            'fuelux-spinner' => [
+            'fuelux-spinner'            => [
                 'location' => 'plugins/fuelux-spinner',
                 'main'     => 'js/spinner',
+            ],
+            'jquery.colorbox'           => [
+                'location' => 'plugins/colorbox',
+                'main'     => 'jquery.colorbox',
             ],
 
         ],
@@ -154,11 +158,6 @@ return [
                 ],
             ],
             'datatables.net-colReorder' => 'plugins/datatables/plugins/colReorder/dataTables.colReorder.min',
-
-            'jquery.colorbox' => [
-                'path' => 'plugins/colorbox/jquery.colorbox',
-                'css'  => 'plugins/colorbox/colorbox.css',
-            ],
         ],
     ],
     'handlers'  => [
