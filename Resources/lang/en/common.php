@@ -12,4 +12,5 @@ return [
     'deleting_ok'    => 'Record deleted successfully',
     'deleting_error' => 'An error occurred while deleting',
     'close'          => 'Close',
+    'back'           => 'Back',
 ];

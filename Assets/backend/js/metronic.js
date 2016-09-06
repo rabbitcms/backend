@@ -198,8 +198,12 @@ define(["require", "exports", "jquery"], function (require, exports, $) {
         };
         Metronic.select2 = function (target, options) {
             if (options === void 0) { options = {}; }
-            require(['rabbitcms/loader/jquery.select2'], function () {
-                $(target).select2(options);
+            return new Promise(function (resolve) {
+                require(['rabbitcms/loader/jquery.select2'], function (promise) {
+                    promise.then(function () {
+                        resolve(target.select2(options));
+                    });
+                });
             });
         };
         Metronic.datePicker = function (target, options) {
@@ -216,6 +220,11 @@ define(["require", "exports", "jquery"], function (require, exports, $) {
             if (options === void 0) { options = {}; }
             require(['rabbitcms/loader/jquery.colorbox'], function () {
                 $.colorbox(options);
+            });
+        };
+        Metronic.maskMoney = function (target, options) {
+            require(['jquery.maskMoney'], function () {
+                target.maskMoney(options);
             });
         };
         Metronic.handlePortletTools = function () {

@@ -145,6 +145,7 @@ return [
             'jquery.cookie'      => 'plugins/jquery.cokie.min',
             'jquery.backstretch' => 'plugins/backstretch/jquery.backstretch.min',
             'jquery.blockui'     => 'plugins/jquery.blockui.min',
+            'jquery.maskMoney'   => 'plugins/jquery.maskMoney.min',
 
             'datatables.net'            => [
                 'path' => 'plugins/datatables/jquery.dataTables.min',

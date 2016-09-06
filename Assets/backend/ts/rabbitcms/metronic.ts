@@ -262,13 +262,17 @@ export class Metronic {
         }
     }
 
-    static select2(target:JQuery, options:Select2Options = {}) {
-        require(['rabbitcms/loader/jquery.select2'], ()=> {
-            $(target).select2(options);
+    static select2(target:JQuery, options:Select2Options = {}) :Promise<JQuery> {
+        return new Promise<JQuery>((resolve) => {
+            require(['rabbitcms/loader/jquery.select2'], (promise: Promise<void>) => {
+                promise.then(() => {
+                    resolve(target.select2(options));
+                });
+            });
         });
     }
 
-    static datePicker(target: JQuery, options: DatepickerOptions = {}): Promise<JQuery> {
+    static datePicker(target:JQuery, options:DatepickerOptions = {}) :Promise<JQuery> {
         return new Promise<JQuery>((resolve) => {
             require(['rabbitcms/loader/bootstrap-datepicker'], (promise: Promise<void>) => {
                 promise.then(() => {
@@ -281,6 +285,12 @@ export class Metronic {
     static colorBox(options: ColorboxSettings = {}) {
         require(['rabbitcms/loader/jquery.colorbox'], () => {
             $.colorbox(options);
+        });
+    }
+
+    static maskMoney(target: JQuery, options: any) { //TODO: DT for maskMoney
+        require(['jquery.maskMoney'], () => {
+            target.maskMoney(options);
         });
     }
 

@@ -35,11 +35,13 @@ declare module 'rabbitcms/metronic' {
 
         static handleFancybox(target?: JQuery)
 
-        static select2(target: JQuery, options?: Select2Options)
+        static select2(target:JQuery, options?:Select2Options) :Promise<JQuery>
 
         static datePicker(target: JQuery, options?: DatepickerOptions): Promise<JQuery>
 
         static colorBox(options: ColorboxSettings)
+
+        static maskMoney(target: JQuery, options: any);
 
         static handlePortletTools()
 
