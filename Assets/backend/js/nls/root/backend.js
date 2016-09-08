@@ -9,7 +9,8 @@ define(["require", "exports"], function (require, exports) {
         dontSave: 'Don\'t save',
         dataHasBeenModified: 'The data has been modified. Save changes?',
         yes: 'Yes',
-        no: 'No'
+        no: 'No',
+        select: 'Select'
     };
 });
 //# sourceMappingURL=backend.js.map

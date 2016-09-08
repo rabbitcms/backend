@@ -9,7 +9,8 @@ define(["require", "exports"], function (require, exports) {
         dontSave: 'Не сохранять',
         dataHasBeenModified: 'Данные были изменены. Сохранить изменения?',
         yes: 'Да',
-        no: 'Нет'
+        no: 'Нет',
+        select: 'Выбрать'
     };
 });
 //# sourceMappingURL=backend.js.map

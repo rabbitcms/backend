@@ -205,8 +205,17 @@ export class RabbitCMS extends Metronic {
             return false;
         });
 
+        $body.on('click', 'a[href^="#exec"]', (event:JQueryEventObject) => {
+            event.preventDefault();
+
+            let exec = $(event.currentTarget).attr('href');
+            let _tmp = exec.split(':');
+
+            this.execute(_tmp[1], _tmp.length > 2 ? _tmp[2] : 'init');
+        });
+
         $body.on('click', 'a:not([href^="#"])', (event:JQueryEventObject) => {
-            if ($(event.target).attr('rel') === 'back') {
+            if ($(event.currentTarget).attr('rel') === 'back') {
                 return false;
             }
 
@@ -288,12 +297,14 @@ export class RabbitCMS extends Metronic {
         widget.data('loaded', true);
         this.updatePlugins(widget);
 
-        require([handler.module], function (_module) {
-            if (handler.exec !== void 0) {
-                _module[handler.exec](widget, state);
-            } else {
-                _module.init(widget, state);
-            }
+        this.execute(handler.module, handler.exec !== void 0 ? handler.exec : 'init', widget, state);
+    }
+
+    private static execute(module:string, exec:string = 'init', ...params) :Promise<any> {
+        return new Promise<any> ((resolve, reject) => {
+            require([module], function (_module) {
+                resolve(_module[exec](...params));
+            });
         });
     }
 
@@ -309,13 +320,8 @@ export class RabbitCMS extends Metronic {
 
         if (_module) {
             let _tmp = _module.split(':');
-            require([_tmp[0]], function (_module) {
-                if (_tmp.length === 2) {
-                    _module[_tmp[1]](widget);
-                } else {
-                    _module.init(widget);
-                }
-            });
+
+            this.execute(_tmp[0], _tmp.length > 1 ? _tmp[1] : 'init', widget);
         }
     }
 

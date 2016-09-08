@@ -13,4 +13,5 @@ return [
     'deleting_error' => 'An error occurred while deleting',
     'close'          => 'Close',
     'back'           => 'Back',
+    'cancel'         => 'Cancel',
 ];

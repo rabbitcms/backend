@@ -170,8 +170,14 @@ define(["require", "exports", "jquery", "i18n!rabbitcms/nls/backend", "rabbitcms
                 }
                 return false;
             });
+            $body.on('click', 'a[href^="#exec"]', function (event) {
+                event.preventDefault();
+                var exec = $(event.currentTarget).attr('href');
+                var _tmp = exec.split(':');
+                _this.execute(_tmp[1], _tmp.length > 2 ? _tmp[2] : 'init');
+            });
             $body.on('click', 'a:not([href^="#"])', function (event) {
-                if ($(event.target).attr('rel') === 'back') {
+                if ($(event.currentTarget).attr('rel') === 'back') {
                     return false;
                 }
                 var a = event.currentTarget;
@@ -223,13 +229,18 @@ define(["require", "exports", "jquery", "i18n!rabbitcms/nls/backend", "rabbitcms
             }
             widget.data('loaded', true);
             this.updatePlugins(widget);
-            require([handler.module], function (_module) {
-                if (handler.exec !== void 0) {
-                    _module[handler.exec](widget, state);
-                }
-                else {
-                    _module.init(widget, state);
-                }
+            this.execute(handler.module, handler.exec !== void 0 ? handler.exec : 'init', widget, state);
+        };
+        RabbitCMS.execute = function (module, exec) {
+            if (exec === void 0) { exec = 'init'; }
+            var params = [];
+            for (var _i = 2; _i < arguments.length; _i++) {
+                params[_i - 2] = arguments[_i];
+            }
+            return new Promise(function (resolve, reject) {
+                require([module], function (_module) {
+                    resolve(_module[exec].apply(_module, params));
+                });
             });
         };
         RabbitCMS.loadModule = function (widget) {
@@ -240,15 +251,8 @@ define(["require", "exports", "jquery", "i18n!rabbitcms/nls/backend", "rabbitcms
             this.updatePlugins(widget);
             var _module = widget.data('require');
             if (_module) {
-                var _tmp_1 = _module.split(':');
-                require([_tmp_1[0]], function (_module) {
-                    if (_tmp_1.length === 2) {
-                        _module[_tmp_1[1]](widget);
-                    }
-                    else {
-                        _module.init(widget);
-                    }
-                });
+                var _tmp = _module.split(':');
+                this.execute(_tmp[0], _tmp.length > 1 ? _tmp[1] : 'init', widget);
             }
         };
         RabbitCMS.navigateByHandler = function (h, link, pushState, replay) {

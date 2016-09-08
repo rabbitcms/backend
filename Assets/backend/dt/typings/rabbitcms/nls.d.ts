@@ -20,6 +20,7 @@ declare module "i18n!rabbitcms/nls/backend" {
         dataHasBeenModified:string;
         yes:string;
         no:string;
+        select:string;
     };
     export = _default;
 }

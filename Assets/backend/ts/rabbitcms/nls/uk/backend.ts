@@ -11,5 +11,6 @@ export =  <typeof i18n>{
     dontSave: 'Не зберігати',
     dataHasBeenModified: 'Дані було змінено. Зберегти внесені зміни?',
     yes: 'Так',
-    no: 'Ні'
+    no: 'Ні',
+    select: 'Вибрати'
 };

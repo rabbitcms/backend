@@ -9,7 +9,8 @@ define(["require", "exports"], function (require, exports) {
         dontSave: 'Не зберігати',
         dataHasBeenModified: 'Дані було змінено. Зберегти внесені зміни?',
         yes: 'Так',
-        no: 'Ні'
+        no: 'Ні',
+        select: 'Вибрати'
     };
 });
 //# sourceMappingURL=backend.js.map
