@@ -338,6 +338,7 @@ define(["require", "exports", "jquery", "i18n!rabbitcms/nls/backend", "rabbitcms
                 _this.ajax({
                     url: link,
                     success: function (data) {
+                        $('.modal').remove();
                         var modal = $(data);
                         $('.page-content').append(modal);
                         modal.modal();
@@ -512,21 +513,23 @@ define(["require", "exports", "jquery", "i18n!rabbitcms/nls/backend", "rabbitcms
                 if ($.isFunction(originalOptions.complete)) {
                     originalOptions.complete(jqXHR, textStatus);
                 }
-                switch (jqXHR.status) {
-                    case 202:
-                    case 418:
-                        _this.customMessage(jqXHR.responseJSON.message, jqXHR.responseJSON.type, options.warningTarget);
-                        break;
-                    case 404:
-                        _this.dangerMessage(i18n.pageNotFound, options.warningTarget);
-                        break;
-                    case 403:
-                        _this.dangerMessage(i18n.accessDenied, options.warningTarget);
-                        break;
-                    case 401:
-                        location.reload(true);
-                        break;
-                }
+                setTimeout(function () {
+                    switch (jqXHR.status) {
+                        case 202:
+                        case 418:
+                            _this.customMessage(jqXHR.responseJSON.message, jqXHR.responseJSON.type, options.warningTarget);
+                            break;
+                        case 404:
+                            _this.dangerMessage(i18n.pageNotFound, options.warningTarget);
+                            break;
+                        case 403:
+                            _this.dangerMessage(i18n.accessDenied, options.warningTarget);
+                            break;
+                        case 401:
+                            location.reload(true);
+                            break;
+                    }
+                }, 100);
             };
             this.blockUI(options.blockTarget, options.blockOptions);
             return $.ajax(options);

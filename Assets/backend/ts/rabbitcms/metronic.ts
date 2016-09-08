@@ -541,6 +541,7 @@ export class Metronic {
         this.initPopovers();
         this.initAccordions();
         this.initModals();
+        this.handleSidebarAndContentHeight();
 
 
         //Handle group element heights
@@ -825,6 +826,56 @@ export class Metronic {
     static getResponsiveBreakpoint(size:string) {
         return size in ResponsiveBreakpointSize ? ResponsiveBreakpointSize[size] : 0;
     }
+
+    static handleSidebarAndContentHeight() {
+        var content = $('.page-content');
+        var sidebar = $('.page-sidebar');
+        var body = $('body');
+        var height;
+
+        if (body.hasClass("page-footer-fixed") === true && body.hasClass("page-sidebar-fixed") === false) {
+            var available_height = this.getViewPort().height - $('.page-footer').outerHeight() - $('.page-header').outerHeight();
+            var sidebar_height = sidebar.outerHeight();
+
+            if (sidebar_height > available_height) {
+                available_height = sidebar_height + $('.page-footer').outerHeight();
+            }
+            if (content.height() < available_height) {
+                content.css('min-height', available_height);
+            }
+        } else {
+            if (body.hasClass('page-sidebar-fixed')) {
+                height = this._calculateFixedSidebarViewportHeight();
+                if (body.hasClass('page-footer-fixed') === false) {
+                    height = height - $('.page-footer').outerHeight();
+                }
+            } else {
+                var headerHeight = $('.page-header').outerHeight();
+                var footerHeight = $('.page-footer').outerHeight();
+
+                if (this.getViewPort().width < this.getResponsiveBreakpoint) {
+                    height = this.getViewPort().height - headerHeight - footerHeight;
+                } else {
+                    height = sidebar.height() + 20;
+                }
+
+                if ((height + headerHeight + footerHeight) <= this.getViewPort().height) {
+                    height = this.getViewPort().height - headerHeight - footerHeight;
+                }
+            }
+            content.css('min-height', height);
+        }
+    }
+
+    protected static _calculateFixedSidebarViewportHeight() {
+        var sidebarHeight = this.getViewPort().height - $('.page-header').outerHeight(true);
+        if ($('body').hasClass("page-footer-fixed")) {
+            sidebarHeight = sidebarHeight - $('.page-footer').outerHeight();
+        }
+        return sidebarHeight;
+    };
+
+
 }
 
 

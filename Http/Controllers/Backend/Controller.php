@@ -53,4 +53,20 @@ abstract class Controller extends ModuleController
             \Response::json(['message' => $message, 'type' => $type], $code, [], JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT)
         );
     }
+
+    /**
+     * @param string $message
+     */
+    protected function success(string $message)
+    {
+        $this->message($message, 'success', 202);
+    }
+
+    /**
+     * @param string $message
+     */
+    protected function error(string $message)
+    {
+        $this->message($message, 'danger', 418);
+    }
 }

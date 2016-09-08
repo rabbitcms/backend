@@ -69,6 +69,8 @@ export class DataTable {
         }
     }
 
+    private timer;
+
     //main function to initiate the module
     constructor(options:DataTableOptions) {
         // default settings
@@ -244,19 +246,27 @@ export class DataTable {
             this.setAjaxParam($(e).attr("name"), $(e).val());
         });
 
-        this.dataTable.ajax.reload();
+        this.update();
     }
 
     resetFilter() {
         $('textarea.form-filter, select.form-filter, input.form-filter', this.table).each(function () {
-            $(this).val("");
+            $(this).val("").trigger('change');
         });
         $('input.form-filter[type="checkbox"]', this.table).each(function () {
             $(this).prop("checked", false);
         });
         this.clearAjaxParams();
         this.addAjaxParam("action", this.tableOptions.filterCancelAction);
-        this.dataTable.ajax.reload();
+
+        this.update();
+    }
+
+    update() {
+        clearTimeout(this.timer);
+        this.timer = setTimeout(() => {
+            this.dataTable.ajax.reload();
+        }, 10);
     }
 
     getSelectedRowsCount() {

@@ -415,6 +415,7 @@ export class RabbitCMS extends Metronic {
             this.ajax({
                 url: link,
                 success: (data) => {
+                    $('.modal').remove();
                     let modal = $(data);
                     $('.page-content').append(modal);
 
@@ -625,21 +626,23 @@ export class RabbitCMS extends Metronic {
                 originalOptions.complete(jqXHR, textStatus);
             }
 
-            switch (jqXHR.status) {
-                case 202:
-                case 418:
-                    this.customMessage(jqXHR.responseJSON.message, jqXHR.responseJSON.type, options.warningTarget);
-                    break;
-                case 404:
-                    this.dangerMessage(i18n.pageNotFound, options.warningTarget);
-                    break;
-                case 403:
-                    this.dangerMessage(i18n.accessDenied, options.warningTarget);
-                    break;
-                case 401:
-                    location.reload(true);
-                    break;
-            }
+            setTimeout(() => {
+                switch (jqXHR.status) {
+                    case 202:
+                    case 418:
+                        this.customMessage(jqXHR.responseJSON.message, jqXHR.responseJSON.type, options.warningTarget);
+                        break;
+                    case 404:
+                        this.dangerMessage(i18n.pageNotFound, options.warningTarget);
+                        break;
+                    case 403:
+                        this.dangerMessage(i18n.accessDenied, options.warningTarget);
+                        break;
+                    case 401:
+                        location.reload(true);
+                        break;
+                }
+            }, 100);
         };
 
         this.blockUI(options.blockTarget, options.blockOptions);

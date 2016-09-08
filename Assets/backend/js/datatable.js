@@ -149,18 +149,25 @@ define(["require", "exports", "jquery", "jszip", "rabbitcms/backend", "i18n!rabb
             $('input.form-filter[type="radio"]:checked', this.table).each(function (i, e) {
                 _this.setAjaxParam($(e).attr("name"), $(e).val());
             });
-            this.dataTable.ajax.reload();
+            this.update();
         };
         DataTable.prototype.resetFilter = function () {
             $('textarea.form-filter, select.form-filter, input.form-filter', this.table).each(function () {
-                $(this).val("");
+                $(this).val("").trigger('change');
             });
             $('input.form-filter[type="checkbox"]', this.table).each(function () {
                 $(this).prop("checked", false);
             });
             this.clearAjaxParams();
             this.addAjaxParam("action", this.tableOptions.filterCancelAction);
-            this.dataTable.ajax.reload();
+            this.update();
+        };
+        DataTable.prototype.update = function () {
+            var _this = this;
+            clearTimeout(this.timer);
+            this.timer = setTimeout(function () {
+                _this.dataTable.ajax.reload();
+            }, 10);
         };
         DataTable.prototype.getSelectedRowsCount = function () {
             return $('tbody > tr > td:nth-child(1) input[type="checkbox"]:checked', this.table).length;
