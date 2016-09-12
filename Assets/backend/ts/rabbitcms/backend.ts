@@ -572,7 +572,7 @@ export class RabbitCMS extends Metronic {
             $(window).trigger('resize');
         });
 
-        $body.on('click', '.page-sidebar-menu > li > a', function (e) {
+        /*$body.on('click', '.page-sidebar-menu li a', function (e) {
             var menu = $('.page-sidebar-menu');
             var subMenu = $(this).next('.sub-menu');
             var slideSpeed = parseInt(menu.data("slide-speed"));
@@ -592,6 +592,39 @@ export class RabbitCMS extends Metronic {
             }
 
             e.preventDefault();
+        });*/
+
+        $('.page-sidebar-menu').on('click', 'li > a.nav-toggle, li > a > span.nav-toggle', (e) => {
+            var that = $(e.currentTarget).closest('.nav-item').children('.nav-link');
+            var hasSubMenu = that.next().hasClass('sub-menu');
+
+            var parent =that.parent().parent();
+            var the = that;
+            var menu = $('.page-sidebar-menu');
+            var sub = that.next();
+
+            var slideSpeed = parseInt(menu.data("slide-speed"));
+
+            parent.children('li.open').children('a').children('.arrow').removeClass('open');
+            parent.children('li.open').children('.sub-menu:not(.always-open)').slideUp(slideSpeed);
+            parent.children('li.open').removeClass('open');
+
+            if (sub.is(":visible")) {
+                $('.arrow', the).removeClass("open");
+                the.parent().removeClass("open");
+                sub.slideUp(slideSpeed, () => {
+                    this.handleSidebarAndContentHeight();
+                });
+            } else if (hasSubMenu) {
+                $('.arrow', the).addClass("open");
+                the.parent().addClass("open");
+                sub.slideDown(slideSpeed, () => {
+                    this.handleSidebarAndContentHeight();
+                });
+            }
+
+
+            e.preventDefault();
         });
     }
 
@@ -601,6 +634,7 @@ export class RabbitCMS extends Metronic {
             let el = $(e);
             if ((menu + '.').startsWith($(e).data('path') + '.')) {
                 el.addClass('active open');
+                $('.arrow', el).addClass('open');
             }
         });
     }

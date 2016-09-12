@@ -108,6 +108,8 @@ declare module 'rabbitcms/metronic' {
         static getBrandColor(name: string);
 
         static getResponsiveBreakpoint(size: string);
+
+        static handleSidebarAndContentHeight();
     }
 }
 

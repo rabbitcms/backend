@@ -448,6 +448,7 @@ define(["require", "exports", "jquery", "i18n!rabbitcms/nls/backend", "rabbitcms
             this.message(options);
         };
         RabbitCMS.initSidebar = function () {
+            var _this = this;
             if ($.cookie && $.cookie('sidebar_closed') === '1' && this.getViewPort().width >= 992) {
                 $body.addClass('page-sidebar-closed');
                 $('.page-sidebar-menu').addClass('page-sidebar-menu-closed');
@@ -471,22 +472,30 @@ define(["require", "exports", "jquery", "i18n!rabbitcms/nls/backend", "rabbitcms
                 }
                 $(window).trigger('resize');
             });
-            $body.on('click', '.page-sidebar-menu > li > a', function (e) {
+            $('.page-sidebar-menu').on('click', 'li > a.nav-toggle, li > a > span.nav-toggle', function (e) {
+                var that = $(e.currentTarget).closest('.nav-item').children('.nav-link');
+                var hasSubMenu = that.next().hasClass('sub-menu');
+                var parent = that.parent().parent();
+                var the = that;
                 var menu = $('.page-sidebar-menu');
-                var subMenu = $(this).next('.sub-menu');
+                var sub = that.next();
                 var slideSpeed = parseInt(menu.data("slide-speed"));
-                $('.open', menu).find('.arrow').removeClass('open');
-                $('.open', menu).find('.sub-menu').slideUp(slideSpeed);
-                $('.open', menu).removeClass('open');
-                if (subMenu.is(":visible")) {
-                    $('.arrow', $(this)).removeClass('open');
-                    $(this).parent('li').removeClass('open');
-                    subMenu.slideUp(slideSpeed);
+                parent.children('li.open').children('a').children('.arrow').removeClass('open');
+                parent.children('li.open').children('.sub-menu:not(.always-open)').slideUp(slideSpeed);
+                parent.children('li.open').removeClass('open');
+                if (sub.is(":visible")) {
+                    $('.arrow', the).removeClass("open");
+                    the.parent().removeClass("open");
+                    sub.slideUp(slideSpeed, function () {
+                        _this.handleSidebarAndContentHeight();
+                    });
                 }
-                else {
-                    $('.arrow', $(this)).addClass('open');
-                    $(this).parent('li').addClass('open');
-                    subMenu.slideDown(slideSpeed);
+                else if (hasSubMenu) {
+                    $('.arrow', the).addClass("open");
+                    the.parent().addClass("open");
+                    sub.slideDown(slideSpeed, function () {
+                        _this.handleSidebarAndContentHeight();
+                    });
                 }
                 e.preventDefault();
             });
@@ -497,6 +506,7 @@ define(["require", "exports", "jquery", "i18n!rabbitcms/nls/backend", "rabbitcms
                 var el = $(e);
                 if ((menu + '.').startsWith($(e).data('path') + '.')) {
                     el.addClass('active open');
+                    $('.arrow', el).addClass('open');
                 }
             });
         };
