@@ -14,4 +14,5 @@ return [
     'close'          => 'Close',
     'back'           => 'Back',
     'cancel'         => 'Cancel',
+    'all'            => 'All',
 ];
