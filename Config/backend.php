@@ -73,7 +73,7 @@ return [
             ],
             'select2'                   => [
                 'location' => 'plugins/select2',
-                'main'     => 'js/select2.min',
+                'main'     => 'js/select2.full.min',
             ],
             'icheck'                    => [
                 'location' => 'plugins/icheck',

@@ -8,6 +8,9 @@ define(["require", "exports", 'jquery', "rabbitcms/backend", "i18n!rabbitcms/nls
             this.options = $.extend(true, {
                 validate: null,
                 completeSubmit: function () {
+                },
+                canSubmit: function () {
+                    return true;
                 }
             }, options);
             if (this.options.state && this.options.dialog !== false) {
@@ -76,6 +79,9 @@ define(["require", "exports", 'jquery', "rabbitcms/backend", "i18n!rabbitcms/nls
         };
         Form.prototype.submitForm = function () {
             var _this = this;
+            if (this.options.canSubmit() === false) {
+                return;
+            }
             this.syncOriginal();
             if (this.options.ajax !== false) {
                 var options = $.extend(true, {

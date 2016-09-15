@@ -327,6 +327,7 @@ declare module 'rabbitcms/form' {
         validation?: ValidationOptions;
         ajax?: DataTables.AjaxSettings|boolean;
         completeSubmit: (data?)=>void;
+        canSubmit?: ()=>boolean;
         state?: State;
         dialog?: BootboxDialogOptions|boolean
     }

@@ -27,6 +27,7 @@ interface DatepickerOptions {
     forceParse?: boolean;
     inputs?: any[];
     minViewMode?: any;
+    viewMode?: any;
     multidate?: any;
     multidateSeparator?: string;
     orientation?: string;

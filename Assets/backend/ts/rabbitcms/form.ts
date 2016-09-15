@@ -6,32 +6,36 @@ import {RabbitCMS, State, ValidationOptions, AjaxSettings} from "rabbitcms/backe
 import * as i18n from "i18n!rabbitcms/nls/backend";
 
 export interface FormOptions {
-    validation?:ValidationOptions;
-    ajax?:AjaxSettings|boolean;
-    completeSubmit:(data?:any)=>void;
-    state?:State;
-    dialog?:BootboxDialogOptions|boolean
+    validation?: ValidationOptions;
+    ajax?: AjaxSettings|boolean;
+    completeSubmit: (data?: any)=>void;
+    canSubmit?: ()=>boolean;
+    state?: State;
+    dialog?: BootboxDialogOptions|boolean
 }
 
 export class Form {
-    private options:FormOptions;
-    private form:JQuery;
-    private data:string;
-    private match:boolean = false;
+    private options: FormOptions;
+    private form: JQuery;
+    private data: string;
+    private match: boolean = false;
 
-    constructor(form:JQuery, options?:FormOptions) {
+    constructor(form: JQuery, options?: FormOptions) {
         this.form = form;
         this.options = $.extend(true, {
             validate: null,
             completeSubmit: ()=> {
+            },
+            canSubmit: ()=> {
+                return true;
             }
         }, options);
 
         if (this.options.state && this.options.dialog !== false) {
-            this.options.state.addChecker((replay:()=>void)=>new Promise<void>((resolve, reject)=> {
+            this.options.state.addChecker((replay: ()=>void)=>new Promise<void>((resolve, reject)=> {
                 if (!this.match && this.data !== this.getData()) {
-                    require(['bootbox'], (bootbox:BootboxStatic)=> {
-                        let dialog:BootboxDialogOptions = <BootboxDialogOptions>$.extend(true, <BootboxDialogOptions>{
+                    require(['bootbox'], (bootbox: BootboxStatic)=> {
+                        let dialog: BootboxDialogOptions = <BootboxDialogOptions>$.extend(true, <BootboxDialogOptions>{
                             message: '<h4>' + i18n.dataHasBeenModified + '</h4>',
                             closeButton: false,
                             buttons: {
@@ -89,11 +93,15 @@ export class Form {
         this.data = this.getData();
     }
 
-    getData():string {
+    getData(): string {
         return $('input:not(.ignore-scan),select:not(.ignore-scan),textarea:not(.ignore-scan)', this.form).serialize();
     }
 
+
     submitForm() {
+        if (this.options.canSubmit() === false) {
+            return;
+        }
         this.syncOriginal();
         if (this.options.ajax !== false) {
             let options = $.extend(true, {
@@ -106,10 +114,10 @@ export class Form {
                         history.back();
                     }
                 },
-                error: (jqXHR:JQueryXHR) => {
+                error: (jqXHR: JQueryXHR) => {
                     let responseText = '<ul>';
                     if (jqXHR.status === 422) {
-                        $.each(jqXHR.responseJSON, function(key, value) {
+                        $.each(jqXHR.responseJSON, function (key, value) {
                             responseText += '<li>' + value + '</li>'
                         });
                     } else {
