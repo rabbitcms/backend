@@ -74,6 +74,7 @@ export class DataTable {
     //main function to initiate the module
     constructor(options:DataTableOptions) {
         // default settings
+        let filters = $('.form-filter', options.src);
         options = $.extend(true, {
             src: "", // actual table
             filterApplyAction: "filter",
@@ -95,10 +96,23 @@ export class DataTable {
                 serverSide: true, // enable/disable server side ajax loading
                 stateSave: true,
                 stateLoadParams: (settings:DataTables.SettingsLegacy, data:Object):void => {
+                    filters.each((index, elem) => {
+                        let filter = $(elem);
+                        let name = $(elem).attr('name');
 
+                        if (data.hasOwnProperty(name))
+                            filter.val(data[name]);
+                    });
+
+                    this.submitFilter();
                 },
-                stateSaveParams: (settings:DataTables.SettingsLegacy, data:Object):void => {
-                    // data.filters = settings.;
+                stateSaveParams: (settings:DataTables.SettingsLegacy, data:Object):Object => {
+                    filters.each(function() {
+                        let self = $(this);
+                        if (self.attr('name'))
+                            data[self.attr('name')] = self.val().replace('"', '"');
+                    });
+                    return data;
                 },
                 ajax: (data:Object, callback:Function, settings:DataTables.SettingsLegacy) => {
                     $.each(this.ajaxParams, (key:string, value:any) => {

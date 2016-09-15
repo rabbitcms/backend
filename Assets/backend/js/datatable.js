@@ -6,6 +6,7 @@ define(["require", "exports", "jquery", "jszip", "rabbitcms/backend", "i18n!rabb
             var _this = this;
             this.tableInitialized = false;
             this.ajaxParams = {};
+            var filters = $('.form-filter', options.src);
             options = $.extend(true, {
                 src: "",
                 filterApplyAction: "filter",
@@ -25,8 +26,21 @@ define(["require", "exports", "jquery", "jszip", "rabbitcms/backend", "i18n!rabb
                     serverSide: true,
                     stateSave: true,
                     stateLoadParams: function (settings, data) {
+                        filters.each(function (index, elem) {
+                            var filter = $(elem);
+                            var name = $(elem).attr('name');
+                            if (data.hasOwnProperty(name))
+                                filter.val(data[name]);
+                        });
+                        _this.submitFilter();
                     },
                     stateSaveParams: function (settings, data) {
+                        filters.each(function () {
+                            var self = $(this);
+                            if (self.attr('name'))
+                                data[self.attr('name')] = self.val().replace('"', '"');
+                        });
+                        return data;
                     },
                     ajax: function (data, callback, settings) {
                         $.each(_this.ajaxParams, function (key, value) {
