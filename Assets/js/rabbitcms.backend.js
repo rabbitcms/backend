@@ -108,6 +108,8 @@ define(['jquery', 'bootbox'], function ($, bootbox) {
         if (_this._visiblePortlet == portlet)
             return false;
 
+        _this._visiblePortlet.data('scroll', window.scrollY);
+
         $('.ajax-portlet:visible').removeClass('show');
 
         if (portlet.length)
@@ -125,7 +127,7 @@ define(['jquery', 'bootbox'], function ($, bootbox) {
 
         _this._visiblePortlet = portlet;
         _this.canSubmit.init();
-        _this.scrollTop();
+        _this.scrollTo(void 0, portlet.data('scroll') || 0);
     };
 
     RabbitCMS.prototype.loadModalWindow = function (link, callback) {
@@ -154,7 +156,6 @@ define(['jquery', 'bootbox'], function ($, bootbox) {
         else
             this.dangerMessage('Помилка. RabbitCMS.prototype.showModal');
     };
-
 
 
     /* --- --- --- */
@@ -223,7 +224,7 @@ define(['jquery', 'bootbox'], function ($, bootbox) {
     };
 
     RabbitCMS.prototype.scrollTo = function (element, offeset) {
-        var position = (element && element.size() > 0) ? element.offset().top : 0;
+        var position = (element && element.size() > 0) ? element.offset().top : (offeset || 0);
 
         if (element) {
             if (_Body.hasClass('page-header-fixed')) {
@@ -367,7 +368,7 @@ define(['jquery', 'bootbox'], function ($, bootbox) {
                     save: {
                         label: 'Зберегти',
                         className: 'btn-sm btn-success btn-green',
-                        callback: function() {
+                        callback: function () {
                             form.submit();
                         }
                     },
@@ -420,7 +421,7 @@ define(['jquery', 'bootbox'], function ($, bootbox) {
         var _this = this;
 
         var settings = {
-            success: function(data) {
+            success: function (data) {
                 if ($.isFunction(callback))
                     callback(data);
 
