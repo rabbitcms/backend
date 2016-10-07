@@ -95,7 +95,7 @@ define(["require", "exports", 'jquery', "rabbitcms/backend", "i18n!rabbitcms/nls
                         }
                     },
                     error: function (jqXHR) {
-                        var responseText = '<ul>';
+                        var responseText = '<ul class="list-unstyled">';
                         if (jqXHR.status === 422) {
                             $.each(jqXHR.responseJSON, function (key, value) {
                                 responseText += '<li>' + value + '</li>';
@@ -105,7 +105,7 @@ define(["require", "exports", 'jquery', "rabbitcms/backend", "i18n!rabbitcms/nls
                             responseText += '<li>' + jqXHR.responseText + '</li>';
                         }
                         responseText += '</ul>';
-                        backend_1.RabbitCMS.customMessage(responseText, 'danger', _this.form.find('.form-body'));
+                        backend_1.RabbitCMS.customMessage(responseText, 'danger', _this.form.find('.form-body:first'));
                     }
                 }, this.options.ajax);
                 backend_1.RabbitCMS.ajax(options);

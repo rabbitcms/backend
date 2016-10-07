@@ -135,6 +135,10 @@ return [
                 'location' => 'plugins/colorbox',
                 'main'     => 'jquery.colorbox',
             ],
+            'tinymce'           => [
+                'location' => 'plugins/tinymce',
+                'main'     => 'jquery.tinymce.min',
+            ],
 
         ],
         'modules'  => [

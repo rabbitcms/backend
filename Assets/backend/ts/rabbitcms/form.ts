@@ -115,7 +115,7 @@ export class Form {
                     }
                 },
                 error: (jqXHR: JQueryXHR) => {
-                    let responseText = '<ul>';
+                    let responseText = '<ul class="list-unstyled">';
                     if (jqXHR.status === 422) {
                         $.each(jqXHR.responseJSON, function (key, value) {
                             responseText += '<li>' + value + '</li>'
@@ -125,7 +125,7 @@ export class Form {
                     }
                     responseText += '</ul>';
 
-                    RabbitCMS.customMessage(responseText, 'danger', this.form.find('.form-body'));
+                    RabbitCMS.customMessage(responseText, 'danger', this.form.find('.form-body:first'));
                 }
             }, this.options.ajax);
 
