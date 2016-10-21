@@ -20,6 +20,7 @@
     <link href="{{asset_module('plugins/bootstrap-datepicker/css/datepicker.css', 'backend')}}" rel="stylesheet" type="text/css">
     <link href="{{asset_module('plugins/bootstrap-datepicker/css/datepicker3.css', 'backend')}}" rel="stylesheet" type="text/css">
     <link href="{{asset_module('plugins/bootstrap-datetimepicker/css/datetimepicker.css', 'backend')}}" rel="stylesheet" type="text/css">
+    <link href="{{asset_module('plugins/bootstrap-timepicker/css/bootstrap-timepicker.css', 'backend')}}" rel="stylesheet" type="text/css">
     <link href="{{asset_module('plugins/datatables/plugins/bootstrap/dataTables.bootstrap.css', 'backend')}}" rel="stylesheet" type="text/css">
     <link href="{{asset_module('plugins/colorbox/colorbox.css', 'backend')}}" rel="stylesheet" type="text/css">
 
@@ -46,6 +47,7 @@
     <script src="{{asset_module('plugins/bootstrap-datepicker/js/bootstrap-datepicker.js', 'backend')}}" type="text/javascript"></script>
     <script src="{{asset_module('plugins/bootstrap-datepicker/js/locales/bootstrap-datepicker.uk.js', 'backend')}}" type="text/javascript"></script>
     <script src="{{asset_module('plugins/bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js', 'backend')}}" type="text/javascript"></script>
+    <script src="{{asset_module('plugins/bootstrap-timepicker/js/bootstrap-timepicker.js', 'backend')}}" type="text/javascript"></script>
     <script src="{{asset_module('plugins/datatables/media/js/jquery.dataTables.min.js', 'backend')}}" type="text/javascript"></script>
     <script src="{{asset_module('plugins/datatables/plugins/bootstrap/dataTables.bootstrap.js', 'backend')}}" type="text/javascript"></script>
     <script src="{{asset_module('plugins/colorbox/jquery.colorbox.js', 'backend')}}" type="text/javascript"></script>

@@ -260,6 +260,10 @@ var Datatable = function() {
             dataTable.ajax.reload();
         },
 
+        update: function () {
+            dataTable.ajax.reload(null, false);
+        },
+
         getSelectedRowsCount: function() {
             return $('tbody > tr > td:nth-child(1) input[type="checkbox"]:checked', table).size();
         },

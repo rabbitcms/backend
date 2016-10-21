@@ -102,13 +102,13 @@
   display: none;
 }
 .datetimepicker.minutes div.datetimepicker-minutes {
-    display: block;
+  display: block;
 }
 .datetimepicker.hours div.datetimepicker-hours {
-    display: block;
+  display: block;
 }
 .datetimepicker.days div.datetimepicker-days {
-    display: block;
+  display: block;
 }
 .datetimepicker.months div.datetimepicker-months {
   display: block;
@@ -134,16 +134,16 @@
   background-color: transparent;
 }
 .datetimepicker table tr td.minute:hover {
-    background: #eeeeee;
-    cursor: pointer;
+  background: #eeeeee;
+  cursor: pointer;
 }
 .datetimepicker table tr td.hour:hover {
-    background: #eeeeee;
-    cursor: pointer;
+  background: #eeeeee;
+  cursor: pointer;
 }
 .datetimepicker table tr td.day:hover {
-    background: #eeeeee;
-    cursor: pointer;
+  background: #eeeeee;
+  cursor: pointer;
 }
 .datetimepicker table tr td.old,
 .datetimepicker table tr td.new {
