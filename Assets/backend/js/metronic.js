@@ -1,3 +1,4 @@
+/// <reference path="../dt/index.d.ts" />
 define(["require", "exports", "jquery"], function (require, exports, $) {
     "use strict";
     (function (ResponsiveBreakpointSize) {
@@ -31,7 +32,7 @@ define(["require", "exports", "jquery"], function (require, exports, $) {
                 }
                 resize = setTimeout(function () {
                     _this._runResizeHandlers();
-                }, 50);
+                }, 50); // wait 50ms until window resize finishes.
             });
         };
         Metronic.init = function (options) {
@@ -45,15 +46,23 @@ define(["require", "exports", "jquery"], function (require, exports, $) {
         };
         Metronic._handleMaterialDesign = function () {
             var $body = $('body');
+            // Material design ckeckbox and radio effects
             $body.on('click', '.md-checkbox > label, .md-radio > label', function () {
                 var the = $(this);
+                // find the first span which is our circle/bubble
                 var el = $(this).children('span:first-child');
+                // add the bubble class (we do this so it doesnt show on page load)
                 el.addClass('inc');
+                // clone it
                 var newone = el.clone(true);
+                // add the cloned version before our original
                 el.before(newone);
+                // remove the original so that it is ready to run on next click
                 $("." + el.attr("class") + ":last", the).remove();
             });
             if ($body.hasClass('page-md')) {
+                // Material design click effect
+                // credit where credit's due; http://thecodeplayer.com/walkthrough/ripple-click-effect-google-material-design
                 var element, circle, d, x, y;
                 $body.on('click', 'a.btn, button.btn, input.btn, label.btn', function (e) {
                     element = $(e.currentTarget);
@@ -74,6 +83,7 @@ define(["require", "exports", "jquery"], function (require, exports, $) {
                     }, 1000);
                 });
             }
+            // Floating labels
             var handleInput = function (el) {
                 if (el.val() != "") {
                     el.addClass('edited');
@@ -120,7 +130,7 @@ define(["require", "exports", "jquery"], function (require, exports, $) {
                 el.each(function (index, elem) {
                     var $elem = $(elem);
                     if ($elem.attr("data-initialized")) {
-                        return;
+                        return; // exit
                     }
                     var height;
                     if ($elem.attr("data-height")) {
@@ -153,6 +163,7 @@ define(["require", "exports", "jquery"], function (require, exports, $) {
                         $elem.removeAttr("data-initialized");
                         $elem.removeAttr("style");
                         var attrList = {};
+                        // store the custom attribures so later we will reassign.
                         if ($elem.attr("data-handle-color")) {
                             attrList["data-handle-color"] = $elem.attr("data-handle-color");
                         }
@@ -172,6 +183,7 @@ define(["require", "exports", "jquery"], function (require, exports, $) {
                             wrapperClass: ($elem.attr("data-wrapper-class") ? $elem.attr("data-wrapper-class") : 'slimScrollDiv'),
                             destroy: true
                         });
+                        // reassign custom attributes
                         $.each(attrList, function (key, value) {
                             $elem.attr(key, value);
                         });
@@ -230,6 +242,7 @@ define(["require", "exports", "jquery"], function (require, exports, $) {
         Metronic.handlePortletTools = function () {
             var _this = this;
             var $body = $('body');
+            // handle portlet remove
             $body.on('click', '.portlet > .portlet-title > .tools > a.remove', function (e) {
                 e.preventDefault();
                 var portlet = $(e.currentTarget).closest(".portlet");
@@ -243,6 +256,7 @@ define(["require", "exports", "jquery"], function (require, exports, $) {
                 portlet.find('.portlet-title > .tools > .collapse, .portlet > .portlet-title > .tools > .expand').tooltip('destroy');
                 portlet.remove();
             });
+            // handle portlet fullscreen
             $body.on('click', '.portlet > .portlet-title .fullscreen', function (e) {
                 var $elem = $(e.currentTarget);
                 e.preventDefault();
@@ -264,6 +278,7 @@ define(["require", "exports", "jquery"], function (require, exports, $) {
                     portlet.children('.portlet-body').css('height', height);
                 }
             });
+            // load ajax data on page init
             $('.portlet .portlet-title a.reload[data-load="true"]').click();
             $body.on('click', '.portlet > .portlet-title > .tools > .collapse, .portlet .portlet-title > .tools > .expand', function (e) {
                 e.preventDefault();
@@ -295,6 +310,9 @@ define(["require", "exports", "jquery"], function (require, exports, $) {
             });
         };
         Metronic.handleDropdowns = function () {
+            /*
+             Hold dropdown on click
+             */
             $('body').on('click', '.dropdown-menu.hold-on-click', function (e) {
                 e.stopPropagation();
             });
@@ -310,6 +328,7 @@ define(["require", "exports", "jquery"], function (require, exports, $) {
             }
         };
         Metronic.initTabs = function () {
+            //activate tab if tab id provided in the URL
             var hash = encodeURI(location.hash);
             if (hash) {
                 hash.substr(1).split(',').forEach(function (tabid) {
@@ -324,7 +343,9 @@ define(["require", "exports", "jquery"], function (require, exports, $) {
         };
         ;
         Metronic.handleTooltips = function (target) {
+            // global tooltips
             $('.tooltips', target).tooltip();
+            // portlet tooltips
             $('.portlet > .portlet-title .fullscreen', target).tooltip({
                 trigger: 'hover',
                 container: 'body',
@@ -373,21 +394,26 @@ define(["require", "exports", "jquery"], function (require, exports, $) {
         };
         Metronic.initModals = function () {
             var $body = $('body');
+            // fix stackable modal issue: when 2 or more modals opened, closing one of modal will remove .modal-open class.
             $body.on('hide.bs.modal', function () {
                 $('html').toggleClass('modal-open', $('.modal:visible').length > 1);
             });
+            // fix page scrollbars issue
             $body.on('show.bs.modal', '.modal', function () {
                 if ($(this).hasClass("modal-scroll")) {
                     $('body').addClass("modal-open-noscroll");
                 }
             });
+            // fix page scrollbars issue
             $body.on('hidden.bs.modal', '.modal', function () {
                 $body.removeClass("modal-open-noscroll");
             });
+            // remove ajax content and remove cache on modal closed
             $body.on('hidden.bs.modal', '.modal:not(.modal-cached)', function () {
                 $(this).removeData('bs.modal');
             });
         };
+        // Handles Bootstrap confirmations
         Metronic.handleBootstrapConfirmation = function (target) {
             var elms = $('[data-toggle=confirmation]', target);
             if (elms.length > 0) {
@@ -421,9 +447,12 @@ define(["require", "exports", "jquery"], function (require, exports, $) {
             this.handleBootstrapConfirmation(target);
             this.handleCounterup(target);
         };
+        //main function to initiate the theme
         Metronic.ready = function () {
-            this._handleOnResize();
-            this._handleMaterialDesign();
+            //Core handlers
+            this._handleOnResize(); // set and handle responsive
+            //UI Component handlers
+            this._handleMaterialDesign(); // handle material desi
             this.updatePlugins();
             this.handlePortletTools();
             this.handleAlerts();
@@ -433,6 +462,7 @@ define(["require", "exports", "jquery"], function (require, exports, $) {
             this.initAccordions();
             this.initModals();
             this.handleSidebarAndContentHeight();
+            //Handle group element heights
             this.addResizeHandler(function () {
                 $('[data-auto-height]').each(function (index, elem) {
                     var parent = $(elem);
@@ -467,17 +497,22 @@ define(["require", "exports", "jquery"], function (require, exports, $) {
                         $(parent.attr('data-related')).css('height', parent.height());
                     }
                 });
-            });
+            }); // handle auto calculating height on window resize
         };
+        //public function to add callback a function which will be called on window resize
         Metronic.addResizeHandler = function (func) {
             this.resizeHandlers.push(func);
         };
+        // runs callback functions set by App.addResponsiveHandler().
         Metronic._runResizeHandlers = function () {
+            // reinitialize other subscribed elements
             this.resizeHandlers.forEach(function (handler) { return handler(); });
         };
+        //public functon to call _runresizeHandlers
         Metronic.runResizeHandlers = function () {
             this._runResizeHandlers();
         };
+        // wrApper function to scroll(focus) to an element
         Metronic.scrollTo = function (el, offset) {
             if (offset === void 0) { offset = 0; }
             var pos = (el && el.length > 0) ? el.offset().top : 0;
@@ -498,6 +533,7 @@ define(["require", "exports", "jquery"], function (require, exports, $) {
                 scrollTop: pos
             }, 'slow');
         };
+        // function to scroll to the top
         Metronic.scrollTop = function () {
             this.scrollTo();
         };
@@ -584,7 +620,7 @@ define(["require", "exports", "jquery"], function (require, exports, $) {
                 reset: true,
                 focus: true,
                 closeInSeconds: 0,
-                icon: ""
+                icon: "" // put icon before the message
             }, options);
             var id = this.getUniqueID("App_alert");
             var html = '<div id="' + id + '" class="custom-alerts alert alert-' + options.type + ' fade in">' + (options.close ? '<button type="button" class="close" data-dismiss="alert" aria-hidden="true"></button>' : '') + (options.icon !== "" ? '<i class="fa-lg fa fa-' + options.icon + '"></i>  ' : '') + options.message + '</div>';
@@ -627,6 +663,7 @@ define(["require", "exports", "jquery"], function (require, exports, $) {
             }
             return id;
         };
+        //public helper function to get actual input value(used in IE9 and IE8 due to placeholder attribute not supported)
         Metronic.getActualVal = function (el) {
             el = $(el);
             if (el.val() === el.attr("placeholder")) {
@@ -644,6 +681,7 @@ define(["require", "exports", "jquery"], function (require, exports, $) {
             }
             return null;
         };
+        // check for device touch support
         Metronic.isTouchDevice = function () {
             try {
                 document.createEvent("TouchEvent");
@@ -653,6 +691,7 @@ define(["require", "exports", "jquery"], function (require, exports, $) {
                 return false;
             }
         };
+        // To get the correct viewport width based on  http://andylangton.co.uk/articles/javascript/get-viewport-size-javascript/
         Metronic.getViewPort = function () {
             var e = window, a = 'inner';
             if (!('innerWidth' in window)) {
@@ -668,6 +707,7 @@ define(["require", "exports", "jquery"], function (require, exports, $) {
             if (prefix === void 0) { prefix = ''; }
             return prefix + '_' + Math.floor(Math.random() * (new Date()).getTime());
         };
+        //check RTL mode
         Metronic.isRTL = function () {
             return this._isRTL;
         };
@@ -677,6 +717,7 @@ define(["require", "exports", "jquery"], function (require, exports, $) {
         Metronic.setAssetsPath = function (path) {
             this.assetsPath = path;
         };
+        // get layout color code by color name
         Metronic.getBrandColor = function (name) {
             return name in BrandColors ? BrandColors[name] : '';
         };
@@ -736,4 +777,15 @@ define(["require", "exports", "jquery"], function (require, exports, $) {
     }());
     exports.Metronic = Metronic;
 });
+// function A() {
+//
+//
+//     var handleDropdownHover = function () {
+//         $('[data-hover="dropdown"]').not('.hover-initialized').each(function () {
+//             $(this).dropdownHover();
+//             $(this).addClass('hover-initialized');
+//         });
+//     };
+// }
+// Handles Bootstrap Popovers 
 //# sourceMappingURL=metronic.js.map

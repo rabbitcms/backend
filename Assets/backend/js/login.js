@@ -1,3 +1,4 @@
+/// <reference path="../dt/index.d.ts" />
 define(["require", "exports", "jquery", "rabbitcms/backend", "jquery.backstretch", "jquery.validation"], function (require, exports, $, backend_1) {
     "use strict";
     function init(portlet) {

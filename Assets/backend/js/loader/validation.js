@@ -18,6 +18,7 @@ define(["require", "exports", "jquery", "rabbitcms/backend", "jquery.validation"
         require(['jquery.validation/localization/methods_' + lang]);
     }
     $.validator.setDefaults({
+        ignore: '',
         focusInvalid: true,
         highlight: function (element) {
             $(element).closest('.form-group').addClass('has-error');

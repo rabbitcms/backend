@@ -1,3 +1,4 @@
+/// <reference path="../dt/index.d.ts" />
 define(["require", "exports", "jquery", "i18n!rabbitcms/nls/backend", "rabbitcms/metronic", "jquery.cookie"], function (require, exports, $, i18n, metronic_1) {
     "use strict";
     var $body = $('body');
@@ -142,6 +143,9 @@ define(["require", "exports", "jquery", "i18n!rabbitcms/nls/backend", "rabbitcms
         function RabbitCMS() {
             _super.apply(this, arguments);
         }
+        /**
+         * Init RabbitCMS backend.
+         */
         RabbitCMS.init = function (options) {
             options = $.extend({
                 handlers: [],
@@ -202,6 +206,12 @@ define(["require", "exports", "jquery", "i18n!rabbitcms/nls/backend", "rabbitcms
             });
             this.initSidebar();
         };
+        /**
+         * Find handler for link.
+         *
+         * @param {string} link
+         * @returns {Handler|null}
+         */
         RabbitCMS.findHandler = function (link) {
             link = link.length > 1 ? link.replace(/\/$/, '') : link;
             return this._handlers.find(function (h) {
@@ -217,9 +227,18 @@ define(["require", "exports", "jquery", "i18n!rabbitcms/nls/backend", "rabbitcms
         RabbitCMS.getPrefix = function () {
             return this.prefix;
         };
+        /**
+         * Set current locale.
+         * @param {string} locale
+         */
         RabbitCMS.setLocale = function (locale) {
             this._locale = locale;
         };
+        /**
+         * Get current locale.
+         * @param {Map<string,string>}map
+         * @returns {string}
+         */
         RabbitCMS.getLocale = function (map) {
             return map && map.has(this._locale) ? map.get(this._locale) : this._locale;
         };
@@ -302,6 +321,13 @@ define(["require", "exports", "jquery", "i18n!rabbitcms/nls/backend", "rabbitcms
                 }
             });
         };
+        /**
+         * Go to link.
+         * @param {string} link
+         * @param {boolean} pushState
+         * @param {ReplayFunc} replay
+         * @returns {Promise<boolean>}
+         */
         RabbitCMS.navigate = function (link, pushState, replay) {
             if (pushState === void 0) { pushState = StateType.Push; }
             var h = this.findHandler(link);
@@ -362,7 +388,7 @@ define(["require", "exports", "jquery", "i18n!rabbitcms/nls/backend", "rabbitcms
                 reset: true,
                 focus: true,
                 closeInSeconds: 0,
-                icon: ""
+                icon: "" // put icon before the message
             }, options);
             var id = this.getUniqueID("App_alert");
             var html = '<div id="' + id + '" class="custom-alerts alert alert-' + options.type + ' fade in">' + (options.close ? '<button type="button" class="close" data-dismiss="alert" aria-hidden="true"></button>' : '') + (options.icon !== "" ? '<i class="fa-lg fa fa-' + options.icon + '"></i>  ' : '') + options.message + '</div>';
@@ -472,6 +498,27 @@ define(["require", "exports", "jquery", "i18n!rabbitcms/nls/backend", "rabbitcms
                 }
                 $(window).trigger('resize');
             });
+            /*$body.on('click', '.page-sidebar-menu li a', function (e) {
+                var menu = $('.page-sidebar-menu');
+                var subMenu = $(this).next('.sub-menu');
+                var slideSpeed = parseInt(menu.data("slide-speed"));
+    
+                $('.open', menu).find('.arrow').removeClass('open');
+                $('.open', menu).find('.sub-menu').slideUp(slideSpeed);
+                $('.open', menu).removeClass('open');
+    
+                if (subMenu.is(":visible")) {
+                    $('.arrow', $(this)).removeClass('open');
+                    $(this).parent('li').removeClass('open');
+                    subMenu.slideUp(slideSpeed);
+                } else {
+                    $('.arrow', $(this)).addClass('open');
+                    $(this).parent('li').addClass('open');
+                    subMenu.slideDown(slideSpeed);
+                }
+    
+                e.preventDefault();
+            });*/
             $('.page-sidebar-menu').on('click', 'li > a.nav-toggle, li > a > span.nav-toggle', function (e) {
                 var that = $(e.currentTarget).closest('.nav-item').children('.nav-link');
                 var hasSubMenu = that.next().hasClass('sub-menu');
@@ -510,6 +557,10 @@ define(["require", "exports", "jquery", "i18n!rabbitcms/nls/backend", "rabbitcms
                 }
             });
         };
+        /**
+         * Ajax wrapper.
+         * @param {JQueryAjaxSettings} options
+         */
         RabbitCMS.ajax = function (options) {
             var _this = this;
             var originalOptions = options;
@@ -625,6 +676,7 @@ define(["require", "exports", "jquery", "i18n!rabbitcms/nls/backend", "rabbitcms
         return Tools;
     }());
     exports.Tools = Tools;
+    /* --- --- --- */
     var MicroEvent = (function () {
         function MicroEvent(object) {
             var _this = this;

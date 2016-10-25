@@ -1,3 +1,4 @@
+/// <reference path="../../dt/index.d.ts" />
 define(["require", "exports", "rabbitcms/backend", "css!jquery.colorbox/colorbox.css"], function (require, exports, backend_1) {
     "use strict";
     var lang = backend_1.RabbitCMS.getLocale(new Map()

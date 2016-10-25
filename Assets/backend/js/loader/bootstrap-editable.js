@@ -1,3 +1,4 @@
+/// <reference path="../../dt/index.d.ts" />
 define(["require", "exports", "bootstrap-editable", "css!bootstrap-editable/css/bootstrap-editable.css"], function (require, exports, editable) {
     "use strict";
     return editable;

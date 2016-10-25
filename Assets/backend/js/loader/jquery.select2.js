@@ -1,3 +1,4 @@
+/// <reference path="../../dt/index.d.ts" />
 define(["require", "exports", "jquery", "rabbitcms/backend", "select2", "css!select2/css/select2.min.css", "css!select2/css/select2-bootstrap.min.css", "css!styles/plugins/select2.css"], function (require, exports, $, backend_1) {
     "use strict";
     var lang = backend_1.RabbitCMS.getLocale(new Map()

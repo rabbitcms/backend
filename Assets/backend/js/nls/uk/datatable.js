@@ -4,6 +4,7 @@ define(["require", "exports"], function (require, exports) {
         groupActions: "_TOTAL_ записів вибрано:  ",
         ajaxRequestGeneralError: "Не вдалося виконати запит. Будь ласка, перевірте ваше інтернет з'єднання",
         dataTable: {
+            // data tables spesific
             lengthMenu: "<span class='seperator'>|</span>_MENU_  записів",
             info: "<span class='seperator'>|</span>Всього знайдено _TOTAL_ записів",
             infoEmpty: "Записи відсутні",

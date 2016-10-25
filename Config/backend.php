@@ -18,8 +18,8 @@ return [
         $backend->addMenuResolver(
             function (Backend $menu) {
                 $menu->addMenu(null, 'system', trans('backend::menu.system'), null, 'icon-settings', null, 100000);
-                $menu->addMenu('system', 'users', trans('backend::menu.users'), relative_route('backend.backend.users'), 'fa-angle-double-right', ['system.users.read'], 10);
-                $menu->addMenu('system', 'groups', trans('backend::menu.groups'), relative_route('backend.backend.groups'), 'fa-angle-double-right', ['system.groups.read'], 20);
+                $menu->addMenu('system', 'users', trans('backend::menu.users'), route('backend.backend.users'), 'fa-angle-double-right', ['system.users.read'], 10);
+                $menu->addMenu('system', 'groups', trans('backend::menu.groups'), route('backend.backend.groups'), 'fa-angle-double-right', ['system.groups.read'], 20);
             },
             Backend::MENU_PRIORITY_MENU
         );
@@ -27,7 +27,7 @@ return [
     'routes'    => function (Router $router) {
         $router->group(
             ['prefix' => 'users'],
-            function (\Illuminate\Routing\Router $router) {
+            function (Router $router) {
                 $router->get('', ['as' => 'users', 'uses' => 'Users@getIndex']);
                 $router->post('', ['as' => 'users.list', 'uses' => 'Users@postIndex']);
 
@@ -37,13 +37,13 @@ return [
                 $router->get('edit/{id}', ['as' => 'users.edit', 'uses' => 'Users@getEdit']);
                 $router->post('edit/{id}', ['as' => 'users.update', 'uses' => 'Users@postEdit']);
 
-                $router->any('delete/{id}', ['as' => 'users.destroy', 'uses' => 'Users@anyDelete']);
+                $router->post('delete/{id}', ['as' => 'users.delete', 'uses' => 'Users@postDelete']);
             }
         );
 
         $router->group(
             ['prefix' => 'groups'],
-            function (\Illuminate\Routing\Router $router) {
+            function (Router $router) {
                 $router->get('', ['as' => 'groups', 'uses' => 'Groups@getIndex']);
                 $router->post('', ['as' => 'groups.list', 'uses' => 'Groups@postIndex']);
 
@@ -53,12 +53,9 @@ return [
                 $router->get('edit/{id}', ['as' => 'groups.edit', 'uses' => 'Groups@getEdit']);
                 $router->post('edit/{id}', ['as' => 'groups.update', 'uses' => 'Groups@postEdit']);
 
-                $router->any('delete/{id}', ['as' => 'groups.destroy', 'uses' => 'Groups@anyDelete']);
+                $router->post('delete/{id}', ['as' => 'groups.delete', 'uses' => 'Groups@postDelete']);
 
-                $router->post(
-                    'users/{group_id}/destroy/{user_id}',
-                    ['as' => 'groups.users.destroy', 'uses' => 'Groups@destroyUser']
-                );
+                $router->post('users/{group_id}/delete/{user_id}', ['as' => 'groups.users.delete', 'uses' => 'Groups@postDeleteUser']);
                 $router->post('users/{id}', ['as' => 'groups.users', 'uses' => 'Groups@getUsers']);
             }
         );
@@ -135,11 +132,14 @@ return [
                 'location' => 'plugins/colorbox',
                 'main'     => 'jquery.colorbox',
             ],
-            'tinymce'           => [
+            'tinymce'                   => [
                 'location' => 'plugins/tinymce',
                 'main'     => 'jquery.tinymce.min',
             ],
-
+            'jquery.inputmask'          => [
+                'location' => 'plugins/jquery-inputmask',
+                'main'     => 'jquery.inputmask.bundle.min',
+            ],
         ],
         'modules'  => [
             'css'                => 'plugins/require-css',

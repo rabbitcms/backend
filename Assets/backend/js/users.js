@@ -7,39 +7,52 @@ define(["require", "exports", "jquery", "rabbitcms/backend", "rabbitcms/datatabl
         }
         User.prototype.table = function (portlet) {
             var dataTable = new datatable_1.DataTable({
-                src: $('.data-table', portlet),
+                src: $('#backend_users_table', portlet),
                 dataTable: {
-                    ordering: false
+                    ordering: false,
+                    columnDefs: [
+                        {
+                            targets: 4,
+                            render: function (data, type, row, meta) {
+                                return '<a class="btn btn-sm green" href="' + row.actions.edit + '"><i class="fa fa-pencil"></i></a> ' +
+                                    '<a class="btn btn-sm red" href="' + row.actions.delete + '" rel="delete"><i class="fa fa-trash-o"></i></a> ';
+                            }
+                        }
+                    ]
                 }
             });
-            this.bind('updated', function () {
+            this.bind('dt.update', function () {
                 dataTable.submitFilter();
             });
-            portlet.on('click', '[rel="destroy"]', function (e) {
+            portlet.on('click', '[rel="delete"]', function (e) {
                 e.preventDefault();
                 backend_1.Dialogs.onDelete({
-                    url: $(e.target).attr('href')
+                    url: $(e.currentTarget).attr('href'),
+                    method: 'POST'
                 }).then(function () { return dataTable.submitFilter(); });
             });
         };
         User.prototype.form = function (portlet, state) {
             var _this = this;
-            var $form = $('form', portlet);
-            var _validationRules = {
-                "user[email]": { required: true, email: true },
-                "groups[]": { required: true }
-            };
-            if ($form.data('type') !== 'update') {
-                _validationRules["password"] = { required: true };
-            }
-            new form_1.Form($form, {
+            var form = $('form', portlet);
+            var select2 = $('.select2', form);
+            backend_1.RabbitCMS.select2(select2);
+            new form_1.Form(form, {
                 state: state,
                 validation: {
-                    rules: _validationRules,
+                    rules: {
+                        "email": {
+                            required: true,
+                            email: true
+                        },
+                        "groups[]": {
+                            required: true
+                        }
+                    },
                 },
                 completeSubmit: function () {
-                    _this.trigger('updated');
-                },
+                    _this.trigger('dt.update');
+                }
             });
         };
         return User;

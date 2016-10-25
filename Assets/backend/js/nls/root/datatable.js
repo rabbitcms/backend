@@ -4,6 +4,7 @@ define(["require", "exports"], function (require, exports) {
         groupActions: "_TOTAL_ records selected:  ",
         ajaxRequestGeneralError: "Could not complete request. Please check your internet connection",
         dataTable: {
+            // data tables spesific
             lengthMenu: "<span class='seperator'>|</span>View _MENU_ records",
             info: "<span class='seperator'>|</span>Found total _TOTAL_ records",
             infoEmpty: "No records found to show",

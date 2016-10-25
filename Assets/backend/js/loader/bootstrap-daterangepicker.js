@@ -6,4 +6,13 @@ define(["require", "exports", "rabbitcms/backend", "bootstrap-daterangepicker", 
         .set('zn_CN', 'zn_CN')
         .set('zn_TW', 'zn_TW'));
 });
+//export = moment;
+//require(['select2/js/i18n/' + lang]);
+//
+/*
+$.fn.select2.defaults.set('language',lang);
+$.fn.select2.defaults.set("theme", "bootstrap");
+$.fn.select2.defaults.set("width", "auto");
+$.fn.select2.defaults.set("allowClear", true);
+*/
 //# sourceMappingURL=bootstrap-daterangepicker.js.map

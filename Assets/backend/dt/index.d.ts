@@ -6,6 +6,7 @@
 /// <reference path="typings/jquery.colorbox/jquery.colorbox.d.ts" />
 /// <reference path="typings/jquery.maskMoney/index.d.ts" />
 /// <reference path="typings/jquery.ui/index.d.ts" />
+/// <reference path="typings/jquery.inputmask/index.d.ts" />
 
 /// <reference path="typings/jquery.datatables/index.d.ts" />
 /// <reference path="typings/jquery.datatables/datatables-buttons.d.ts" />

@@ -1,34 +1,34 @@
 @extends(\Request::ajax() ? 'backend::layouts.empty' : 'backend::layouts.master')
 @section('content')
-    <div class="portlet box blue-hoki ajax-portlet" data-require="rabbitcms/groups:form">
+    <div class="portlet box blue-hoki ajax-portlet" data-require="">
         <div class="portlet-title">
             <div class="caption">
-                {{$model->exists ? trans('backend::common.edit_group') : trans('backend::common.create_group')}}</div>
+                {{$model->exists ? trans('backend::groups.edit') : trans('backend::groups.create')}}</div>
             <div class="actions">
-                <a class="btn btn-default btn-sm" rel="back" href="{{relative_route('backend.backend.groups')}}">
-                    <i class="fa fa-arrow-left"></i> {{trans('backend::common.buttons.back')}}</a>
+                <a class="btn btn-default btn-sm" rel="back" href="{{route('backend.backend.groups')}}">
+                    <i class="fa fa-arrow-left"></i> {{trans('backend::common.back')}}</a>
             </div>
         </div>
 
-        <div class="portlet-body">
-            <form method="post" class="form" data-type="{{$model->exists ? 'update' : 'create'}}" action="{{$model->exists ? relative_route('backend.backend.groups.update', ['id' => $model->id]) : relative_route('backend.backend.groups.store')}}">
-                <div class="tabbable-custom">
+        <div class="portlet-body form">
+            <div class="form-body">
+                <div class="tabbable-line">
                     <ul class="nav nav-tabs">
                         <li class="active">
-                            <a href="#tab_1" data-toggle="tab"> Дані</a></li>
+                            <a href="#tab_1" data-toggle="tab"> {{trans('backend::groups.group')}}</a></li>
                         @if($model->exists)
                             <li>
-                                <a href="#tab_2" data-toggle="tab"> Користувачі</a></li>
+                                <a href="#tab_2" data-toggle="tab"> {{trans('backend::groups.users')}}</a></li>
                         @endif
                     </ul>
                     <div class="tab-content">
                         <div class="tab-pane active" id="tab_1">
-                            <div class="form-body">
+                            <form method="post" data-type="{{$model->exists ? 'update' : 'create'}}" action="{{$model->exists ? route('backend.backend.groups.update', ['id' => $model->id]) : route('backend.backend.groups.store')}}">
                                 <div class="row">
                                     <div class="col-md-6">
                                         <div class="form-group">
-                                            <label class="control-label">{{trans('backend::common.form.caption')}}</label>
-                                            <input class="form-control" name="groups[caption]" value="{{$model->caption}}">
+                                            <label class="control-label">{{trans('backend::groups.caption')}}</label>
+                                            <input class="form-control" name="caption" value="{{$model->caption}}">
                                         </div>
                                     </div>
                                 </div>
@@ -38,8 +38,8 @@
                                             <table class="table table-striped table-bordered table-hover">
                                                 <thead>
                                                 <tr role="row" class="heading">
-                                                    <th>{{trans('backend::common.section')}}</th>
-                                                    <th>Можливості</th>
+                                                    <th>{{trans('backend::groups.section')}}</th>
+                                                    <th>{{trans('backend::groups.abilities')}}</th>
                                                 </tr>
                                                 </thead>
                                                 <tbody>
@@ -47,12 +47,12 @@
                                                     <tr>
                                                         <td style="font-weight: bold; font-style: italic;">{{$caption}}</td>
                                                         <td>
-                                                        @foreach(\Backend::getGroupPermissions($group) as $rule => $caption)
-                                                            <label>
-                                                                <input class="{{$rule}} read-rule" type="checkbox"
-                                                                       @if($model->exists && array_key_exists($rule, $model->permissions)) checked="checked" @endif
-                                                                       name="permissions[{{$rule}}]" value="1"> {{$caption}}</label><br>
-                                                        @endforeach
+                                                            @foreach(\Backend::getGroupPermissions($group) as $rule => $caption)
+                                                                <label class="mt-checkbox mt-checkbox-outline">
+                                                                    <input type="checkbox" @if($model->exists && array_key_exists($rule, $model->permissions)) checked @endif name="permissions[{{$rule}}]" value="1"> {{$caption}}
+                                                                    <span></span>
+                                                                </label><br>
+                                                            @endforeach
                                                         </td>
                                                     </tr>
                                                 @endforeach
@@ -61,37 +61,37 @@
                                         </div>
                                     </div>
                                 </div>
-                            </div>
+                            </form>
                         </div>
                         @if($model->exists)
                             <div class="tab-pane" id="tab_2">
-                                <div class="form-body">
-                                    <div class="table-container">
-                                        <table class="table table-striped table-bordered table-hover data-table" data-link="{{relative_route('backend.backend.groups.users', ['id' => $model->id])}}">
-                                            <thead>
-                                            <tr role="row" class="heading">
-                                                <th style="width: 100px;">{{trans('backend::common.table.id')}}</th>
-                                                <th>{{trans('backend::common.table.name')}}</th>
-                                                <th style="width: 45px;">{{trans('backend::common.table.actions')}}</th>
-                                            </tr>
-                                            </thead>
-                                            <tbody></tbody>
-                                        </table>
-                                    </div>
+                                <div class="table-container">
+                                    <table class="table table-striped table-bordered table-hover" data-link="{{route('backend.backend.groups.users', ['id' => $model->id])}}" id="backend_groups_users_table">
+                                        <thead>
+                                        <tr role="row" class="heading">
+                                            <th data-data="id" style="width: 100px;">{{trans('backend::common.id')}}</th>
+                                            <th data-data="name">{{trans('backend::users.name')}}</th>
+                                            <th data-data="actions" style="width: 30px;"></th>
+                                        </tr>
+                                        </thead>
+                                        <tbody></tbody>
+                                    </table>
                                 </div>
                             </div>
                         @endif
                     </div>
                 </div>
+            </div>
 
-                <div class="form-actions">
-                    <div class="pull-right">
-                        <a class="btn red" rel="back" href="{{relative_route('backend.backend.groups')}}">
-                            <i class="fa fa-close"></i> {{trans('backend::common.buttons.cancel')}}</a>
-                        <button type="submit" class="btn green"><i class="fa fa-check"></i> {{trans('backend::common.buttons.save')}}</button>
-                    </div>
+            <div class="form-actions">
+                <div class="pull-right">
+                    <a class="btn red" rel="cancel" href="{{route('backend.backend.groups')}}">
+                        <i class="fa fa-close"></i> {{trans('backend::common.cancel')}}</a>
+                    <button type="submit" class="btn green"><i
+                                class="fa fa-save"></i> {{trans('backend::common.save')}}</button>
                 </div>
-            </form>
+            </div>
+
         </div>
     </div>
 @stop

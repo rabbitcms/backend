@@ -1,11 +1,17 @@
+/// <reference path="../dt/index.d.ts" />
 define(["require", "exports", "jquery", "jszip", "rabbitcms/backend", "i18n!rabbitcms/nls/datatable", "pdfmake", "pdfmake/vfs_fonts", "datatables.net", "datatables.net-bs", "datatables.net-buttons", "datatables.net-buttons/js/buttons.bootstrap.min", "datatables.net-buttons/js/buttons.colVis.min", "datatables.net-buttons/js/buttons.html5.min", "datatables.net-buttons/js/buttons.print.min", "datatables.net-colReorder", "datatables.net-colReorder", "css!datatables.net-buttons/css/buttons.bootstrap.min.css"], function (require, exports, $, jszip, backend_1, i18n) {
     "use strict";
     window['JSZip'] = jszip;
+    /***
+     Wrapper/Helper Class for datagrid based on jQuery Datatable Plugin
+     ***/
     var DataTable = (function () {
+        //main function to initiate the module
         function DataTable(options) {
             var _this = this;
             this.tableInitialized = false;
-            this.ajaxParams = {};
+            this.ajaxParams = {}; // set filter mode
+            // default settings
             var filters = $('.form-filter', options.src);
             options = $.extend(true, {
                 src: "",
@@ -26,13 +32,15 @@ define(["require", "exports", "jquery", "jszip", "rabbitcms/backend", "i18n!rabb
                     serverSide: true,
                     stateSave: true,
                     stateLoadParams: function (settings, data) {
-                        filters.each(function (index, elem) {
-                            var filter = $(elem);
-                            var name = $(elem).attr('name');
-                            if (data.hasOwnProperty(name))
-                                filter.val(data[name]);
-                        });
-                        _this.submitFilter();
+                        if (filters.length) {
+                            filters.each(function (index, elem) {
+                                var filter = $(elem);
+                                var name = $(elem).attr('name');
+                                if (data.hasOwnProperty(name))
+                                    filter.val(data[name])
+                                        .change();
+                            });
+                        }
                     },
                     stateSaveParams: function (settings, data) {
                         filters.each(function () {
@@ -92,10 +100,11 @@ define(["require", "exports", "jquery", "jszip", "rabbitcms/backend", "i18n!rabb
                     },
                     drawCallback: function () {
                         if (_this.tableInitialized === false) {
-                            _this.tableInitialized = true;
-                            _this.table.show();
+                            _this.tableInitialized = true; // set table initialized
+                            _this.table.show(); // display table
                         }
-                        _this.countSelectedRecords();
+                        _this.countSelectedRecords(); // reset selected records indicator
+                        // callback for ajax data load
                         if (_this.tableOptions.onDataLoad) {
                             _this.tableOptions.onDataLoad.call(undefined, _this);
                         }
@@ -103,21 +112,28 @@ define(["require", "exports", "jquery", "jszip", "rabbitcms/backend", "i18n!rabb
                 }
             }, options);
             this.tableOptions = options;
+            // create table's jquery object
             this.table = $(options.src);
             this.tableContainer = this.table.parents(".table-container");
+            // apply the special class that used to restyle the default datatable
             var tmp = $.fn.dataTableExt.oStdClasses;
             $.fn.dataTableExt.oStdClasses.sWrapper = $.fn.dataTableExt.oStdClasses.sWrapper + " dataTables_extended_wrapper";
             $.fn.dataTableExt.oStdClasses.sFilterInput = "form-control input-xs input-sm input-inline";
             $.fn.dataTableExt.oStdClasses.sLengthSelect = "form-control input-xs input-sm input-inline";
+            // initialize a datatable
             this.dataTable = this.table.DataTable(options.dataTable);
+            // revert back to default
             $.fn.dataTableExt.oStdClasses.sWrapper = tmp.sWrapper;
             $.fn.dataTableExt.oStdClasses.sFilterInput = tmp.sFilterInput;
             $.fn.dataTableExt.oStdClasses.sLengthSelect = tmp.sLengthSelect;
+            // get table wrapper
             this.tableWrapper = this.table.parents('.dataTables_wrapper');
+            // build table group actions panel
             if ($('.table-actions-wrapper', this.tableContainer).length === 1) {
-                $('.table-group-actions', this.tableWrapper).html($('.table-actions-wrapper', this.tableContainer).html());
-                $('.table-actions-wrapper', this.tableContainer).remove();
+                $('.table-group-actions', this.tableWrapper).html($('.table-actions-wrapper', this.tableContainer).html()); // place the panel inside the wrapper
+                $('.table-actions-wrapper', this.tableContainer).remove(); // remove the template container
             }
+            // handle group checkboxes check/uncheck
             $('.group-checkable', this.table).change(function (e) {
                 var set = _this.table.find('tbody > tr > td:nth-child(1) input[type="checkbox"]');
                 var checked = $(e.target).prop("checked");
@@ -129,13 +145,16 @@ define(["require", "exports", "jquery", "jszip", "rabbitcms/backend", "i18n!rabb
             this.table.on('change', '.form-filter', function () {
                 _this.submitFilter();
             });
+            // handle row's checkbox click
             this.table.on('change', 'tbody > tr > td:nth-child(1) input[type="checkbox"]', function () {
                 _this.countSelectedRecords();
             });
+            // handle filter submit button click
             this.table.on('click', '.filter-submit', function (e) {
                 e.preventDefault();
                 _this.submitFilter();
             });
+            // handle filter cancel button click
             this.table.on('click', '.filter-cancel', function (e) {
                 e.preventDefault();
                 _this.resetFilter();
@@ -154,12 +173,15 @@ define(["require", "exports", "jquery", "jszip", "rabbitcms/backend", "i18n!rabb
         DataTable.prototype.submitFilter = function () {
             var _this = this;
             this.setAjaxParam("action", this.tableOptions.filterApplyAction);
+            // get all typeable inputs
             $('textarea.form-filter, select.form-filter, input.form-filter:not([type="radio"],[type="checkbox"])', this.table).each(function (i, e) {
                 _this.setAjaxParam($(e).attr("name"), $(e).val());
             });
+            // get all checkboxes
             $('input.form-filter[type="checkbox"]:checked', this.table).each(function (i, e) {
                 _this.addAjaxParam($(e).attr("name"), $(e).val());
             });
+            // get all radio buttons
             $('input.form-filter[type="radio"]:checked', this.table).each(function (i, e) {
                 _this.setAjaxParam($(e).attr("name"), $(e).val());
             });
