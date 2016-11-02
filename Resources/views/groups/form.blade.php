@@ -23,7 +23,7 @@
                     </ul>
                     <div class="tab-content">
                         <div class="tab-pane active" id="tab_1">
-                            <form method="post" data-type="{{$model->exists ? 'update' : 'create'}}" action="{{$model->exists ? route('backend.backend.groups.update', ['id' => $model->id]) : route('backend.backend.groups.store')}}">
+                            <form method="post" data-type="{{$model->exists ? 'update' : 'create'}}" action="{{$model->exists ? route('backend.backend.groups.update', ['id' => $model->id]) : route('backend.backend.groups.store')}}" id="backend_groups_form">
                                 <div class="row">
                                     <div class="col-md-6">
                                         <div class="form-group">
@@ -87,8 +87,8 @@
                 <div class="pull-right">
                     <a class="btn red" rel="cancel" href="{{route('backend.backend.groups')}}">
                         <i class="fa fa-close"></i> {{trans('backend::common.cancel')}}</a>
-                    <button type="submit" class="btn green"><i
-                                class="fa fa-save"></i> {{trans('backend::common.save')}}</button>
+                    <button type="submit" class="btn green" form="backend_groups_form">
+                        <i class="fa fa-save"></i> {{trans('backend::common.save')}}</button>
                 </div>
             </div>
 
