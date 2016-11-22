@@ -2,7 +2,7 @@
     "name": "rabbitcms/backend",
     "description": "Backend for RabbitCMS",
     "require": {
-        "rabbitcms/carrot": "^0.1.10",
+        "rabbitcms/carrot": "^0.3.3",
         "doctrine/annotations": "1.*"
     },
     "type": "october-module",
@@ -26,5 +26,10 @@
         "files": [
             "Annotation/Permissions.php"
         ]
+    },
+    "extra": {
+        "module": {
+            "providers": "RabbitCMS\\Backend\\ModuleProvider"
+        }
     }
 }
