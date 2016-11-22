@@ -5,7 +5,8 @@ namespace RabbitCMS\Backend\Http\Controllers\Backend;
 use Illuminate\Auth\AuthManager;
 use Illuminate\Foundation\Application;
 use RabbitCMS\Backend\Entities\User;
-use RabbitCMS\Carrot\Http\ModuleController;
+use RabbitCMS\Modules\ModuleController;
+
 
 abstract class Controller extends ModuleController
 {
