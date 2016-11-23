@@ -2,7 +2,6 @@
 
 namespace RabbitCMS\Backend;
 
-use Illuminate\Auth\SessionGuard;
 use Illuminate\Config\Repository as ConfigRepository;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
@@ -114,29 +113,6 @@ class ModuleProvider extends BaseModuleProvider
 
         $this->commands(MakeConfigCommand::class);
 
-        $this->app->make('auth')->extend('backend', function () {
-            $provider = $this->app->make('auth')->createUserProvider('backend');
-
-            $guard = new SessionGuard('backend', $provider, $this->app->make('session.store'));
-
-            // When using the remember me functionality of the authentication services we
-            // will need to be set the encryption instance of the guard, which allows
-            // secure, encrypted cookie values to get generated for those cookies.
-            if (method_exists($guard, 'setCookieJar')) {
-                $guard->setCookieJar($this->app->make('cookie'));
-            }
-
-            if (method_exists($guard, 'setDispatcher')) {
-                $guard->setDispatcher($this->app->make('events'));
-            }
-
-            if (method_exists($guard, 'setRequest')) {
-                $guard->setRequest($this->app->refresh('request', $guard, 'setRequest'));
-            }
-
-            return $guard;
-        });
-
         // Register the middleware with the container using the container's singleton method.
         $this->app->singleton(StartSession::class);
 
@@ -147,13 +123,12 @@ class ModuleProvider extends BaseModuleProvider
             ShareErrorsFromSession::class,
             VerifyCsrfToken::class
         ]);
-        
+
         $this->app->make('router')->middleware('backend.auth', Authenticate::class);
         $this->app->make('router')->middleware('backend.auth.base', AuthenticateWithBasicAuth::class);
 
 
-        $loader = AliasLoader::getInstance();
-        $loader->alias('Backend', BackendFacade::class);
+        AliasLoader::getInstance(['Backend'=> BackendFacade::class]);
     }
 
     /**

@@ -10,27 +10,25 @@ class Auth extends Controller
 
     public function init()
     {
-        Metronic::module('login');
+
     }
 
     public function getLogin()
     {
+        Metronic::module('login');
         return $this->view('auth.login');
     }
 
     public function postLogin(Request $request)
     {
-        $this->validate(
-            $request,
-            [
-                'email' => 'required|email',
-                'password' => 'required',
-            ]
-        );
+        $this->validate($request, [
+            'email' => 'required|email',
+            'password' => 'required',
+        ]);
 
         $credentials = $request->only('email', 'password');
         $credentials['active'] = 1;
-        if ($this->auth->attempt($credentials, $request->has('remember'))) {
+        if ($this->guard()->attempt($credentials, $request->has('remember'))) {
             return \Redirect::intended();
         }
 
@@ -41,7 +39,7 @@ class Auth extends Controller
 
     public function getLogout()
     {
-        $this->auth->logout();
+        $this->guard()->logout();
 
         return redirect()->route('backend.index');
     }
