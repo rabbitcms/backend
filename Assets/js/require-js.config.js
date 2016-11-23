@@ -43,6 +43,7 @@ require.config({
         "dtkt.footer": "dtkt/backend/js/dtkt.footer",
         "dtkt.localization": "dtkt/backend/js/dtkt.localization",
         "dtkt.comments": "dtkt/backend/js/dtkt.comments",
+        "dtkt.adverts": "dtkt/backend/js/dtkt.adverts",
 
         "dtkt.news": "news/backend/js/dtkt.news",
 
