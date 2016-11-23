@@ -15,6 +15,7 @@ use RabbitCMS\Backend\Facades\Backend as BackendFacade;
 use RabbitCMS\Backend\Http\Controllers\Backend\Auth as AuthController;
 use RabbitCMS\Backend\Http\Middleware\Authenticate;
 use RabbitCMS\Backend\Http\Middleware\AuthenticateWithBasicAuth;
+use RabbitCMS\Backend\Http\Middleware\SetBackendGuard;
 use RabbitCMS\Backend\Http\Middleware\StartSession;
 use RabbitCMS\Backend\Support\Backend;
 use RabbitCMS\Modules\Contracts\ModulesManager;
@@ -116,13 +117,16 @@ class ModuleProvider extends BaseModuleProvider
         // Register the middleware with the container using the container's singleton method.
         $this->app->singleton(StartSession::class);
 
-        $this->app->make('router')->middlewareGroup('backend', [
-            EncryptCookies::class,
-            AddQueuedCookiesToResponse::class,
-            StartSession::class,
-            ShareErrorsFromSession::class,
-            VerifyCsrfToken::class
-        ]);
+        $this->app->make('router')
+            ->middlewareGroup('backend', [
+                SetBackendGuard::class,
+                EncryptCookies::class,
+                AddQueuedCookiesToResponse::class,
+                StartSession::class,
+                ShareErrorsFromSession::class,
+                VerifyCsrfToken::class
+            ]);
+
 
         $this->app->make('router')->middleware('backend.auth', Authenticate::class);
         $this->app->make('router')->middleware('backend.auth.base', AuthenticateWithBasicAuth::class);
