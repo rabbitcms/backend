@@ -18,7 +18,7 @@
     ],
     "autoload": {
         "classmap": [
-            "Database"
+            "Database/Migrations/"
         ],
         "psr-4": {
             "RabbitCMS\\Backend\\": "./"
