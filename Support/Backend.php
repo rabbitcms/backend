@@ -269,7 +269,7 @@ class Backend
             }
         );
         $filteredItems = array_map(function ($item) {
-            if ($item['url'] !== null || count($item['items']) === 1) {
+            if ($item['url'] === null && count($item['items']) === 1) {
                 $item['url'] = reset($item['items'])['url'];
                 $item['name'] = reset($item['items'])['name'];
                 $item['items'] = [];
