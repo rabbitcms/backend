@@ -274,6 +274,8 @@ class Backend
                 $item['name'] = reset($item['items'])['name'];
                 $item['items'] = [];
             }
+
+            return $item;
         }, $filteredItems);
         //cleanup empty menus
         return array_filter(
