@@ -1,10 +1,13 @@
 <?php
-
+declare(strict_types=1);
 namespace RabbitCMS\Backend\Support;
 
 use Illuminate\Contracts\Container\Container;
 use RabbitCMS\Backend\Entities\User;
 
+/**
+ * Class Backend.
+ */
 class Backend
 {
     const MENU_PRIORITY_MENU = 0;
@@ -253,12 +256,9 @@ class Backend
      */
     protected function accessFilter(User $user, array $items)
     {
-        $filteredItems = array_filter(
-            $items,
-            function ($item) use ($user) {
-                return $item['permissions'] === null || $user->hasAccess($item['permissions'], false);
-            }
-        );
+        $filteredItems = array_filter($items, function ($item) use ($user) {
+            return $item['permissions'] === null || $user->hasAccess($item['permissions'], false);
+        });
 
         array_walk(
             $filteredItems,
@@ -268,7 +268,13 @@ class Backend
                 }
             }
         );
-
+        $filteredItems = array_map(function ($item) {
+            if ($item['url'] !== null || count($item['items']) === 1) {
+                $item['url'] = reset($item['items'])['url'];
+                $item['name'] = reset($item['items'])['name'];
+                $item['items'] = [];
+            }
+        }, $filteredItems);
         //cleanup empty menus
         return array_filter(
             $filteredItems,
@@ -288,11 +294,9 @@ class Backend
         if ($this->menu === null) {
             $this->menu = [];
             ksort($this->menuResolvers, SORT_NUMERIC);
-            array_walk($this->menuResolvers,
-                function ($callbacks) {
-                    $this->callAll($callbacks);
-                }
-            );
+            array_walk($this->menuResolvers, function ($callbacks) {
+                $this->callAll($callbacks);
+            });
         }
 
         if ($this->menuChanged) {
@@ -312,19 +316,13 @@ class Backend
      */
     protected function sortMenu(array &$items)
     {
-        uasort(
-            $items,
-            function (array $a, array $b) {
-                return $a['position'] > $b['position'];
-            }
-        );
+        uasort($items, function (array $left, array $right) {
+            return $left['position'] > $right['position'];
+        });
 
-        array_walk(
-            $items,
-            function (&$item) {
-                $this->sortMenu($item['items']);
-            }
-        );
+        array_walk($items, function (&$item) {
+            $this->sortMenu($item['items']);
+        });
     }
 
     /**
@@ -333,7 +331,7 @@ class Backend
      */
     public function setActiveMenu(...$path)
     {
-        $this->active = implode('.',$path);
+        $this->active = implode('.', $path);
     }
 
     /**
