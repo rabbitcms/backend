@@ -58,7 +58,7 @@ class Backend
      *
      * @var string
      */
-    protected $active;
+    protected $active = '';
 
     /**
      * @var bool
@@ -331,7 +331,7 @@ class Backend
      * Set active path.
      * @param string[] ...$path
      */
-    public function setActiveMenu(...$path)
+    public function setActiveMenu(string ...$path)
     {
         $this->active = implode('.', $path);
     }
