@@ -20,7 +20,7 @@ class BackendVerifyCsrfToken extends VerifyCsrfToken
         try {
             return parent::handle($request, $next);
         } catch (TokenMismatchException $e) {
-            return new Response($e->getMessage(), Response::HTTP_FORBIDDEN);
+            return new Response($e->getMessage(), Response::HTTP_UNAUTHORIZED);
         }
     }
 }
