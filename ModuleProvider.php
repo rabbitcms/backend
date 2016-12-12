@@ -15,6 +15,7 @@ use RabbitCMS\Backend\Facades\Backend as BackendFacade;
 use RabbitCMS\Backend\Http\Controllers\Backend\Auth as AuthController;
 use RabbitCMS\Backend\Http\Middleware\Authenticate;
 use RabbitCMS\Backend\Http\Middleware\AuthenticateWithBasicAuth;
+use RabbitCMS\Backend\Http\Middleware\BackendVerifyCsrfToken;
 use RabbitCMS\Backend\Http\Middleware\SetBackendGuard;
 use RabbitCMS\Backend\Http\Middleware\StartSession;
 use RabbitCMS\Backend\Support\Backend;
@@ -124,7 +125,7 @@ class ModuleProvider extends BaseModuleProvider
                 AddQueuedCookiesToResponse::class,
                 StartSession::class,
                 ShareErrorsFromSession::class,
-                VerifyCsrfToken::class
+                BackendVerifyCsrfToken::class
             ]);
 
 
