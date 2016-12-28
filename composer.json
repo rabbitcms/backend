@@ -1,0 +1,24 @@
+{
+  "name": "rabbitcms/backend",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Kulyk Dmytro",
+      "email": "lnkvisitor.ts@gmail.com"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "RabbitCMS\\Backend\\": "src/"
+    }
+  },
+  "require": {
+    "rabbitcms/modules": "^1.0",
+    "illuminate/support": "^5.3"
+  },
+  "extra": {
+    "module": {
+      "providers": "RabbitCMS\\Backend\\ModuleProvider"
+    }
+  }
+}
