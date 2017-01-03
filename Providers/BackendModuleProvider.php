@@ -47,21 +47,17 @@ class BackendModuleProvider extends ModuleProvider
             'model' => UserEntity::class,
         ]);
 
-        $modules->enabled()->each(
-            function (Module $module) use ($router) {
-                $path = $module->getPath('Config/backend.php');
-                if (file_exists($path)) {
-                    $value = require_once($path);
-                    if (is_callable($value)) {
-                        $this->app->call($value);
-                    } elseif (is_array($value)) {
-                        if (array_key_exists('boot', $value) && is_callable($value['boot'])) {
-                            $this->app->call($value['boot']);
-                        }
-                    }
+        $modules->enabled()->each(function (Module $module) use ($router) {
+            $path = $module->getPath('Config/backend.php');
+            if (file_exists($path)) {
+                $value = require_once($path);
+                if (is_callable($value)) {
+                    $this->app->call($value);
+                } elseif (is_array($value) && array_key_exists('boot', $value) && is_callable($value['boot'])) {
+                    $this->app->call($value['boot']);
                 }
             }
-        );
+        });
 
 
         $router->group([
@@ -97,26 +93,29 @@ class BackendModuleProvider extends ModuleProvider
                 ]);
 
                 $modules->enabled()->each(function (Module $module) use ($router) {
-                        $path = $module->getPath('Config/backend.php');
-                        if (file_exists($path)) {
-                            $router->group(
-                                [
-                                    'prefix' => $module->getName(),
-                                    'as' => $module->getName() . '.',
-                                    'namespace' => $module->getNamespace() . '\\Http\\Controllers\\Backend'
-                                ],
-                                function (Router $router) use ($path) {
-                                    $value = require($path); //todo cache module backend config
-                                    if (is_array($value)) {
-                                        if (array_key_exists('routes', $value) && is_callable($value['routes'])) {
-                                            $this->app->call($value['routes'], ['router' => $router]);
-                                        }
-                                    }
-                                }
-                            );
-                        }
+                    if (file_exists($path = $module->getPath('routes/backend.php'))) {
+                        $call = function (Router $router) use ($path) {
+                            require $path;
+                        };
+                    } elseif (file_exists($path = $module->getPath('Config/backend.php'))) {
+                        $call = function (Router $router) use ($path) {
+                            $value = require $path;
+                            if (is_array($value)
+                                && array_key_exists('routes', $value)
+                                && is_callable($value['routes'])) {
+                                $this->app->call($value['routes'], ['router' => $router]);
+                            }
+                        };
+                    } else {
+                        return;
                     }
-                );
+
+                    $router->group([
+                        'prefix' => $module->getName(),
+                        'as' => $module->getName() . '.',
+                        'namespace' => $module->getNamespace() . '\\Http\\Controllers\\Backend'
+                    ], $call);
+                });
             });
         });
     }
@@ -135,30 +134,6 @@ class BackendModuleProvider extends ModuleProvider
         });
 
         $this->commands(MakeConfigCommand::class);
-
-        //$this->app->make('auth')->extend('backend', function () {
-        //
-        //    $provider = $this->app->make('auth')->createUserProvider('backend');
-        //
-        //    $guard = new SessionGuard('backend', $provider, $this->app->make('session.store'));
-        //
-        //    // When using the remember me functionality of the authentication services we
-        //    // will need to be set the encryption instance of the guard, which allows
-        //    // secure, encrypted cookie values to get generated for those cookies.
-        //    if (method_exists($guard, 'setCookieJar')) {
-        //        $guard->setCookieJar($this->app->make('cookie'));
-        //    }
-        //
-        //    if (method_exists($guard, 'setDispatcher')) {
-        //        $guard->setDispatcher($this->app->make('events'));
-        //    }
-        //
-        //    if (method_exists($guard, 'setRequest')) {
-        //        $guard->setRequest($this->app->refresh('request', $guard, 'setRequest'));
-        //    }
-        //
-        //    return $guard;
-        //});
 
         // Register the middleware with the container using the container's singleton method.
         $this->app->singleton(StartSession::class);
