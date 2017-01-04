@@ -205,7 +205,7 @@ define(['jquery', 'bootbox'], function ($, bootbox) {
         if (options.reset)
             $('.rabbit-alert').remove();
 
-        var _container = (!options.container) ? _this._visiblePortlet.find('.portlet-body')
+        var _container = (!options.container) ? _this._visiblePortlet.find('.portlet-body:first')
             : options.container;
 
         if (options.place == 'append')
@@ -427,35 +427,49 @@ define(['jquery', 'bootbox'], function ($, bootbox) {
 
                 _this.unblockUI();
             },
-            error: function (jqXHR) {
-                setTimeout(function () {
-                    switch (jqXHR.status) {
-                        case 202:
-                        case 418:
-                            _this.message({type: jqXHR.responseJSON.type, message: jqXHR.responseJSON.message});
-                            break;
-                        case 404:
-                            _this.dangerMessage('Сторінку не знайдено');
-                            break;
-                        case 403:
-                            _this.dangerMessage('Доступ заборонено. Зверніться до адміністратора');
-                            break;
-                        case 401:
-                            location.reload(true);
-                            break;
-                        case 503:
-                            var responseText = {};
-                            try {
-                                responseText = $.parseJSON(jqXHR.responseText);
-                            } catch (message) {
-                                responseText.message = message;
-                            }
-                            _this.dangerMessage('Помилка ' + jqXHR.status + '. ' + responseText.message);
-                            break;
-                        default:
-                            _this.dangerMessage('Помилка ' + jqXHR.status + '. ' + jqXHR.statusText);
-                    }
-                }, 100);
+            complete: function (jqXHR) {
+                if(jqXHR.status !== 200) {
+                    setTimeout(function () {
+                        switch (jqXHR.status) {
+                            case 202:
+                            case 418:
+                                _this.message({type: jqXHR.responseJSON.type, message: jqXHR.responseJSON.message});
+                                break;
+                            case 404:
+                                _this.dangerMessage('Сторінку не знайдено');
+                                break;
+                            case 403:
+                                _this.dangerMessage('Доступ заборонено. Зверніться до адміністратора');
+                                break;
+                            case 401:
+                                location.reload(true);
+                                break;
+                            case 422:
+                                var result = '<ul class="list-unstyled">';
+                                try {
+                                    $.each(jqXHR.responseJSON, function (key, value) {
+                                        result += '<li>' + value + '</li>'
+                                    });
+                                } catch (message) {
+                                    result = '<li>' + message + '</li>';
+                                }
+                                result += '</ul>';
+                                _this.message({type: 'danger', message: result});
+                                break;
+                            case 503:
+                                var responseText = {};
+                                try {
+                                    responseText = $.parseJSON(jqXHR.responseText);
+                                } catch (message) {
+                                    responseText.message = message;
+                                }
+                                _this.dangerMessage('Помилка ' + jqXHR.status + '. ' + responseText.message);
+                                break;
+                            default:
+                                _this.dangerMessage('Помилка ' + jqXHR.status + '. ' + jqXHR.statusText);
+                        }
+                    }, 100);
+                }
 
                 _this.unblockUI();
             }

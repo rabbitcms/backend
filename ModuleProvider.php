@@ -50,10 +50,8 @@ class ModuleProvider extends BaseModuleProvider
                 $value = require_once($path);
                 if (is_callable($value)) {
                     $this->app->call($value);
-                } elseif (is_array($value)) {
-                    if (array_key_exists('boot', $value) && is_callable($value['boot'])) {
-                        $this->app->call($value['boot']);
-                    }
+                } elseif (is_array($value) && array_key_exists('boot', $value) && is_callable($value['boot'])) {
+                    $this->app->call($value['boot']);
                 }
             }
         });
@@ -76,25 +74,28 @@ class ModuleProvider extends BaseModuleProvider
                 }, 'as' => 'index']);
 
                 $modules->enabled()->each(function (Module $module) use ($router) {
-                    $path = $module->getPath('Config/backend.php');
-                    if (file_exists($path)) {
-                        $namespace = $module->getNamespace();
-                        $router->group(
-                            [
-                                'prefix' => $module->getName(),
-                                'as' => $module->getName() . '.',
-                                'namespace' => $namespace === null ? '': trim($namespace,'\\').'\\Http\\Controllers\\Backend'
-                            ],
-                            function (Router $router) use ($path) {
-                                $value = require($path); //todo cache module backend config
-                                if (is_array($value)) {
-                                    if (array_key_exists('routes', $value) && is_callable($value['routes'])) {
-                                        $this->app->call($value['routes'], ['router' => $router]);
-                                    }
-                                }
+                    if (file_exists($path = $module->getPath('routes/backend.php'))) {
+                        $call = function (Router $router) use ($path) {
+                            require $path;
+                        };
+                    } elseif (file_exists($path = $module->getPath('Config/backend.php'))) {
+                        $call = function (Router $router) use ($path) {
+                            $value = require $path;
+                            if (is_array($value)
+                                && array_key_exists('routes', $value)
+                                && is_callable($value['routes'])) {
+                                    $this->app->call($value['routes'], ['router' => $router]);
                             }
-                        );
+                        };
+                    } else {
+                        return;
                     }
+
+                    $router->group([
+                        'prefix' => $module->getName(),
+                        'as' => $module->getName() . '.',
+                        'namespace' => $module->getNamespace() . '\\Http\\Controllers\\Backend'
+                    ], $call);
                 });
             });
         });
