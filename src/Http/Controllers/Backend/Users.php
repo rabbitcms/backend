@@ -1,5 +1,5 @@
 <?php
-
+declare(strict_types=1);
 namespace RabbitCMS\Backend\Http\Controllers\Backend;
 
 use Illuminate\Http\Request;
@@ -58,8 +58,9 @@ class Users extends Controller
             $query->where('active', '=', $filters['active']);
         }
         if (!empty($filters['email'])) {
-            (strpos($filters['email'], '%') !== false) ? $query->where('email', 'like',
-                $filters['email']) : $query->where('email', '=', strtolower($filters['email']));
+            (strpos($filters['email'], '%') !== false)
+                ? $query->where('email', 'like', $filters['email'])
+                : $query->where('email', '=', strtolower($filters['email']));
         }
         $recordsFiltered = $query->count();
 
@@ -79,16 +80,18 @@ class Users extends Controller
                 'title' => trans('backend::common.buttons.edit')
             ]);
 
-            $destroy_link = relative_route('backend.backend.users.destroy', ['id' => $item->id]);
-            $destroy_link_html = html_link($destroy_link, '<i class="fa fa-trash-o"></i>',
-                ['rel' => 'destroy', 'class' => 'btn btn-sm red', 'title' => trans('backend::common.buttons.destroy')]);
+            $destroy_link = html_link(
+                relative_route('backend.backend.dissociate', ['id' => $item->id]),
+                '<i class="fa fa-trash-o"></i>',
+                ['rel' => 'destroy', 'class' => 'btn btn-sm red', 'title' => trans('backend::common.buttons.destroy')]
+            );
 
             $result[] = [
                 $item->id,
                 $item->name,
                 $item->email,
                 array_key_exists($item->active, $status) ? $status[$item->active] : $item->active,
-                $edit_link_html . $destroy_link_html
+                $edit_link_html . $destroy_link
             ];
         }
 

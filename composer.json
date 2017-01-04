@@ -3,9 +3,9 @@
     "description": "Backend for RabbitCMS",
     "require": {
         "rabbitcms/carrot": "^0.3.3",
-        "doctrine/annotations": "1.*"
+        "doctrine/annotations": "1.*",
+        "rabbitcms/modules": "0.1.* | 1.1.*"
     },
-    "type": "october-module",
     "authors": [
         {
             "name": "Kulyk Dmytro",
@@ -18,18 +18,19 @@
     ],
     "autoload": {
         "classmap": [
-            "Database/Migrations/"
+            "database/migrations/"
         ],
         "psr-4": {
-            "RabbitCMS\\Backend\\": "./"
+            "RabbitCMS\\Backend\\src": "./"
         },
         "files": [
-            "Annotation/Permissions.php"
+            "src/Annotation/Permissions.php"
         ]
     },
     "extra": {
         "module": {
-            "providers": "RabbitCMS\\Backend\\ModuleProvider"
+            "providers": "RabbitCMS\\Backend\\ModuleProvider",
+            "system":true
         }
     }
 }
