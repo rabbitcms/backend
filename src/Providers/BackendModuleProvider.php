@@ -166,7 +166,7 @@ class BackendModuleProvider extends ModuleProvider
     /**
      * @inheritdoc
      */
-    protected function name()
+    protected function name(): string
     {
         return 'backend';
     }
