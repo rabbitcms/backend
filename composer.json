@@ -21,7 +21,7 @@
             "database/migrations/"
         ],
         "psr-4": {
-            "RabbitCMS\\Backend\\src": "./"
+            "RabbitCMS\\Backend\\": "src/"
         },
         "files": [
             "src/Annotation/Permissions.php"
