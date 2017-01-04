@@ -24,7 +24,7 @@
       "RabbitCMS\\Backend\\": "./src"
     },
     "files": [
-      "Annotation/Permissions.php"
+      "src/Annotation/Permissions.php"
     ]
   },
   "extra": {
