@@ -94,27 +94,14 @@ class BackendModuleProvider extends ModuleProvider
 
                 $modules->enabled()->each(function (Module $module) use ($router) {
                     if (file_exists($path = $module->getPath('routes/backend.php'))) {
-                        $call = function (Router $router) use ($path) {
+                        $router->group([
+                            'prefix' => $module->getName(),
+                            'as' => $module->getName() . '.',
+                            'namespace' => $module->getNamespace() . '\\Http\\Controllers\\Backend'
+                        ], function (Router $router) use ($path, $module) {
                             require $path;
-                        };
-                    } elseif (file_exists($path = $module->getPath('Config/backend.php'))) {
-                        $call = function (Router $router) use ($path) {
-                            $value = require $path;
-                            if (is_array($value)
-                                && array_key_exists('routes', $value)
-                                && is_callable($value['routes'])) {
-                                $this->app->call($value['routes'], ['router' => $router]);
-                            }
-                        };
-                    } else {
-                        return;
+                        });
                     }
-
-                    $router->group([
-                        'prefix' => $module->getName(),
-                        'as' => $module->getName() . '.',
-                        'namespace' => $module->getNamespace() . '\\Http\\Controllers\\Backend'
-                    ], $call);
                 });
             });
         });
