@@ -14,14 +14,14 @@
   "require": {
     "doctrine/annotations": "1.*",
     "rabbitcms/carrot": "^0.3.0",
-    "rabbitcms/modules": "^0.1.0"
+    "rabbitcms/modules": "^1.1.0"
   },
   "autoload": {
     "classmap": [
       "Database"
     ],
     "psr-4": {
-      "RabbitCMS\\Backend\\": "./"
+      "RabbitCMS\\Backend\\": "./src"
     },
     "files": [
       "Annotation/Permissions.php"
@@ -29,9 +29,6 @@
   },
   "extra": {
     "module": {
-      "name": "backend",
-      "namespace": "RabbitCMS\\Backend",
-      "enabled": true,
       "providers": "RabbitCMS\\Backend\\Providers\\BackendModuleProvider",
       "system": true
     }
