@@ -1,5 +1,5 @@
 <?php
-
+declare(strict_types=1);
 namespace RabbitCMS\Backend\Http\Controllers\Backend;
 
 use Illuminate\Http\Request;
@@ -61,14 +61,18 @@ class Groups extends Controller
                 'title' => trans('backend::common.buttons.edit')
             ]);
 
-            $destroy_link = relative_route('backend.backend.groups.destroy', ['id' => $item->id]);
-            $destroy_link_html = html_link($destroy_link, '<i class="fa fa-trash-o"></i>',
-                ['rel' => 'destroy', 'class' => 'btn btn-sm red', 'title' => trans('backend::common.buttons.destroy')]);
+            $destroy_link = html_link(relative_route('backend.backend.groups.destroy', [
+                'id' => $item->id
+            ]), '<i class="fa fa-trash-o"></i>', [
+                'rel' => 'destroy',
+                'class' => 'btn btn-sm red',
+                'title' => trans('backend::common.buttons.destroy')
+            ]);
 
             $result[] = [
                 $item->id,
                 $item->caption,
-                $edit_link_html . $destroy_link_html
+                $edit_link_html . $destroy_link
             ];
         }
 
@@ -125,7 +129,7 @@ class Groups extends Controller
             return ['result' => $result];
         }
 
-        return \Redirect::route('backend.backend.groups');
+        return \Redirect::route('backend.backend.groups.');
     }
 
     /**
@@ -188,7 +192,7 @@ class Groups extends Controller
         $group = GroupModel::query()
             ->findOrFail($id);
 
-        $query = $group->users();
+        $query = $group->users()->getQuery();
         $recordsFiltered = $recordsTotal = $query->count();
 
         $query->limit($request->input('length', 25))
@@ -200,15 +204,19 @@ class Groups extends Controller
 
         $result = [];
         foreach ($collection as $item) {
-            $destroy_link = relative_route('backend.backend.groups.users.destroy',
-                ['group_id' => $group->id, 'user_id' => $item->id]);
-            $destroy_link_html = html_link($destroy_link, '<i class="fa fa-trash-o"></i>',
-                ['rel' => 'destroy', 'class' => 'btn btn-sm red', 'title' => trans('backend::common.buttons.destroy')]);
+            $destroy_link = html_link(relative_route('backend.backend.groups.dissociate', [
+                'group_id' => $group->id,
+                'user_id' => $item->id
+            ]), '<i class="fa fa-trash-o"></i>', [
+                'rel' => 'destroy',
+                'class' => 'btn btn-sm red',
+                'title' => trans('backend::common.buttons.destroy')
+            ]);
 
             $result[] = [
                 $item->id,
                 $item->email . (empty($item->name) ? '' : ' - ' . $item->name),
-                $destroy_link_html
+                $destroy_link
             ];
         }
 

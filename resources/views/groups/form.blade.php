@@ -5,7 +5,7 @@
             <div class="caption">
                 {{$model->exists ? trans('backend::common.edit_group') : trans('backend::common.create_group')}}</div>
             <div class="actions">
-                <a class="btn btn-default btn-sm" rel="back" href="{{relative_route('backend.backend.groups')}}">
+                <a class="btn btn-default btn-sm" rel="back" href="{{relative_route('backend.backend.groups.')}}">
                     <i class="fa fa-arrow-left"></i> {{trans('backend::common.buttons.back')}}</a>
             </div>
         </div>
@@ -88,7 +88,7 @@
 
                 <div class="form-actions">
                     <div class="pull-right">
-                        <a class="btn red" rel="back" href="{{relative_route('backend.backend.groups')}}">
+                        <a class="btn red" rel="back" href="{{relative_route('backend.backend.groups.')}}">
                             <i class="fa fa-close"></i> {{trans('backend::common.buttons.cancel')}}</a>
                         <button type="submit" class="btn green"><i class="fa fa-check"></i> {{trans('backend::common.buttons.save')}}</button>
                     </div>

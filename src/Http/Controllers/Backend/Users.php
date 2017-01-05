@@ -81,7 +81,7 @@ class Users extends Controller
             ]);
 
             $destroy_link = html_link(
-                relative_route('backend.backend.dissociate', ['id' => $item->id]),
+                relative_route('backend.backend.users.destroy', ['id' => $item->id]),
                 '<i class="fa fa-trash-o"></i>',
                 ['rel' => 'destroy', 'class' => 'btn btn-sm red', 'title' => trans('backend::common.buttons.destroy')]
             );
