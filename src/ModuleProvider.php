@@ -18,7 +18,7 @@ use RabbitCMS\Backend\Http\Middleware\BackendVerifyCsrfToken;
 use RabbitCMS\Backend\Http\Middleware\SetBackendGuard;
 use RabbitCMS\Backend\Http\Middleware\StartSession;
 use RabbitCMS\Backend\Support\Backend;
-use RabbitCMS\Modules\Contracts\ModulesManager;
+use RabbitCMS\Modules\Managers\Modules;
 use RabbitCMS\Modules\Module;
 use RabbitCMS\Modules\ModuleProvider as BaseModuleProvider;
 
@@ -33,9 +33,9 @@ class ModuleProvider extends BaseModuleProvider
      *
      * @param ConfigRepository $config
      * @param Router $router
-     * @param ModulesManager $modules
+     * @param Modules $modules
      */
-    public function boot(ConfigRepository $config, Router $router, ModulesManager $modules)
+    public function boot(ConfigRepository $config, Router $router, Modules $modules)
     {
         $config->set('auth.guards.backend', [
             'driver' => 'session',
