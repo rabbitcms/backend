@@ -56,6 +56,7 @@ require.config({
         "dtkt.subscribe.packages": "subscribe/backend/js/dtkt.subscribe.packages",
         "dtkt.subscribe.sampling": "subscribe/backend/js/dtkt.subscribe.sampling",
         "dtkt.subscribe.statuses": "subscribe/backend/js/dtkt.subscribe.statuses",
+        "dtkt.subscribe.archive": "subscribe/backend/js/dtkt.subscribe.archive",
 
         "dtkt.users": "users/backend/js/dtkt.users",
         "dtkt.users.autocomplete": "users/backend/js/dtkt.users.autocomplete",
