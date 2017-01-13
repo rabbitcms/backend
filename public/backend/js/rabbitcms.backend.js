@@ -7,6 +7,8 @@ define(['jquery', 'bootbox'], function ($, bootbox) {
     var _location = document.location.pathname;
     var _pathname = _location.length > 1 ? _location.replace(/\/$/, '') : _location;
 
+    var onNavigate = [];
+
     var RabbitCMS = function () {
         _this = this;
 
@@ -75,6 +77,10 @@ define(['jquery', 'bootbox'], function ($, bootbox) {
         }
     };
 
+    RabbitCMS.prototype.onNavigate = function(cb){
+        onNavigate.push(cb);
+    };
+
     RabbitCMS.prototype.navigate = function (link, pushState) {
         link = link.length > 1 ? link.replace(/\/$/, '') : link;
         pushState = (pushState === undefined) ? true : pushState;
@@ -97,9 +103,14 @@ define(['jquery', 'bootbox'], function ($, bootbox) {
         }
     };
 
+
+
     RabbitCMS.prototype.cachePortlet = function (link, portlet, pushState) {
         _this._cache[link] = portlet;
 
+        onNavigate.forEach(function(cb) {
+            cb(link);
+        });
         if (pushState === undefined || pushState === true)
             history.pushState({link: link}, null, link);
     };
