@@ -73,6 +73,17 @@
     require(["jquery", "rabbitcms.backend"], function ($, RabbitCMS) {
         window.RabbitCMS = new RabbitCMS();
 
+        window.RabbitCMS.onNavigate(function(link) {
+            var self = $(this);
+            $('li.nav-item, a.nav-link .arrow').removeClass('active open');
+            $('a.nav-link').each(function() {
+                var self=$(this);
+                if(link.lastIndexOf(this.pathname, 0) === 0) {
+                    self.parents('li.nav-item').addClass('active open');
+                }
+            });
+        });
+
         $('body').removeClass('loading');
     });
 </script>
