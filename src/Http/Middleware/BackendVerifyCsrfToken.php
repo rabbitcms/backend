@@ -2,7 +2,7 @@
 declare(strict_types = 1);
 namespace RabbitCMS\Backend\Http\Middleware;
 
-use App\Http\Middleware\VerifyCsrfToken;
+use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Closure;
 use Illuminate\Http\Response;
 use Illuminate\Session\TokenMismatchException;
@@ -19,8 +19,8 @@ class BackendVerifyCsrfToken extends VerifyCsrfToken
     {
         try {
             return parent::handle($request, $next);
-        } catch (TokenMismatchException $e) {
-            return new Response($e->getMessage(), Response::HTTP_UNAUTHORIZED);
+        } catch (TokenMismatchException $exception) {
+            return new Response($exception->getMessage(), Response::HTTP_UNAUTHORIZED);
         }
     }
 }

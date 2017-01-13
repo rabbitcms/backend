@@ -2,6 +2,7 @@
 declare(strict_types=1);
 namespace RabbitCMS\Backend\Http\Controllers\Backend;
 
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\Factory as ViewFactory;
 use Illuminate\View\View;
@@ -10,6 +11,7 @@ use RabbitCMS\Backend\Entities\Group as GroupModel;
 use RabbitCMS\Backend\Entities\User as UserModel;
 use RabbitCMS\Backend\Http\Requests\UsersRequest;
 use RabbitCMS\Backend\Support\Backend;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Class Users.
@@ -32,18 +34,18 @@ class Users extends Controller
     }
 
     /**
-     * @return \Illuminate\View\View
+     * @return View
      */
-    public function getIndex()
+    public function getIndex(): View
     {
         return $this->view('users.index');
     }
 
     /**
      * @param Request $request
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
-    public function postIndex(Request $request)
+    public function postIndex(Request $request): JsonResponse
     {
         $status = [0 => trans('backend::common.non_active'), 1 => trans('backend::common.active')];
 
@@ -102,14 +104,14 @@ class Users extends Controller
             'draw' => $request->input('draw')
         ];
 
-        return \Response::json($data, 200, [], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+        return new JsonResponse($data, 200, [], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
     }
 
     /**
-     * @return \Illuminate\View\View
+     * @return View
      * @Permissions("system.users.write")
      */
-    public function getCreate()
+    public function getCreate(): View
     {
         return $this->view('users.form', [
             'model' => new UserModel
@@ -118,10 +120,10 @@ class Users extends Controller
 
     /**
      * @param UsersRequest $request
-     * @return array|\Illuminate\Http\RedirectResponse
+     * @return Response
      * @Permissions("system.users.write")
      */
-    public function postCreate(UsersRequest $request)
+    public function postCreate(UsersRequest $request):Response
     {
         $model = new UserModel;
 
@@ -131,9 +133,9 @@ class Users extends Controller
     /**
      * @param UserModel $model
      * @param UsersRequest $request
-     * @return array|\Illuminate\Http\RedirectResponse
+     * @return Response
      */
-    private function save(UserModel $model, UsersRequest $request)
+    private function save(UserModel $model, UsersRequest $request):Response
     {
         return \DB::transaction(function () use ($model, $request) {
             $data = $request->input('user', []);
@@ -150,19 +152,19 @@ class Users extends Controller
                 ->sync($request->input('groups', []));
 
             if ($request->ajax()) {
-                return ['result' => $result];
+                return new JsonResponse(['result' => $result]);
             }
 
-            return \Redirect::route('backend.backend.users');
+            return \Redirect::route('backend.backend.users.');
         });
     }
 
     /**
      * @param $id
-     * @return \Illuminate\View\View
+     * @return View
      * @Permissions("system.users.write")
      */
-    public function getEdit($id)
+    public function getEdit($id): View
     {
         return $this->view('users.form', [
             'model' => UserModel::query()->findOrFail($id)
@@ -172,10 +174,10 @@ class Users extends Controller
     /**
      * @param              $id
      * @param UsersRequest $request
-     * @return array|\Illuminate\Http\RedirectResponse
+     * @return Response
      * @Permissions("system.users.write")
      */
-    public function postEdit($id, UsersRequest $request)
+    public function postEdit($id, UsersRequest $request):Response
     {
         /**
          * @var UserModel $model
@@ -188,16 +190,16 @@ class Users extends Controller
 
     /**
      * @param $id
-     * @return array
+     * @return JsonResponse
      * @throws \Exception
      * @Permissions("system.users.write")
      */
-    public function anyDelete($id)
+    public function anyDelete($id): JsonResponse
     {
         $result = UserModel::query()
             ->findOrFail($id)
             ->delete();
 
-        return ['result' => $result];
+        return new JsonResponse(['result' => $result]);
     }
 }
