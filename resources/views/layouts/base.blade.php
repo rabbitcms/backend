@@ -65,5 +65,15 @@
 </head>
 @yield('main')
 
-<script src="{{asset_module('js/require-js.config.js', 'backend')}}" type="text/javascript"></script>
+<script src="{{asset('/backend/config.js')}}" type="text/javascript"></script>
+<script>
+    define('jquery', [], function() { return jQuery; });
+    define('bootbox', [], function() { return bootbox; });
+    define('Highcharts', [], function() { return Highcharts; });
+    require(["jquery", "rabbitcms.backend"], function ($, RabbitCMS) {
+        window.RabbitCMS = new RabbitCMS();
+
+        $('body').removeClass('loading');
+    });
+</script>
 </html>

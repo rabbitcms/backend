@@ -1,5 +1,5 @@
 <?php
-
+declare(strict_types = 1);
 namespace RabbitCMS\Backend\Contracts;
 
 interface HasAccessEntity
@@ -14,16 +14,16 @@ interface HasAccessEntity
      * Super users DON'T have access no matter what.
      *
      * @param  string|array $permissions
-     * @param  bool         $all
+     * @param  bool $all
      *
      * @return bool
      */
-    public function hasAccess($permissions, $all = true);
+    public function hasAccess($permissions, $all = true): bool;
 
     /**
      * Returns an array of merged permissions for each group the user is in.
      *
      * @return string[]
      */
-    public function getPermissions();
+    public function getPermissions(): array;
 }

@@ -37,7 +37,6 @@ return [
         }, Backend::MENU_PRIORITY_MENU);
     },
     'requirejs' => [
-        'css' => 'plugins/require-css',
         'rabbitcms.backend' => 'js/rabbitcms.backend',
         'rabbitcms.backend.login' => [
             'path' => 'js/rabbitcms.backend.login',
@@ -45,9 +44,6 @@ return [
         ],
         'rabbitcms.backend.users' => 'js/rabbitcms.backend.users',
         'rabbitcms.backend.users.groups' => 'js/rabbitcms.backend.users.groups',
-        'jquery' => 'plugins/jquery.min.js',
-        'bootbox' => 'plugins/bootbox.js',
-        'jquery.cookie' => 'plugins/jquery.cokie.min.js'
     ],
     'handlers' => [
         '.*' => true

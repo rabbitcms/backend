@@ -1,5 +1,5 @@
 <?php
-
+declare(strict_types = 1);
 namespace RabbitCMS\Backend\Providers;
 
 use Illuminate\Contracts\Auth\Access\Gate;
@@ -7,6 +7,10 @@ use Illuminate\Support\ServiceProvider as LaravelServiceProvider;
 use RabbitCMS\Backend\Entities\User;
 use RabbitCMS\Backend\Support\Backend;
 
+/**
+ * Class AclToGateProvider.
+ * @package RabbitCMS\Backend
+ */
 class AclToGateProvider extends LaravelServiceProvider
 {
     /**

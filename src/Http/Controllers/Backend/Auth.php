@@ -1,25 +1,35 @@
-<?php namespace RabbitCMS\Backend\Http\Controllers\Backend;
+<?php
+declare(strict_types = 1);
+namespace RabbitCMS\Backend\Http\Controllers\Backend;
 
 use Illuminate\Foundation\Validation\ValidatesRequests;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\View\View;
 use RabbitCMS\Backend\Support\Metronic;
 
+/**
+ * Class Auth.
+ * @package RabbitCMS\Backend
+ */
 class Auth extends Controller
 {
     use ValidatesRequests;
 
-    public function init()
-    {
-
-    }
-
-    public function getLogin()
+    /**
+     * @return View
+     */
+    public function getLogin():View
     {
         Metronic::module('login');
         return $this->view('auth.login');
     }
 
-    public function postLogin(Request $request)
+    /**
+     * @param Request $request
+     * @return RedirectResponse
+     */
+    public function postLogin(Request $request):RedirectResponse
     {
         $this->validate($request, [
             'email' => 'required|email',
@@ -37,7 +47,10 @@ class Auth extends Controller
             ->withErrors(['email' => 'Введено невірний логін або пароль']);
     }
 
-    public function getLogout()
+    /**
+     * @return RedirectResponse
+     */
+    public function getLogout():RedirectResponse
     {
         $this->guard()->logout();
 

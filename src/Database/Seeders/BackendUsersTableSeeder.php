@@ -1,9 +1,16 @@
-<?php namespace RabbitCMS\Backend\Database\Seeders;
+<?php
+declare(strict_types = 1);
+namespace RabbitCMS\Backend\Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Illuminate\Database\Eloquent\Model;
 use RabbitCMS\Backend\Entities\User;
 
+/**
+ * Class BackendUsersTableSeeder.
+ *
+ * @package RabbitCMS\Backend
+ */
 class BackendUsersTableSeeder extends Seeder
 {
 
@@ -22,5 +29,4 @@ class BackendUsersTableSeeder extends Seeder
             'active'   => 1,
         ]);
     }
-
 }

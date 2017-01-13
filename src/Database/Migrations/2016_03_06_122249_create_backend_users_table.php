@@ -18,7 +18,7 @@ class CreateBackendUsersTable extends Migration {
             $table->string('email');
             $table->string('password');
             $table->boolean('active');
-            $table->string('remember_token');
+            $table->string('remember_token')->nullable();
 
             $table->timestamps();
             $table->softDeletes();

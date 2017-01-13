@@ -1,4 +1,6 @@
-<?php namespace RabbitCMS\Backend\Entities;
+<?php
+declare(strict_types = 1);
+namespace RabbitCMS\Backend\Entities;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;

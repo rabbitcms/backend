@@ -142,5 +142,4 @@ class ModuleProvider extends BaseModuleProvider
     {
         return 'backend';
     }
-
 }

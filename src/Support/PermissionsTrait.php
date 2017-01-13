@@ -74,8 +74,9 @@ trait PermissionsTrait
 
                     // We will make sure that the merged permission does not
                     // exactly match our permission, but starts with it.
-                    if ($checkPermission != $mergedPermission && starts_with($mergedPermission,
-                            $checkPermission) && $value == 1
+                    if ($checkPermission != $mergedPermission
+                        && starts_with($mergedPermission, $checkPermission)
+                        && $value == 1
                     ) {
                         $matched = true;
                         break;

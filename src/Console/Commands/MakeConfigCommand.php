@@ -1,10 +1,16 @@
 <?php
-
+declare(strict_types=1);
 namespace RabbitCMS\Backend\Console\Commands;
 
 use Illuminate\Console\Command;
-use Pingpong\Modules\Module;
+use RabbitCMS\Modules\Managers\Modules;
+use RabbitCMS\Modules\Module;
 
+/**
+ * Class MakeConfigCommand.
+ *
+ * @package RabbitCMS\Backend
+ */
 class MakeConfigCommand extends Command
 {
     /**
@@ -26,14 +32,14 @@ class MakeConfigCommand extends Command
      *
      * @return mixed
      */
-    public function handle(\Pingpong\Modules\Repository $modules)
+    public function handle(Modules $modules)
     {
-        $baseUrl = str_replace(public_path(), '', $modules->getAssetsPath());
+        $baseUrl = str_replace(public_path(), '/', $modules->getAssetsPath());
         $config = [
-            'baseUrl' => rtrim($baseUrl, '/') . '/',
+            'baseUrl' => '/'.rtrim($baseUrl, '/') . '/',
             'shim' => [],
             'paths' => [],
-            'urlArgs' => time()
+            'urlArgs' => (string) time()
         ];
         $dir = public_path('backend');
         if (!is_dir($dir)) {
@@ -42,16 +48,16 @@ class MakeConfigCommand extends Command
 
         /* @var Module $module */
         foreach ($modules->enabled() as $module) {
-            $path = $module->getExtraPath('Config/backend.php');
+            $path = $module->getPath('config/backend.php');
             if (file_exists($path)) {
                 $value = require($path);
                 if (is_array($value) && array_key_exists('requirejs', $value) && is_array($value['requirejs'])) {
                     foreach ($value['requirejs'] as $m => $c) {
                         if (is_string($c)) {
-                            $config['paths'][$m] = $module->getLowerName() . '/' . ltrim($c, '/');
+                            $config['paths'][$m] = $module->getName() . '/backend/' . ltrim($c, '/');
                         } elseif (is_array($c)) {
                             if (array_key_exists('path', $c)) {
-                                $config['paths'][$m] = $module->getLowerName() . '/' . ltrim($c['path'], '/');
+                                $config['paths'][$m] = $module->getName() . '/backend/' . ltrim($c['path'], '/');
                             }
                             if (array_key_exists('deps', $c)) {
                                 $config['shim'][$m] = ['deps'=>(array)$c['deps']];
@@ -69,6 +75,5 @@ class MakeConfigCommand extends Command
             /* @lang JavaScript */
             "require.config(${config});"
         );
-
     }
 }

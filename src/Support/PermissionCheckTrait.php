@@ -3,6 +3,7 @@
 namespace RabbitCMS\Backend\Support;
 
 use Doctrine\Common\Annotations\AnnotationReader;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Routing\Controller;
 use RabbitCMS\Backend\Annotation\Permissions;
 use RabbitCMS\Backend\Contracts\HasAccessEntity;
@@ -59,16 +60,11 @@ trait PermissionCheckTrait
             }
         } catch (AccessDeniedHttpException $e) {
             if (\Request::ajax()) {
-                return \Response::json(
-                    [
-                        'error' => $e->getMessage(),
-                        'file' => $e->getFile(),
-                        'line' => $e->getLine(),
-                    ],
-                    403,
-                    [],
-                    JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE
-                );
+                return new JsonResponse([
+                    'error' => $e->getMessage(),
+                    'file' => $e->getFile(),
+                    'line' => $e->getLine(),
+                ], 403, [], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
             } else {
                 return view(property_exists($this, 'denyView') ? $this->denyView : 'deny');
             }

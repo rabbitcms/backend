@@ -1,5 +1,5 @@
 <?php
-
+declare(strict_types = 1);
 namespace RabbitCMS\Backend\Entities;
 
 use Illuminate\Auth\Authenticatable;
@@ -25,7 +25,11 @@ use RabbitCMS\Backend\Contracts\HasAccessEntity;
  *
  * @property-read Group[] $groups
  */
-class User extends Eloquent implements AuthenticatableContract, AuthorizableContract, CanResetPasswordContract, HasAccessEntity
+class User extends Eloquent implements
+    AuthenticatableContract,
+    AuthorizableContract,
+    CanResetPasswordContract,
+    HasAccessEntity
 {
     use Authenticatable, Authorizable, CanResetPassword, SoftDeletes;
 
@@ -95,7 +99,7 @@ class User extends Eloquent implements AuthenticatableContract, AuthorizableCont
      *
      * @return bool
      */
-    public function hasAccess($permissions, $all = true)
+    public function hasAccess($permissions, $all = true): bool
     {
         $allPermissions = $this->getPermissions();
 
@@ -106,8 +110,7 @@ class User extends Eloquent implements AuthenticatableContract, AuthorizableCont
         $match = false;
 
         foreach ($permissions as $permission) {
-            //todo temporary check key(old permissions)
-            if (array_key_exists($permission,$allPermissions) || in_array($permission, $allPermissions)) {
+            if (array_key_exists($permission, $allPermissions)) {
                 $match = true;
             } elseif ($all) {
                 return false;
@@ -120,7 +123,7 @@ class User extends Eloquent implements AuthenticatableContract, AuthorizableCont
     /**
      * @inheritdoc
      */
-    public function getPermissions()
+    public function getPermissions(): array
     {
         /**
          * @var Group $group
