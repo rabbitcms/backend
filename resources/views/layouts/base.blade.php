@@ -58,6 +58,7 @@
     <script src="{{asset_module('plugins/tinymce/langs/uk_UA.js', 'backend')}}" type="text/javascript"></script>
     <script src="{{asset_module('plugins/jquery.inputmask.js', 'backend')}}" type="text/javascript"></script>
     <script src="{{asset_module('plugins/highcharts.js', 'backend')}}" type="text/javascript"></script>
+    <script src="{{module_asset('backend', 'plugins/bootstrap-touchspin/bootstrap.touchspin.js')}}" type="text/javascript"></script>
 
     <script src="{{asset_module('js/metronic.js', 'backend')}}" type="text/javascript"></script>
     <script src="{{asset_module('js/datatable.js', 'backend')}}" type="text/javascript"></script>
