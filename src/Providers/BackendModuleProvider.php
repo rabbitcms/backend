@@ -2,7 +2,6 @@
 
 namespace RabbitCMS\Backend\Providers;
 
-use Illuminate\Auth\SessionGuard;
 use Illuminate\Config\Repository as ConfigRepository;
 use Illuminate\Contracts\Bus\Dispatcher;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
@@ -21,7 +20,7 @@ use RabbitCMS\Backend\Http\Middleware\AuthenticateWithBasicAuth;
 use RabbitCMS\Backend\Http\Middleware\StartSession;
 use RabbitCMS\Backend\Support\Backend;
 use RabbitCMS\Backend\Support\ConfigMaker;
-use RabbitCMS\Modules\Contracts\ModulesManager;
+use RabbitCMS\Modules\Managers\Modules;
 use RabbitCMS\Modules\Module;
 use RabbitCMS\Modules\ModuleProvider;
 
@@ -32,10 +31,10 @@ class BackendModuleProvider extends ModuleProvider
      *
      * @param ConfigRepository $config
      * @param Router $router
-     * @param ModulesManager $modules
+     * @param Modules $modules
      * @param Dispatcher $dispatcher
      */
-    public function boot(ConfigRepository $config, Router $router, ModulesManager $modules, Dispatcher $dispatcher)
+    public function boot(ConfigRepository $config, Router $router, Modules $modules, Dispatcher $dispatcher)
     {
         $this->app->make('config')->set('auth.guards.backend', [
             'driver' => 'session',
