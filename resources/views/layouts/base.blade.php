@@ -23,6 +23,7 @@
     <link href="{{asset_module('plugins/bootstrap-timepicker/css/bootstrap-timepicker.css', 'backend')}}" rel="stylesheet" type="text/css">
     <link href="{{asset_module('plugins/datatables/plugins/bootstrap/dataTables.bootstrap.css', 'backend')}}" rel="stylesheet" type="text/css">
     <link href="{{asset_module('plugins/colorbox/colorbox.css', 'backend')}}" rel="stylesheet" type="text/css">
+    <link href="{{module_asset('backend', 'plugins/jquery-file-upload/css/jquery.fileupload.css')}}" rel="stylesheet" type="text/css">
 
     <link href="{{asset_module('css/login.css', 'backend')}}" rel="stylesheet" type="text/css">
     <link href="{{asset_module('css/components.css', 'backend')}}" rel="stylesheet" type="text/css">
@@ -59,6 +60,7 @@
     <script src="{{asset_module('plugins/jquery.inputmask.js', 'backend')}}" type="text/javascript"></script>
     <script src="{{asset_module('plugins/highcharts.js', 'backend')}}" type="text/javascript"></script>
     <script src="{{module_asset('backend', 'plugins/bootstrap-touchspin/bootstrap.touchspin.js')}}" type="text/javascript"></script>
+    <script src="{{module_asset('backend', 'plugins/jquery-file-upload/js/jquery.fileupload.js')}}" type="text/javascript"></script>
 
     <script src="{{asset_module('js/metronic.js', 'backend')}}" type="text/javascript"></script>
     <script src="{{asset_module('js/datatable.js', 'backend')}}" type="text/javascript"></script>

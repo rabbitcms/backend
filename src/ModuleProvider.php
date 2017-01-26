@@ -60,32 +60,22 @@ class ModuleProvider extends BaseModuleProvider
         });
 
         $router->group([
-            'as' => 'backend.',
             'prefix' => $this->module->config('path'),
             'domain' => $this->module->config('domain'),
             'middleware' => ['backend']
         ], function (Router $router) use ($modules) {
-            $router->get('auth/login', ['uses' => AuthController::class . '@getLogin', 'as' => 'auth']);
-            $router->post('auth/login', ['uses' => AuthController::class . '@postLogin', 'as' => 'auth.login']);
-            $router->get('auth/logout', ['uses' => AuthController::class . '@getLogout', 'as' => 'auth.logout']);
+            $router->get('auth/login', ['uses' => AuthController::class . '@getLogin', 'as' => 'backend.auth']);
+            $router->post('auth/login', ['uses' => AuthController::class . '@postLogin', 'as' => 'backend.auth.login']);
+            $router->get('auth/logout', ['uses' => AuthController::class . '@getLogout', 'as' => 'backend.auth.logout']);
 
             $router->group(['middleware' => ['backend.auth']], function (Router $router) use ($modules) {
+                $modules->loadRoutes('backend', function (Module $module, array $options) {
+                    return array_merge($options, ['prefix' => $module->config('backend.path', $module->getName())]);
+                });
 
                 $router->get('', ['uses' => function () {
                     return view('backend::index');
-                }, 'as' => 'index']);
-
-                $modules->enabled()->each(function (Module $module) use ($router) {
-                    if (file_exists($path = $module->getPath('routes/backend.php'))) {
-                        $router->group([
-                            'prefix' => $module->getName(),
-                            'as' => $module->getName() . '.',
-                            'namespace' => $module->getNamespace() . '\\Http\\Controllers\\Backend'
-                        ], function (Router $router) use ($path) {
-                            require $path;
-                        });
-                    }
-                });
+                }, 'as' => 'backend.index']);
             });
         });
     }
