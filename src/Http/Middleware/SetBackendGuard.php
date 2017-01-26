@@ -2,9 +2,9 @@
 
 namespace RabbitCMS\Backend\Http\Middleware;
 
+use Closure;
 use Illuminate\Config\Repository;
 use Illuminate\Http\Request;
-use Closure;
 
 class SetBackendGuard
 {

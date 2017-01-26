@@ -2,8 +2,8 @@
 declare(strict_types = 1);
 namespace RabbitCMS\Backend\Http\Middleware;
 
-use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Closure;
+use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Http\Response;
 use Illuminate\Session\TokenMismatchException;
 

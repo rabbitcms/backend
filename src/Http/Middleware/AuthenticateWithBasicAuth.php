@@ -5,7 +5,6 @@ namespace RabbitCMS\Backend\Http\Middleware;
 use Closure;
 use Illuminate\Auth\SessionGuard;
 use Illuminate\Contracts\Auth\Factory as AuthFactory;
-use Illuminate\Contracts\Auth\Guard;
 
 class AuthenticateWithBasicAuth
 {

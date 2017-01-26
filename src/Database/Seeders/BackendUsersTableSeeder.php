@@ -2,8 +2,8 @@
 declare(strict_types = 1);
 namespace RabbitCMS\Backend\Database\Seeders;
 
-use Illuminate\Database\Seeder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Seeder;
 use RabbitCMS\Backend\Entities\User;
 
 /**
