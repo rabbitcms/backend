@@ -6,6 +6,7 @@ use Illuminate\Config\Repository as ConfigRepository;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\AliasLoader;
+use Illuminate\Foundation\Application;
 use Illuminate\Routing\Router;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 use RabbitCMS\Backend\Console\Commands\MakeConfigCommand;
@@ -109,9 +110,13 @@ class ModuleProvider extends BaseModuleProvider
             BackendVerifyCsrfToken::class
         ]);
 
-
-        $this->app->make('router')->middleware('backend.auth', Authenticate::class);
-        $this->app->make('router')->middleware('backend.auth.base', AuthenticateWithBasicAuth::class);
+        if (version_compare(Application::VERSION, '5.4') === -1) {
+            $this->app->make('router')->middleware('backend.auth', Authenticate::class);
+            $this->app->make('router')->middleware('backend.auth.base', AuthenticateWithBasicAuth::class);
+        } else {
+            $this->app->make('router')->aliasMiddleware('backend.auth', Authenticate::class);
+            $this->app->make('router')->aliasMiddleware('backend.auth.base', AuthenticateWithBasicAuth::class);
+        }
 
 
         AliasLoader::getInstance(['Backend'=> BackendFacade::class]);
