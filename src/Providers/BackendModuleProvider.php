@@ -30,8 +30,10 @@ class BackendModuleProvider extends ModuleProvider
 {
     /**
      * Boot the application events.
+     *
+     * @param Modules $modules
      */
-    public function boot()
+    public function boot(Modules $modules)
     {
         $this->app->make('config')->set('auth.guards.backend', [
             'driver' => 'session',
@@ -43,19 +45,19 @@ class BackendModuleProvider extends ModuleProvider
             'model' => UserEntity::class,
         ]);
 
-        $this->loadRoutes(function (Modules $modules, Router $router) {
-            $modules->enabled()->each(function (Module $module) use ($router) {
-                $path = $module->getPath('Config/backend.php');
-                if (file_exists($path)) {
-                    $value = require_once($path);
-                    if (is_callable($value)) {
-                        $this->app->call($value);
-                    } elseif (is_array($value) && array_key_exists('boot', $value) && is_callable($value['boot'])) {
-                        $this->app->call($value['boot']);
-                    }
+        $modules->enabled()->each(function (Module $module) {
+            $path = $module->getPath('Config/backend.php');
+            if (file_exists($path)) {
+                $value = require_once($path);
+                if (is_callable($value)) {
+                    $this->app->call($value);
+                } elseif (is_array($value) && array_key_exists('boot', $value) && is_callable($value['boot'])) {
+                    $this->app->call($value['boot']);
                 }
-            });
+            }
+        });
 
+        $this->loadRoutes(function (Router $router) use ($modules) {
             $router->get('backend/config.js', [
                 'uses'=>'Config@make',
                 'as' => 'backend.config.js',
