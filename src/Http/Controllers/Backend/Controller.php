@@ -3,8 +3,7 @@ namespace RabbitCMS\Backend\Http\Controllers\Backend;
 
 use Illuminate\Auth\AuthManager;
 use Illuminate\Contracts\Auth\StatefulGuard;
-use Illuminate\Foundation\Application;
-use Illuminate\Http\Exception\HttpResponseException;
+use Illuminate\Http\JsonResponse;
 use RabbitCMS\Backend\Entities\User;
 use RabbitCMS\Modules\ModuleController;
 
@@ -16,17 +15,6 @@ abstract class Controller extends ModuleController
     protected $module = 'backend';
 
     protected $denyView = 'backend::deny';
-
-    /**
-     * Controller constructor.
-     *
-     * @param Application $app
-     * @param AuthManager $auth
-     */
-    public function __construct(Application $app, AuthManager $auth)
-    {
-        parent::__construct($app);
-    }
 
     /**
      * @return StatefulGuard
@@ -53,24 +41,22 @@ abstract class Controller extends ModuleController
      * @param string $type
      * @param int    $code
      *
-     * @throws HttpResponseException
+     * @throws \Illuminate\Http\Exceptions\HttpResponseException
      */
     protected function message(string $message, string $type = 'danger', int $code = 418)
     {
-        throw new HttpResponseException(
-            \Response::json(
-                ['message' => $message, 'type' => $type],
-                $code,
-                [],
-                JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT
-            )
-        );
+        (new JsonResponse(
+            ['message' => $message, 'type' => $type],
+            $code,
+            [],
+            JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT
+        ))->throwResponse();
     }
 
     /**
      * @param string $message
      *
-     * @throws HttpResponseException
+     * @throws \Illuminate\Http\Exceptions\HttpResponseException
      */
     protected function success(string $message)
     {
@@ -80,7 +66,7 @@ abstract class Controller extends ModuleController
     /**
      * @param string $message
      *
-     * @throws HttpResponseException
+     * @throws \Illuminate\Http\Exceptions\HttpResponseException
      */
     protected function error(string $message)
     {
