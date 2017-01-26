@@ -12,6 +12,7 @@ use RabbitCMS\Backend\Console\Commands\MakeConfigCommand;
 use RabbitCMS\Backend\Entities\User as UserEntity;
 use RabbitCMS\Backend\Facades\Backend as BackendFacade;
 use RabbitCMS\Backend\Http\Controllers\Backend\Auth as AuthController;
+use RabbitCMS\Backend\Http\Controllers\Backend\Main;
 use RabbitCMS\Backend\Http\Middleware\Authenticate;
 use RabbitCMS\Backend\Http\Middleware\AuthenticateWithBasicAuth;
 use RabbitCMS\Backend\Http\Middleware\BackendVerifyCsrfToken;
@@ -59,23 +60,24 @@ class ModuleProvider extends BaseModuleProvider
             }
         });
 
-        $router->group([
-            'prefix' => $this->module->config('path'),
-            'domain' => $this->module->config('domain'),
-            'middleware' => ['backend']
-        ], function (Router $router) use ($modules) {
-            $router->get('auth/login', ['uses' => AuthController::class . '@getLogin', 'as' => 'backend.auth']);
-            $router->post('auth/login', ['uses' => AuthController::class . '@postLogin', 'as' => 'backend.auth.login']);
-            $router->get('auth/logout', ['uses' => AuthController::class . '@getLogout', 'as' => 'backend.auth.logout']);
+        $this->loadRoutes(function (Router $router) use ($modules) {
+            $router->group([
+                'prefix' => $this->module->config('path'),
+                'domain' => $this->module->config('domain'),
+                'middleware' => ['backend']
+            ], function (Router $router) use ($modules) {
+                $auth = AuthController::class;
+                $router->get('auth/login', ['uses' => "{$auth}@getLogin", 'as' => 'backend.auth']);
+                $router->post('auth/login', ['uses' => "{$auth}@postLogin", 'as' => 'backend.auth.login']);
+                $router->get('auth/logout', ['uses' => "{$auth}@getLogout", 'as' => 'backend.auth.logout']);
 
-            $router->group(['middleware' => ['backend.auth']], function (Router $router) use ($modules) {
-                $modules->loadRoutes('backend', function (Module $module, array $options) {
-                    return array_merge($options, ['prefix' => $module->config('backend.path', $module->getName())]);
+                $router->group(['middleware' => ['backend.auth']], function (Router $router) use ($modules) {
+                    $modules->loadRoutes('backend', function (Module $module, array $options) {
+                        return array_merge($options, ['prefix' => $module->config('backend.path', $module->getName())]);
+                    });
+
+                    $router->get('', ['uses' => Main::class.'@index', 'as' => 'backend.index']);
                 });
-
-                $router->get('', ['uses' => function () {
-                    return view('backend::index');
-                }, 'as' => 'backend.index']);
             });
         });
     }
