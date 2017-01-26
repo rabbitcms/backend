@@ -17,6 +17,6 @@ $router->group([
         'ext' => 'jpg|png|pdf|doc|docx|xls|xlsx|rtf|zip',
     ],
 ], function (Router $router) {
-    $router->get('{h}/{h2}/{id}-{hash}.{ext}', MediaController::class.'@image');
-    $router->get('{h}/{h2}/{id}-{hash}_{type}{width}x{height}.{ext}', MediaController::class.'@resize');
+    $router->get('{h}/{h2}/{id}-{hash}.{ext}', 'MediaController@image');
+    $router->get('{h}/{h2}/{id}-{hash}_{type}{width}x{height}.{ext}', 'MediaController@resize');
 });
