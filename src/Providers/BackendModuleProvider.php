@@ -5,6 +5,7 @@ namespace RabbitCMS\Backend\Providers;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\AliasLoader;
+use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Routing\Router;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
@@ -75,9 +76,7 @@ class BackendModuleProvider extends ModuleProvider
                 $router->get('auth/logout', ['uses' => "{$auth}@getLogout", 'as' => 'backend.auth.logout']);
 
                 $router->group(['middleware' => ['backend.auth']], function (Router $router) use ($modules) {
-                    $modules->loadRoutes('backend', function (Module $module, array $options = []) {
-                        return array_merge($options, ['prefix' => $module->config('backend.path', $module->getName())]);
-                    });
+                    $modules->loadRoutes('backend');
                     $router->get('', [
                         'uses' => Dashboard::class.'@index',
                         'as' => 'backend.index'
@@ -113,9 +112,13 @@ class BackendModuleProvider extends ModuleProvider
             VerifyCsrfToken::class
         ]);
 
-
-        $this->app->make('router')->middleware('backend.auth', Authenticate::class);
-        $this->app->make('router')->middleware('backend.auth.base', AuthenticateWithBasicAuth::class);
+        if (version_compare(Application::VERSION, '5.4') === -1) {
+            $this->app->make('router')->middleware('backend.auth', Authenticate::class);
+            $this->app->make('router')->middleware('backend.auth.base', AuthenticateWithBasicAuth::class);
+        } else {
+            $this->app->make('router')->aliasMiddleware('backend.auth', Authenticate::class);
+            $this->app->make('router')->aliasMiddleware('backend.auth.base', AuthenticateWithBasicAuth::class);
+        }
 
         AliasLoader::getInstance(['Backend'=> BackendFacade::class]);
     }
