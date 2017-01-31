@@ -74,7 +74,9 @@
     define('bootbox', [], function() { return bootbox; });
     define('Highcharts', [], function() { return Highcharts; });
     require(["jquery", "rabbitcms.backend"], function ($, RabbitCMS) {
-        window.RabbitCMS = new RabbitCMS();
+        window.RabbitCMS = new RabbitCMS({
+            prefix: {!! json_encode(config('module.backend.path')) !!}
+        });
 
         window.RabbitCMS.onNavigate(function(link) {
             var self = $(this);

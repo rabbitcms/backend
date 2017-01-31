@@ -9,7 +9,13 @@ define(['jquery', 'bootbox'], function ($, bootbox) {
 
     var onNavigate = [];
 
-    var RabbitCMS = function () {
+    var RabbitCMS = function (options) {
+        options = $.extend({
+           prefix: '/'
+        }, options);
+
+        this.prefix = options.prefix;
+
         _this = this;
 
         window.onpopstate = function (e) {
@@ -81,7 +87,10 @@ define(['jquery', 'bootbox'], function ($, bootbox) {
         onNavigate.push(cb);
     };
 
-    RabbitCMS.prototype.navigate = function (link, pushState) {
+    RabbitCMS.prototype.navigate = function (link, pushState, prefix) {
+        if (prefix) {
+            link = ('/' + this.prefix + '/' + link).replace(/\/{2,}/, '/');
+        }
         link = link.length > 1 ? link.replace(/\/$/, '') : link;
         pushState = (pushState === undefined) ? true : pushState;
 
