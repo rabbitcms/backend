@@ -13,6 +13,7 @@ use RabbitCMS\Backend\Console\Commands\MakeConfigCommand;
 use RabbitCMS\Backend\Entities\User as UserEntity;
 use RabbitCMS\Backend\Facades\Backend as BackendFacade;
 use RabbitCMS\Backend\Http\Controllers\Backend\Auth as AuthController;
+use RabbitCMS\Backend\Http\Controllers\Backend\Config;
 use RabbitCMS\Backend\Http\Controllers\Backend\Dashboard;
 use RabbitCMS\Backend\Http\Middleware\Authenticate;
 use RabbitCMS\Backend\Http\Middleware\AuthenticateWithBasicAuth;
@@ -47,7 +48,7 @@ class BackendModuleProvider extends ModuleProvider
         ]);
 
         $modules->enabled()->each(function (Module $module) {
-            $path = $module->getPath('Config/backend.php');
+            $path = $module->getPath('config/backend.php');
             if (file_exists($path)) {
                 $value = require_once($path);
                 if (is_callable($value)) {
@@ -60,7 +61,7 @@ class BackendModuleProvider extends ModuleProvider
 
         $this->loadRoutes(function (Router $router) use ($modules) {
             $router->get('backend/config.js', [
-                'uses'=>'Config@make',
+                'uses'=> Config::class.'@make',
                 'as' => 'backend.config.js',
                 'domain' => $this->module->config('domain')
             ]);
@@ -76,11 +77,11 @@ class BackendModuleProvider extends ModuleProvider
                 $router->get('auth/logout', ['uses' => "{$auth}@getLogout", 'as' => 'backend.auth.logout']);
 
                 $router->group(['middleware' => ['backend.auth']], function (Router $router) use ($modules) {
-                    $modules->loadRoutes('backend');
                     $router->get('', [
                         'uses' => Dashboard::class.'@index',
                         'as' => 'backend.index'
                     ]);
+                    $modules->loadRoutes('backend');
                 });
             });
         });
