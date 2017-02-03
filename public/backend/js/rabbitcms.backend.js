@@ -415,7 +415,7 @@ define(['jquery', 'bootbox'], function ($, bootbox) {
     RabbitCMS.prototype.submitForm = function (form, callback) {
         form = (form instanceof jQuery) ? form : $(form);
         var link = form.attr('action');
-        var data = form.serialize();
+        var data = new FormData(form[0]);
         var _callback = function (data) {
             _this.canSubmit._match = true;
             $('[rel="back"]:first', _this._visiblePortlet).trigger('click');
@@ -424,7 +424,9 @@ define(['jquery', 'bootbox'], function ($, bootbox) {
                 callback(data);
         };
 
-        _this.ajaxPost(link, data, _callback);
+        var options = {url: link, method: 'POST', processData: false, contentType: false, data: data};
+
+        _this._ajax(options, _callback);
     };
 
     RabbitCMS.prototype.ajax = function (link, callback) {
@@ -468,6 +470,7 @@ define(['jquery', 'bootbox'], function ($, bootbox) {
                                 var result = '<ul class="list-unstyled">';
                                 try {
                                     $.each(jqXHR.responseJSON, function (key, value) {
+                                        console.log(key, value);
                                         result += '<li>' + value + '</li>'
                                     });
                                 } catch (message) {
