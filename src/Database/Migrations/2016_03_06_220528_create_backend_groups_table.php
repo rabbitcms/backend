@@ -1,9 +1,9 @@
 <?php
 
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
 
-class CreateBackendUsersTable extends Migration
+class CreateBackendGroupsTable extends Migration
 {
 
     /**
@@ -13,13 +13,10 @@ class CreateBackendUsersTable extends Migration
      */
     public function up()
     {
-        Schema::create('backend_users', function (Blueprint $table) {
+        Schema::create('backend_groups', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('email');
-            $table->string('password');
-            $table->boolean('active');
-            $table->string('remember_token');
-
+            $table->string('caption');
+            $table->text('permissions');
             $table->timestamps();
             $table->softDeletes();
         });
@@ -32,6 +29,6 @@ class CreateBackendUsersTable extends Migration
      */
     public function down()
     {
-        Schema::drop('backend_users');
+        Schema::drop('backend_groups');
     }
 }
