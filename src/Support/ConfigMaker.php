@@ -39,14 +39,15 @@ class ConfigMaker
 
         /* @var Module $module */
         foreach ($modules->enabled() as $module) {
-            $path = $module->getPath('Config/backend.php');
+            $path = $module->getPath('config/backend.php');
             $name = $module->getName();
             if (file_exists($path)) {
                 $value = require($path);
                 if (is_array($value)) {
                     if (array_key_exists('handlers', $value)) {
+                        $module_prefix = $module->config('routes.backend.prefix', $module->getName());
                         foreach ($value['handlers'] as $handler => $options) {
-                            $path = '/' . ltrim("{$prefix}/{$name}" . ($handler ? '/' : ''), '/');
+                            $path = '/' . ltrim("{$prefix}/{$module_prefix}" . ($handler ? '/' : ''), '/');
                             $handler = preg_quote($path, '/.') . $handler;
                             if (!is_array($options)) {
                                 if (is_bool($options)) {
