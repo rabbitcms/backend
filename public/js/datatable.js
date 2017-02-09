@@ -42,6 +42,7 @@ var Datatable = function() {
                 loadingMessage: 'Завантаження...',
                 dataTable: {
                     "dom": "<'row'<'col-md-8 col-sm-12'pli><'col-md-4 col-sm-12'<'table-group-actions pull-right'B>>r><'table-scrollable't><'row'<'col-md-8 col-sm-12'pli><'col-md-4 col-sm-12'>>", // datatable layout
+                    "stateSave": true,
                     "buttons": [],
                     "pageLength": 25, // default records per page
                     "lengthMenu": [
@@ -156,7 +157,54 @@ var Datatable = function() {
                             Metronic.unblockUI(tableContainer);
                         }
                     },
-
+                    /* ajax: function (data, callback, settings) {
+                        $.each(ajaxParams, function (key, value) {
+                            data[key] = value;
+                        });
+                        RabbitCMS._ajax({
+                            url: table.data('link'),
+                            method: 'post',
+                            timeout: 10000,
+                            data: data,
+                            dataType: 'json',
+                            warningTarget: tableContainer,
+                            blockTarget: tableContainer,
+                            blockOptions: {
+                                message: tableOptions.loadingMessage,
+                                overlayColor: 'none',
+                                cenrerY: true,
+                                boxed: true
+                            },
+                            success: function (result) {
+                                if (result.customActionMessage) {
+                                    RabbitCMS.alert({
+                                        type: (result.customActionStatus == 'OK' ? 'success' : 'danger'),
+                                        icon: (result.customActionStatus == 'OK' ? 'check' : 'warning'),
+                                        message: result.customActionMessage,
+                                        container: tableWrapper,
+                                        place: 'prepend'
+                                    });
+                                }
+                                if (result.customActionStatus) {
+                                    if (tableOptions.resetGroupActionInputOnSuccess) {
+                                        $('.table-group-action-input', tableWrapper).val("");
+                                    }
+                                }
+                                if ($('.group-checkable', table).length === 1) {
+                                    $('.group-checkable', table).prop("checked", false);
+                                }
+                                if (tableOptions.onSuccess) {
+                                    tableOptions.onSuccess.call(undefined, this, res);
+                                }
+                                callback(res);
+                            },
+                            error: function () {
+                                if (tableOptions.onError) {
+                                    tableOptions.onError.call(undefined, this);
+                                }
+                            }
+                        });
+                    },*/
                     "drawCallback": function(oSettings) { // run some code on table redraw
                         if (tableInitialized === false) { // check if table has been initialized
                             tableInitialized = true; // set table initialized

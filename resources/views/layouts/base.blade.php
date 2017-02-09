@@ -21,6 +21,7 @@
     <link href="{{asset_module('plugins/bootstrap-datepicker/css/datepicker3.css', 'backend')}}" rel="stylesheet" type="text/css">
     <link href="{{asset_module('plugins/bootstrap-datetimepicker/css/datetimepicker.css', 'backend')}}" rel="stylesheet" type="text/css">
     <link href="{{asset_module('plugins/bootstrap-timepicker/css/bootstrap-timepicker.css', 'backend')}}" rel="stylesheet" type="text/css">
+    <link href="{{module_asset('backend', 'plugins/datatables/media/css/jquery.dataTables.min.css')}}" rel="stylesheet" type="text/css">
     <link href="{{asset_module('plugins/datatables/plugins/bootstrap/dataTables.bootstrap.css', 'backend')}}" rel="stylesheet" type="text/css">
     <link href="{{asset_module('plugins/colorbox/colorbox.css', 'backend')}}" rel="stylesheet" type="text/css">
     <link href="{{module_asset('backend', 'plugins/jquery-file-upload/css/jquery.fileupload.css')}}" rel="stylesheet" type="text/css">
@@ -38,7 +39,7 @@
     <script src="{{asset_module('plugins/jquery.min.js', 'backend')}}" type="text/javascript"></script>
     <script src="{{asset_module('plugins/jquery-ui/jquery-ui.custom.min.js', 'backend')}}" type="text/javascript"></script>
     <script src="{{asset_module('plugins/bootstrap/js/bootstrap.min.js', 'backend')}}" type="text/javascript"></script>
-    <script src="{{asset_module('plugins/js.cookie.min.js', 'backend')}}" type="text/javascript"></script>
+    <script src="{{module_asset('backend', 'plugins/js.cookie.js')}}" type="text/javascript"></script>
     <script src="{{asset_module('plugins/jquery.block-ui.js', 'backend')}}" type="text/javascript"></script>
     <script src="{{asset_module('plugins/uniform/jquery.uniform.min.js', 'backend')}}" type="text/javascript"></script>
     <script src="{{asset_module('plugins/bootbox.js', 'backend')}}" type="text/javascript"></script>
@@ -54,9 +55,9 @@
     <script src="{{asset_module('plugins/colorbox/jquery.colorbox.js', 'backend')}}" type="text/javascript"></script>
     <script src="{{asset_module('plugins/backstretch/jquery.backstretch.min.js', 'backend')}}" type="text/javascript"></script>
     <script src="{{asset_module('plugins/fuelux/js/spinner.min.js', 'backend')}}" type="text/javascript"></script>
-    <script src="{{asset_module('plugins/tinymce/tinymce.min.js', 'backend')}}" type="text/javascript"></script>
-    <script src="{{asset_module('plugins/tinymce/jquery.tinymce.min.js', 'backend')}}" type="text/javascript"></script>
-    <script src="{{asset_module('plugins/tinymce/langs/uk_UA.js', 'backend')}}" type="text/javascript"></script>
+    <script src="{{module_asset('backend', 'plugins/tinymce/tinymce.min.js')}}" type="text/javascript"></script>
+    <script src="{{module_asset('backend', 'plugins/tinymce/jquery.tinymce.min.js')}}" type="text/javascript"></script>
+    <script src="{{module_asset('backend', 'plugins/tinymce/langs/uk_UA.js')}}" type="text/javascript"></script>
     <script src="{{asset_module('plugins/jquery.inputmask.js', 'backend')}}" type="text/javascript"></script>
     <script src="{{asset_module('plugins/highcharts.js', 'backend')}}" type="text/javascript"></script>
     <script src="{{module_asset('backend', 'plugins/bootstrap-touchspin/bootstrap.touchspin.js')}}" type="text/javascript"></script>
@@ -73,6 +74,7 @@
     define('jquery', [], function() { return jQuery; });
     define('bootbox', [], function() { return bootbox; });
     define('Highcharts', [], function() { return Highcharts; });
+    define('Cookies', [], function() { return Cookies; });
     require(["jquery", "rabbitcms.backend"], function ($, RabbitCMS) {
         window.RabbitCMS = new RabbitCMS({
             prefix: {!! json_encode(config('module.backend.path')) !!}

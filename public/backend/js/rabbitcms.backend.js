@@ -87,14 +87,14 @@ define(['jquery', 'bootbox'], function ($, bootbox) {
         onNavigate.push(cb);
     };
 
-    RabbitCMS.prototype.navigate = function (link, pushState, prefix) {
+    RabbitCMS.prototype.navigate = function (link, pushState, prefix, force) {
         if (prefix) {
             link = ('/' + this.prefix + '/' + link).replace(/\/{2,}/, '/');
         }
         link = link.length > 1 ? link.replace(/\/$/, '') : link;
         pushState = (pushState === undefined) ? true : pushState;
 
-        if (_this._cache[link] !== undefined) {
+        if (!force && _this._cache[link] !== undefined) {
             var portlet = _this._cache[link];
 
             _this.cachePortlet(link, portlet, pushState);
@@ -107,7 +107,7 @@ define(['jquery', 'bootbox'], function ($, bootbox) {
                 $('.page-content').append(portlet);
 
                 _this.cachePortlet(link, portlet, pushState);
-                _this.showPortlet(portlet);
+                _this.showPortlet(portlet, force);
             });
         }
     };
@@ -124,7 +124,7 @@ define(['jquery', 'bootbox'], function ($, bootbox) {
             history.pushState({link: link}, null, link);
     };
 
-    RabbitCMS.prototype.showPortlet = function (portlet) {
+    RabbitCMS.prototype.showPortlet = function (portlet, force) {
         if (_this._visiblePortlet == portlet)
             return false;
 
@@ -139,7 +139,7 @@ define(['jquery', 'bootbox'], function ($, bootbox) {
 
         var _toRemove = _this._visiblePortlet;
         $.map(_this._cache, function (portlet, link) {
-            if (portlet == _toRemove && portlet.data('permanent') === undefined) {
+            if ((force || portlet == _toRemove) && portlet.data('permanent') === undefined) {
                 _toRemove.remove();
                 delete _this._cache[link];
             }
@@ -273,7 +273,7 @@ define(['jquery', 'bootbox'], function ($, bootbox) {
     };
 
     RabbitCMS.prototype.initSidebar = function () {
-        if ($.cookie && $.cookie('sidebar_closed') === '1' && this.getViewPort().width >= 992) {
+        if (Cookies && Cookies('sidebar_closed') === '1' && this.getViewPort().width >= 992) {
             _Body.addClass('page-sidebar-closed');
             $('.page-sidebar-menu').addClass('page-sidebar-menu-closed');
         }
@@ -286,8 +286,8 @@ define(['jquery', 'bootbox'], function ($, bootbox) {
                 _Body.removeClass('page-sidebar-closed');
                 sidebarMenu.removeClass('page-sidebar-menu-closed');
 
-                if ($.cookie)
-                    $.cookie('sidebar_closed', '0');
+                if (Cookies)
+                    Cookies('sidebar_closed', '0');
             } else {
                 _Body.addClass('page-sidebar-closed');
                 sidebarMenu.addClass('page-sidebar-menu-closed');
@@ -295,8 +295,8 @@ define(['jquery', 'bootbox'], function ($, bootbox) {
                 if (_Body.hasClass('page-sidebar-fixed'))
                     sidebarMenu.trigger('mouseleave');
 
-                if ($.cookie)
-                    $.cookie('sidebar_closed', '1');
+                if (Cookies)
+                    Cookies('sidebar_closed', '1');
             }
 
             $(window).trigger('resize');
