@@ -5,7 +5,7 @@ namespace RabbitCMS\Backend\Http\Controllers\Backend;
 use Illuminate\Auth\AuthManager;
 use Illuminate\Contracts\Auth\StatefulGuard;
 use Illuminate\Foundation\Application;
-use Illuminate\Http\Exception\HttpResponseException;
+use Illuminate\Http\Exceptions\HttpResponseException;
 use RabbitCMS\Backend\Entities\User;
 use RabbitCMS\Modules\ModuleController;
 
