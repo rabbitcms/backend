@@ -47,16 +47,18 @@ class BackendModuleProvider extends ModuleProvider
             'model' => UserEntity::class,
         ]);
 
-        $modules->enabled()->each(function (Module $module) {
-            $path = $module->getPath('config/backend.php');
-            if (file_exists($path)) {
-                $value = require_once($path);
-                if (is_callable($value)) {
-                    $this->app->call($value);
-                } elseif (is_array($value) && array_key_exists('boot', $value) && is_callable($value['boot'])) {
-                    $this->app->call($value['boot']);
+        $this->app->booted(function () use ($modules) {
+            $modules->enabled()->each(function (Module $module) {
+                $path = $module->getPath('config/backend.php');
+                if (file_exists($path)) {
+                    $value = require_once($path);
+                    if (is_callable($value)) {
+                        $this->app->call($value);
+                    } elseif (is_array($value) && array_key_exists('boot', $value) && is_callable($value['boot'])) {
+                        $this->app->call($value['boot']);
+                    }
                 }
-            }
+            });
         });
 
         $this->loadRoutes(function (Router $router) use ($modules) {
