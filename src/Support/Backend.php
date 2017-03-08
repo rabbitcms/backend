@@ -4,6 +4,8 @@ namespace RabbitCMS\Backend\Support;
 
 use Illuminate\Contracts\Container\Container;
 use RabbitCMS\Backend\Entities\User;
+use RabbitCMS\Modules\Managers\Modules;
+use RabbitCMS\Modules\Module;
 
 class Backend
 {
@@ -62,6 +64,8 @@ class Backend
      */
     protected $menuChanged = false;
 
+    protected $loaded = false;
+
     /**
      * BackendAcl constructor.
      *
@@ -70,6 +74,28 @@ class Backend
     public function __construct(Container $container)
     {
         $this->container = $container;
+    }
+
+    /**
+     * Load backend config.
+     */
+    protected function loadConfig()
+    {
+        if ($this->loaded) {
+            return;
+        }
+        $this->container->make(Modules::class)->enabled()->each(function (Module $module) {
+            $path = $module->getPath('config/backend.php');
+            if (file_exists($path)) {
+                $value = require_once($path);
+                if (is_callable($value)) {
+                    $this->container->call($value);
+                } elseif (is_array($value) && array_key_exists('boot', $value) && is_callable($value['boot'])) {
+                    $this->container->call($value['boot']);
+                }
+            }
+        });
+        $this->loaded = true;
     }
 
     /**
@@ -131,6 +157,7 @@ class Backend
     public function getAllAcl()
     {
         if ($this->acl === null) {
+            $this->loadConfig();
             $this->acl = [];
             $this->callAll($this->aclResolvers);
         }
@@ -286,13 +313,12 @@ class Backend
     public function getMenu()
     {
         if ($this->menu === null) {
+            $this->loadConfig();
             $this->menu = [];
             ksort($this->menuResolvers, SORT_NUMERIC);
-            array_walk($this->menuResolvers,
-                function ($callbacks) {
-                    $this->callAll($callbacks);
-                }
-            );
+            array_walk($this->menuResolvers, function ($callbacks) {
+                $this->callAll($callbacks);
+            });
         }
 
         if ($this->menuChanged) {

@@ -20,7 +20,6 @@ use RabbitCMS\Backend\Http\Middleware\AuthenticateWithBasicAuth;
 use RabbitCMS\Backend\Http\Middleware\StartSession;
 use RabbitCMS\Backend\Support\Backend;
 use RabbitCMS\Modules\Managers\Modules;
-use RabbitCMS\Modules\Module;
 use RabbitCMS\Modules\ModuleProvider;
 
 /**
@@ -46,20 +45,6 @@ class BackendModuleProvider extends ModuleProvider
             'driver' => 'eloquent',
             'model' => UserEntity::class,
         ]);
-
-        $this->app->booted(function () use ($modules) {
-            $modules->enabled()->each(function (Module $module) {
-                $path = $module->getPath('config/backend.php');
-                if (file_exists($path)) {
-                    $value = require_once($path);
-                    if (is_callable($value)) {
-                        $this->app->call($value);
-                    } elseif (is_array($value) && array_key_exists('boot', $value) && is_callable($value['boot'])) {
-                        $this->app->call($value['boot']);
-                    }
-                }
-            });
-        });
 
         $this->loadRoutes(function (Router $router) use ($modules) {
             $router->get('backend/config.js', [
