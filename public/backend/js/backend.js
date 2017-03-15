@@ -22,21 +22,20 @@ define(["require", "exports", "jquery", "i18n!rabbitcms/nls/backend", "rabbitcms
         return State;
     }());
     exports.State = State;
+    var StateType;
     (function (StateType) {
         StateType[StateType["NoPush"] = 0] = "NoPush";
         StateType[StateType["None"] = 1] = "None";
         StateType[StateType["Push"] = 2] = "Push";
         StateType[StateType["Replace"] = 3] = "Replace";
-    })(exports.StateType || (exports.StateType = {}));
-    var StateType = exports.StateType;
-    var Stack = (function (_super) {
-        __extends(Stack, _super);
+    })(StateType = exports.StateType || (exports.StateType = {}));
+    var Stack = (function () {
         function Stack() {
             var _this = this;
-            _super.call(this);
             this._position = -1;
             this._previous = -1;
             this.index = 0;
+            this.states = [];
             if (history.state && history.state.index) {
                 this.index = history.state.index;
             }
@@ -82,9 +81,9 @@ define(["require", "exports", "jquery", "i18n!rabbitcms/nls/backend", "rabbitcms
         });
         Stack.prototype.add = function (state, type) {
             if (type === void 0) { type = StateType.Push; }
-            this.length = this._position + 1;
+            this.states.length = this._position + 1;
             this._previous = this._position;
-            this._position = _super.prototype.push.call(this, state) - 1;
+            this._position = this.states.push(state) - 1;
             switch (type) {
                 case StateType.Push:
                     history.pushState({ state: this._position, link: state.link, index: ++this.index }, null, state.link);
@@ -99,10 +98,10 @@ define(["require", "exports", "jquery", "i18n!rabbitcms/nls/backend", "rabbitcms
             if (index < 0) {
                 return null;
             }
-            if (index >= this.length) {
+            if (index >= this.states.length) {
                 return null;
             }
-            return this[index];
+            return this.states[index];
         };
         Stack.prototype.go = function (index, link, replay) {
             var _this = this;
@@ -137,11 +136,11 @@ define(["require", "exports", "jquery", "i18n!rabbitcms/nls/backend", "rabbitcms
             }
         };
         return Stack;
-    }(Array));
+    }());
     var RabbitCMS = (function (_super) {
         __extends(RabbitCMS, _super);
         function RabbitCMS() {
-            _super.apply(this, arguments);
+            return _super.apply(this, arguments) || this;
         }
         /**
          * Init RabbitCMS backend.
@@ -595,13 +594,13 @@ define(["require", "exports", "jquery", "i18n!rabbitcms/nls/backend", "rabbitcms
             this.blockUI(options.blockTarget, options.blockOptions);
             return $.ajax(options);
         };
-        RabbitCMS._stack = new Stack();
-        RabbitCMS.menu = '';
-        RabbitCMS._locale = 'en';
-        RabbitCMS._handlers = [];
-        RabbitCMS.prefix = 'admin';
         return RabbitCMS;
     }(metronic_1.Metronic));
+    RabbitCMS._stack = new Stack();
+    RabbitCMS.menu = '';
+    RabbitCMS._locale = 'en';
+    RabbitCMS._handlers = [];
+    RabbitCMS.prefix = 'admin';
     exports.RabbitCMS = RabbitCMS;
     var Dialogs = (function () {
         function Dialogs() {

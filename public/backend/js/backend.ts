@@ -1,5 +1,4 @@
 /// <reference path="../dt/index.d.ts" />
-
 import * as $ from "jquery";
 import "jquery.cookie";
 import * as i18n from "i18n!rabbitcms/nls/backend";
@@ -52,12 +51,13 @@ export interface ReplayFunc {
     ():void;
 }
 
-class Stack extends Array<State> {
+class Stack {
 
     private _position:number = -1;
     private _previous:number = -1;
     private handleEvent:JQueryEventObject;
     private index:number = 0;
+    private states: Array<State> = [];
 
     get current():State {
         return this.fetch(this._position);
@@ -72,7 +72,6 @@ class Stack extends Array<State> {
     }
 
     constructor() {
-        super();
         if (history.state && history.state.index) {
             this.index = history.state.index;
         }
@@ -96,9 +95,9 @@ class Stack extends Array<State> {
     }
 
     public add(state:State, type:StateType = StateType.Push):number {
-        this.length = this._position + 1;
+        this.states.length = this._position + 1;
         this._previous = this._position;
-        this._position = super.push(state) - 1;
+        this._position = this.states.push(state) - 1;
         switch (type) {
             case StateType.Push:
                 history.pushState({state: this._position, link: state.link, index: ++this.index}, null, state.link);
@@ -115,11 +114,11 @@ class Stack extends Array<State> {
         if (index < 0) {
             return null;
         }
-        if (index >= this.length) {
+        if (index >= this.states.length) {
             return null
         }
 
-        return this[index];
+        return this.states[index];
     }
 
     private go(index:number, link:string, replay:ReplayFunc) {
