@@ -3,7 +3,7 @@ define(["require", "exports", "jquery", "rabbitcms/backend", "rabbitcms/datatabl
     var Groups = (function (_super) {
         __extends(Groups, _super);
         function Groups() {
-            _super.apply(this, arguments);
+            return _super !== null && _super.apply(this, arguments) || this;
         }
         Groups.prototype.table = function (portlet) {
             var dataTable = new datatable_1.DataTable({

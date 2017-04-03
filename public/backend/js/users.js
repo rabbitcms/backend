@@ -3,7 +3,7 @@ define(["require", "exports", "jquery", "rabbitcms/backend", "rabbitcms/datatabl
     var User = (function (_super) {
         __extends(User, _super);
         function User() {
-            _super.apply(this, arguments);
+            return _super !== null && _super.apply(this, arguments) || this;
         }
         User.prototype.table = function (portlet) {
             var dataTable = new datatable_1.DataTable({

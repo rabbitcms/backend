@@ -501,28 +501,44 @@ export class RabbitCMS extends Metronic {
             icon: ''
         }, options);
 
-        var html = $('<div></div>').addClass('rabbit-alert alert alert-' + options.type + ' fade in');
-        if (options.close)
-            html.append('<button type="button" class="close" data-dismiss="alert" aria-hidden="true"></button>');
+        let html = $('<div></div>').addClass('rabbit-alert alert alert-' + options.type + ' fade in');
 
-        if (options.icon !== '')
+        if (options.close) {
+            html.append('<button type="button" class="close" data-dismiss="alert" aria-hidden="true"></button>');
+        }
+
+        if (options.icon !== '') {
             html.append('<i class="fa-lg fa ' + options.icon + '"></i>  ');
+        }
 
         html.append(options.message);
 
-        if (options.reset)
+        if (options.reset) {
             $('.rabbit-alert').remove();
+        }
 
-        var _container = (!options.container) ? this._stack.current.widget.find('.portlet-body')
-            : options.container;
+        let _container;
+        if (!options.container) {
+            let tmp = this._stack.current.widget.find('.portlet-body');
 
-        if (options.place == 'append')
+            if (tmp.hasClass('form')) {
+                _container = tmp.find('.form-body');
+            } else {
+                _container = tmp;
+            }
+        } else {
+            _container = options.container;
+        }
+
+        if (options.place == 'append') {
             _container.append(html);
-        else
+        } else {
             _container.prepend(html);
+        }
 
-        if (options.focus)
+        if (options.focus) {
             this.scrollTo(html);
+        }
 
         if (options.timeout > 0) {
             setTimeout(function () {
@@ -532,12 +548,12 @@ export class RabbitCMS extends Metronic {
     }
 
     static dangerMessage(message:string, target?:JQuery) {
-        var options = {container: target, type: 'danger', message: message, icon: 'fa-warning'};
+        let options = {container: target, type: 'danger', message: message, icon: 'fa-warning'};
         this.message(options);
     }
 
     static customMessage(message:string, type:string, target?:JQuery) {
-        var options = {container: target, type: type, message: message};
+        let options = {container: target, type: type, message: message};
         this.message(options);
     }
 
@@ -644,7 +660,7 @@ export class RabbitCMS extends Metronic {
      * @param {JQueryAjaxSettings} options
      */
     static ajax(options:AjaxSettings):JQueryXHR {
-        var originalOptions = options;
+        let originalOptions = options;
 
         options = $.extend(true, {
             headers:{

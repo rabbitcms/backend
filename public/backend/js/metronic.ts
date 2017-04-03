@@ -294,6 +294,12 @@ export class Metronic {
         });
     }
 
+    static TouchSpin(target: JQuery, options: any) {
+        require(['bootstrap-touchspin'], () => {
+            target.TouchSpin(options);
+        });
+    }
+
     static handlePortletTools() {
         let $body = $('body');
         // handle portlet remove

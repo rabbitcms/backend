@@ -1,6 +1,6 @@
-/// <reference path="../dt/index.d.ts" />
 define(["require", "exports", "jquery", "i18n!rabbitcms/nls/backend", "rabbitcms/metronic", "jquery.cookie"], function (require, exports, $, i18n, metronic_1) {
     "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
     var $body = $('body');
     var _visiblePortlet = $();
     var _token = '';
@@ -140,7 +140,7 @@ define(["require", "exports", "jquery", "i18n!rabbitcms/nls/backend", "rabbitcms
     var RabbitCMS = (function (_super) {
         __extends(RabbitCMS, _super);
         function RabbitCMS() {
-            return _super.apply(this, arguments) || this;
+            return _super !== null && _super.apply(this, arguments) || this;
         }
         /**
          * Init RabbitCMS backend.
@@ -443,21 +443,38 @@ define(["require", "exports", "jquery", "i18n!rabbitcms/nls/backend", "rabbitcms
                 icon: ''
             }, options);
             var html = $('<div></div>').addClass('rabbit-alert alert alert-' + options.type + ' fade in');
-            if (options.close)
+            if (options.close) {
                 html.append('<button type="button" class="close" data-dismiss="alert" aria-hidden="true"></button>');
-            if (options.icon !== '')
+            }
+            if (options.icon !== '') {
                 html.append('<i class="fa-lg fa ' + options.icon + '"></i>  ');
+            }
             html.append(options.message);
-            if (options.reset)
+            if (options.reset) {
                 $('.rabbit-alert').remove();
-            var _container = (!options.container) ? this._stack.current.widget.find('.portlet-body')
-                : options.container;
-            if (options.place == 'append')
+            }
+            var _container;
+            if (!options.container) {
+                var tmp = this._stack.current.widget.find('.portlet-body');
+                if (tmp.hasClass('form')) {
+                    _container = tmp.find('.form-body');
+                }
+                else {
+                    _container = tmp;
+                }
+            }
+            else {
+                _container = options.container;
+            }
+            if (options.place == 'append') {
                 _container.append(html);
-            else
+            }
+            else {
                 _container.prepend(html);
-            if (options.focus)
+            }
+            if (options.focus) {
                 this.scrollTo(html);
+            }
             if (options.timeout > 0) {
                 setTimeout(function () {
                     html.remove();

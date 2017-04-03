@@ -1,5 +1,6 @@
 define(["require", "exports", "rabbitcms/backend", "bootstrap-daterangepicker", "css!bootstrap-daterangepicker/css/daterangepicker.css"], function (require, exports, backend_1) {
     "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
     var lang = backend_1.RabbitCMS.getLocale(new Map()
         .set('pt_BR', 'pt-BR')
         .set('pt_PT', 'pt')

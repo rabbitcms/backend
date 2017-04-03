@@ -1,24 +1,25 @@
 /// <reference path="../dt/index.d.ts" />
 define(["require", "exports", "jquery"], function (require, exports, $) {
     "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    var ResponsiveBreakpointSize;
     (function (ResponsiveBreakpointSize) {
         ResponsiveBreakpointSize[ResponsiveBreakpointSize["xs"] = 480] = "xs";
         ResponsiveBreakpointSize[ResponsiveBreakpointSize["sm"] = 768] = "sm";
         ResponsiveBreakpointSize[ResponsiveBreakpointSize["md"] = 992] = "md";
         ResponsiveBreakpointSize[ResponsiveBreakpointSize["lg"] = 1200] = "lg";
-    })(exports.ResponsiveBreakpointSize || (exports.ResponsiveBreakpointSize = {}));
-    var ResponsiveBreakpointSize = exports.ResponsiveBreakpointSize;
+    })(ResponsiveBreakpointSize = exports.ResponsiveBreakpointSize || (exports.ResponsiveBreakpointSize = {}));
     var BrandColors = (function () {
         function BrandColors() {
         }
-        BrandColors.blue = '#89C4F4';
-        BrandColors.red = '#F3565D';
-        BrandColors.green = '#1bbc9b';
-        BrandColors.purple = '#9b59b6';
-        BrandColors.grey = '#95a5a6';
-        BrandColors.yellow = '#F8CB00';
         return BrandColors;
     }());
+    BrandColors.blue = '#89C4F4';
+    BrandColors.red = '#F3565D';
+    BrandColors.green = '#1bbc9b';
+    BrandColors.purple = '#9b59b6';
+    BrandColors.grey = '#95a5a6';
+    BrandColors.yellow = '#F8CB00';
     exports.BrandColors = BrandColors;
     var Metronic = (function () {
         function Metronic() {
@@ -237,6 +238,11 @@ define(["require", "exports", "jquery"], function (require, exports, $) {
         Metronic.maskMoney = function (target, options) {
             require(['jquery.maskMoney'], function () {
                 target.maskMoney(options);
+            });
+        };
+        Metronic.TouchSpin = function (target, options) {
+            require(['bootstrap-touchspin'], function () {
+                target.TouchSpin(options);
             });
         };
         Metronic.handlePortletTools = function () {
@@ -770,11 +776,11 @@ define(["require", "exports", "jquery"], function (require, exports, $) {
             return sidebarHeight;
         };
         ;
-        Metronic._isRTL = false;
-        Metronic.resizeHandlers = [];
-        Metronic.assetsPath = '../assets/';
         return Metronic;
     }());
+    Metronic._isRTL = false;
+    Metronic.resizeHandlers = [];
+    Metronic.assetsPath = '../assets/';
     exports.Metronic = Metronic;
 });
 // function A() {

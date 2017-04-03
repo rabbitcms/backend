@@ -1,6 +1,7 @@
 /// <reference path="../dt/index.d.ts" />
 define(["require", "exports", "jquery", "jszip", "rabbitcms/backend", "i18n!rabbitcms/nls/datatable", "pdfmake", "pdfmake/vfs_fonts", "datatables.net", "datatables.net-bs", "datatables.net-buttons", "datatables.net-buttons/js/buttons.bootstrap.min", "datatables.net-buttons/js/buttons.colVis.min", "datatables.net-buttons/js/buttons.html5.min", "datatables.net-buttons/js/buttons.print.min", "datatables.net-colReorder", "datatables.net-colReorder", "css!datatables.net-buttons/css/buttons.bootstrap.min.css"], function (require, exports, $, jszip, backend_1, i18n) {
     "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
     window['JSZip'] = jszip;
     /***
      Wrapper/Helper Class for datagrid based on jQuery Datatable Plugin

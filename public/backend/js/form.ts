@@ -105,6 +105,7 @@ export class Form {
         this.syncOriginal();
         if (this.options.ajax !== false) {
             let options = $.extend(true, {
+                warningTarget: this.form.find('.form-body:first'),
                 blockTarget: this.form,
                 url: this.form.attr('action'),
                 method: this.form.attr('method'),
@@ -115,17 +116,49 @@ export class Form {
                     }
                 },
                 error: (jqXHR: JQueryXHR) => {
-                    let responseText = '<ul class="list-unstyled">';
+                    let form = this.form;
+                    let error_placement = form.data('error-placement');
+
+                    let errors = {};
                     if (jqXHR.status === 422) {
-                        $.each(jqXHR.responseJSON, function (key, value) {
-                            responseText += '<li>' + value + '</li>'
+                        $.each(jqXHR.responseJSON, function (key, values) {
+                            errors[key] = values[0];
                         });
                     } else {
-                        responseText += '<li>' + jqXHR.responseText + '</li>'
+                        errors[0] = jqXHR.responseText;
                     }
-                    responseText += '</ul>';
 
-                    RabbitCMS.customMessage(responseText, 'danger', this.form.find('.form-body:first'));
+                    if (error_placement === 'inline') {
+                        $('.error-block', form).remove();
+
+                        $.each(errors, function (key, value) {
+                            let element = $('[name="' + key + '"]', form);
+                            let help_block = element.siblings('div.error-block').length
+                                ? element.siblings('div.error-block').first()
+                                : $('<div class="help-block error-block"></div>');
+
+                            if (!element.siblings('div.error-block').length) {
+                                element.parent().append(help_block);
+                            }
+
+                            console.log(key, element.siblings('div.help-block'));
+
+                            element.closest('.form-group')
+                                .addClass('has-error');
+
+                            help_block.text(value);
+                        });
+                    } else {
+                        let responseText = '<ul class="list-unstyled">';
+
+                        $.each(errors, function (key, value) {
+                            responseText += '<li>' + value + '</li>'
+                        });
+
+                        responseText += '</ul>';
+
+                        RabbitCMS.customMessage(responseText, 'danger', this.form.find('.form-body:first'));
+                    }
                 }
             }, this.options.ajax);
 

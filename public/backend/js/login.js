@@ -1,6 +1,7 @@
 /// <reference path="../dt/index.d.ts" />
 define(["require", "exports", "jquery", "rabbitcms/backend", "jquery.backstretch", "jquery.validation"], function (require, exports, $, backend_1) {
     "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
     function init(portlet) {
         var _imgPath = backend_1.RabbitCMS.getAssetsPath() + '/img/bg/';
         var _images = [_imgPath + '1.jpg', _imgPath + '2.jpg', _imgPath + '3.jpg', _imgPath + '4.jpg'];

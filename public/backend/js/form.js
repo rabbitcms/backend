@@ -1,5 +1,6 @@
-define(["require", "exports", 'jquery', "rabbitcms/backend", "i18n!rabbitcms/nls/backend"], function (require, exports, $, backend_1, i18n) {
+define(["require", "exports", "jquery", "rabbitcms/backend", "i18n!rabbitcms/nls/backend"], function (require, exports, $, backend_1, i18n) {
     "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
     var Form = (function () {
         function Form(form, options) {
             var _this = this;
@@ -85,6 +86,7 @@ define(["require", "exports", 'jquery', "rabbitcms/backend", "i18n!rabbitcms/nls
             this.syncOriginal();
             if (this.options.ajax !== false) {
                 var options = $.extend(true, {
+                    warningTarget: this.form.find('.form-body:first'),
                     blockTarget: this.form,
                     url: this.form.attr('action'),
                     method: this.form.attr('method'),
@@ -95,17 +97,41 @@ define(["require", "exports", 'jquery', "rabbitcms/backend", "i18n!rabbitcms/nls
                         }
                     },
                     error: function (jqXHR) {
-                        var responseText = '<ul class="list-unstyled">';
+                        var form = _this.form;
+                        var error_placement = form.data('error-placement');
+                        var errors = {};
                         if (jqXHR.status === 422) {
-                            $.each(jqXHR.responseJSON, function (key, value) {
-                                responseText += '<li>' + value + '</li>';
+                            $.each(jqXHR.responseJSON, function (key, values) {
+                                errors[key] = values[0];
                             });
                         }
                         else {
-                            responseText += '<li>' + jqXHR.responseText + '</li>';
+                            errors[0] = jqXHR.responseText;
                         }
-                        responseText += '</ul>';
-                        backend_1.RabbitCMS.customMessage(responseText, 'danger', _this.form.find('.form-body:first'));
+                        if (error_placement === 'inline') {
+                            $('.error-block', form).remove();
+                            $.each(errors, function (key, value) {
+                                var element = $('[name="' + key + '"]', form);
+                                var help_block = element.siblings('div.error-block').length
+                                    ? element.siblings('div.error-block').first()
+                                    : $('<div class="help-block error-block"></div>');
+                                if (!element.siblings('div.error-block').length) {
+                                    element.parent().append(help_block);
+                                }
+                                console.log(key, element.siblings('div.help-block'));
+                                element.closest('.form-group')
+                                    .addClass('has-error');
+                                help_block.text(value);
+                            });
+                        }
+                        else {
+                            var responseText_1 = '<ul class="list-unstyled">';
+                            $.each(errors, function (key, value) {
+                                responseText_1 += '<li>' + value + '</li>';
+                            });
+                            responseText_1 += '</ul>';
+                            backend_1.RabbitCMS.customMessage(responseText_1, 'danger', _this.form.find('.form-body:first'));
+                        }
                     }
                 }, this.options.ajax);
                 backend_1.RabbitCMS.ajax(options);

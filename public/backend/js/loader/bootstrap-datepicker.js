@@ -6,7 +6,7 @@ define(["require", "exports", "jquery", "rabbitcms/backend", "bootstrap-datepick
         .set('ru_RU', 'ru')
         .set('uk_UA', 'uk'));
     return new Promise(function (resolve) {
-        require([("bootstrap-datepicker/locales/bootstrap-datepicker." + lang + ".min")], function () {
+        require(["bootstrap-datepicker/locales/bootstrap-datepicker." + lang + ".min"], function () {
             $.fn.datepicker.defaults.language = lang;
             $.fn.datepicker.defaults.autoclose = true;
             resolve();
