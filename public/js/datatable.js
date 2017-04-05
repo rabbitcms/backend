@@ -262,13 +262,13 @@ var Datatable = function() {
             });
 
             // handle filter submit button click
-            table.on('click', '.filter-submit', function(e) {
+            tableContainer.on('click', '.filter-submit', function(e) {
                 e.preventDefault();
                 the.submitFilter();
             });
 
             // handle filter cancel button click
-            table.on('click', '.filter-cancel', function(e) {
+            tableContainer.on('click', '.filter-cancel', function(e) {
                 e.preventDefault();
                 the.resetFilter();
             });
