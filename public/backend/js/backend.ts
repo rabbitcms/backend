@@ -299,7 +299,7 @@ export class RabbitCMS extends Metronic {
         this.execute(handler.module, handler.exec !== void 0 ? handler.exec : 'init', widget, state);
     }
 
-    private static execute(module:string, exec:string = 'init', ...params) :Promise<any> {
+    public static execute(module:string, exec:string = 'init', ...params) :Promise<any> {
         return new Promise<any> ((resolve, reject) => {
             require([module], function (_module) {
                 resolve(_module[exec](...params));

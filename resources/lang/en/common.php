@@ -1,4 +1,5 @@
 <?php
+declare(strict_types = 1);
 
 return [
     'not_selected'   => 'Not selected',
@@ -15,4 +16,5 @@ return [
     'back'           => 'Back',
     'cancel'         => 'Cancel',
     'all'            => 'All',
+    'ok'            => 'OK'
 ];

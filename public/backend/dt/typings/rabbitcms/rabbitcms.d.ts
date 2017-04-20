@@ -233,6 +233,8 @@ declare module 'rabbitcms/backend' {
 
         static setMenu(menu: string);
 
+        static execute(module: string, exec: string, ...params) :Promise <any>
+
         /**
          * Ajax wrapper.
          * @param {JQueryAjaxSettings} options
