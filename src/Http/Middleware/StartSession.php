@@ -15,6 +15,7 @@ class StartSession extends StartSessionMiddleware
     {
         $config->set('session.table', 'backend_sessions');
         $config->set('session.driver', 'database');
+        $config->set('auth.defaults.guard', 'backend');
         parent::__construct($manager);
     }
 }
