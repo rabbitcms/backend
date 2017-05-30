@@ -292,7 +292,22 @@ var Datatable = function() {
                 the.setAjaxParam($(this).attr("name"), $(this).val());
             });
 
+            var eventData = the.trigger('beforeSubmitFilter');
+            if (eventData) {
+                the.setAjaxParam("qBuilder", eventData.filters);
+            } else {
+                the.setAjaxParam("qBuilder", {});
+            }
+
             dataTable.ajax.reload();
+        },
+
+        trigger: function(eventType) {
+            var event = new $.Event(eventType);
+
+            table.triggerHandler(event);
+
+            return event.data;
         },
 
         resetFilter: function() {
@@ -305,6 +320,9 @@ var Datatable = function() {
             the.clearAjaxParams();
             the.setAjaxParam('_token', _TOKEN);
             the.addAjaxParam("action", tableOptions.filterCancelAction);
+
+            the.trigger('beforeResetFilter');
+
             dataTable.ajax.reload();
         },
 

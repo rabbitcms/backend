@@ -64,6 +64,10 @@ define(['jquery', 'bootbox'], function ($, bootbox) {
         _this.initSidebar();
     };
 
+    RabbitCMS.prototype.getPrefix = function () {
+        return _this.prefix;
+    };
+
     RabbitCMS.prototype._cache = {};
 
     RabbitCMS.prototype._visiblePortlet = $();

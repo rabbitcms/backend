@@ -65,6 +65,7 @@
     <script src="{{module_asset('backend', 'plugins/jquery-file-upload/js/jquery.fileupload.js')}}" type="text/javascript"></script>
     <script src="{{module_asset('backend', 'plugins/moment.min.js')}}" type="text/javascript"></script>
     <script src="{{module_asset('backend', 'plugins/bootstrap-daterangepicker/daterangepicker.js')}}" type="text/javascript"></script>
+    <script src="{{module_asset('backend', 'plugins/jquery.maskMoney.js')}}" type="text/javascript"></script>
 
     <script src="{{asset_module('js/metronic.js', 'backend')}}" type="text/javascript"></script>
     <script src="{{asset_module('js/datatable.js', 'backend')}}" type="text/javascript"></script>
