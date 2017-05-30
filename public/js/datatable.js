@@ -302,6 +302,40 @@ var Datatable = function() {
             dataTable.ajax.reload();
         },
 
+        exportHandler: function (link) {
+            var params = {};
+            var form = $('<form/>')
+                .attr('action', link)
+                .attr('target', '_blank')
+                .attr('method', 'post')
+                .css({'display': 'none'});
+
+            var eventData = the.trigger('beforeSubmitFilter');
+            if (eventData) {
+                params['qBuilder'] = eventData.filters;
+            } else {
+                params['qBuilder'] = {};
+            }
+
+            params['_token'] = _TOKEN;
+            $('.form-filter', table).each(function () {
+                var self = $(this);
+                params[self.attr('name')] = self.val();
+            });
+
+            $.each(params, function(name, value) {
+                form.append(
+                    $('<input/>').attr('type', 'hidden')
+                        .attr('name', name)
+                        .attr('value', value)
+                );
+            });
+
+            tableContainer.append(form);
+            form.submit();
+            form.remove();
+        },
+
         trigger: function(eventType) {
             var event = new $.Event(eventType);
 
