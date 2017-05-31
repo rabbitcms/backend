@@ -313,8 +313,6 @@ var Datatable = function() {
             var eventData = the.trigger('beforeSubmitFilter');
             if (eventData) {
                 params['qBuilder'] = eventData.filters;
-            } else {
-                params['qBuilder'] = '{}';
             }
 
             params['_token'] = _TOKEN;
