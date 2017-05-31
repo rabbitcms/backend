@@ -314,7 +314,7 @@ var Datatable = function() {
             if (eventData) {
                 params['qBuilder'] = eventData.filters;
             } else {
-                params['qBuilder'] = {};
+                params['qBuilder'] = '{}';
             }
 
             params['_token'] = _TOKEN;
