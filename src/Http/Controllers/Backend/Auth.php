@@ -1,38 +1,34 @@
-<?php namespace RabbitCMS\Backend\Http\Controllers\Backend;
+<?php
+declare(strict_types=1);
 
-use Illuminate\Foundation\Validation\ValidatesRequests;
+namespace RabbitCMS\Backend\Http\Controllers\Backend;
+
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
 use Illuminate\View\View;
-use RabbitCMS\Backend\Support\Metronic;
+use RabbitCMS\Backend\Http\Requests\LoginRequest;
 
+/**
+ * Class Auth
+ *
+ * @package RabbitCMS\Backend\Http\Controllers\Backend
+ */
 class Auth extends Controller
 {
-    use ValidatesRequests;
-
     /**
      * @return View
      */
-    public function getLogin():View
+    public function getLogin(): View
     {
         return $this->view('auth.login');
     }
 
     /**
-     * @param Request $request
+     * @param LoginRequest $request
      *
      * @return RedirectResponse
      */
-    public function postLogin(Request $request):RedirectResponse
+    public function postLogin(LoginRequest $request): RedirectResponse
     {
-        $this->validate(
-            $request,
-            [
-                'email' => 'required|email',
-                'password' => 'required',
-            ]
-        );
-
         $credentials = $request->only('email', 'password');
         $credentials['active'] = 1;
         if ($this->guard()->attempt($credentials, $request->has('remember'))) {
@@ -41,13 +37,13 @@ class Auth extends Controller
 
         return \Redirect::route('backend.auth')
             ->withInput($request->only('email'))
-            ->withErrors(['email' => trans('backend::login.wrong credentials')]);
+            ->withErrors(['credentials' => trans('backend::login.wrong credentials')]);
     }
 
     /**
      * @return RedirectResponse
      */
-    public function getLogout():RedirectResponse
+    public function getLogout(): RedirectResponse
     {
         $this->guard()->logout();
 

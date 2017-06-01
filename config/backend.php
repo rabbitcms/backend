@@ -133,6 +133,10 @@ return [
             'bootstrap-touchspin' => [
                 'location' => 'plugins/bootstrap-touchspin',
                 'main' => 'bootstrap.touchspin'
+            ],
+            'moment' => [
+                'location' => 'plugins/moment',
+                'main' => 'moment'
             ]
         ],
         'modules'  => [

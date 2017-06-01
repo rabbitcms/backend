@@ -72,8 +72,12 @@ export class Form {
         }
 
         if (this.options.validation !== false) {
-            require(['rabbitcms/loader/validation'], ()=> {
+            require(['rabbitcms/loader/validation'], () => {
                 let options = $.extend(true, {
+                    onfocusout: function(element) {
+                        $(element).closest('.form-group').removeClass('has-error')
+                            .find('.help-block').remove();
+                    },
                     submitHandler: () => {
                         this.submitForm();
                     }
@@ -117,43 +121,38 @@ export class Form {
                 },
                 error: (jqXHR: JQueryXHR) => {
                     let form = this.form;
-                    let error_placement = form.data('error-placement');
+                    let errorPlacement = form.data('error-placement');
 
-                    let errors = {};
-                    if (jqXHR.status === 422) {
-                        $.each(jqXHR.responseJSON, function (key, values) {
-                            errors[key] = values[0];
-                        });
-                    } else {
-                        errors[0] = jqXHR.responseText;
-                    }
-
-                    if (error_placement === 'inline') {
+                    if (errorPlacement === 'inline') {
                         $('.error-block', form).remove();
 
-                        $.each(errors, function (key, value) {
-                            let element = $('[name="' + key + '"]', form);
-                            let help_block = element.siblings('div.error-block').length
-                                ? element.siblings('div.error-block').first()
-                                : $('<div class="help-block error-block"></div>');
+                        if (jqXHR.status === 422) {
+                            $.each(jqXHR.responseJSON, function (key, values) {
+                                let element = $('[name="' + key + '"]', form);
+                                let helpBlock = element.siblings('div.error-block').length
+                                    ? element.siblings('div.error-block').first()
+                                    : $('<div class="help-block error-block"></div>');
 
-                            if (!element.siblings('div.error-block').length) {
-                                element.parent().append(help_block);
-                            }
+                                if (!element.siblings('div.error-block').length) {
+                                    element.parent().append(helpBlock);
+                                }
 
-                            console.log(key, element.siblings('div.help-block'));
+                                element.closest('.form-group')
+                                    .addClass('has-error');
 
-                            element.closest('.form-group')
-                                .addClass('has-error');
-
-                            help_block.text(value);
-                        });
+                                helpBlock.text(values[0]);
+                            });
+                        }
                     } else {
                         let responseText = '<ul class="list-unstyled">';
 
-                        $.each(errors, function (key, value) {
-                            responseText += '<li>' + value + '</li>'
-                        });
+                        if (jqXHR.status === 422) {
+                            $.each(jqXHR.responseJSON, function (key, values) {
+                                responseText += '<li>' + values[0] + '</li>';
+                            });
+                        } else {
+                            responseText += '<li>' + jqXHR.responseText + '</li>';
+                        }
 
                         responseText += '</ul>';
 

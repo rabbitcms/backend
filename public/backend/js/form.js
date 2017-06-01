@@ -57,6 +57,10 @@ define(["require", "exports", "jquery", "rabbitcms/backend", "i18n!rabbitcms/nls
             if (this.options.validation !== false) {
                 require(['rabbitcms/loader/validation'], function () {
                     var options = $.extend(true, {
+                        onfocusout: function (element) {
+                            $(element).closest('.form-group').removeClass('has-error')
+                                .find('.help-block').remove();
+                        },
                         submitHandler: function () {
                             _this.submitForm();
                         }
@@ -98,37 +102,34 @@ define(["require", "exports", "jquery", "rabbitcms/backend", "i18n!rabbitcms/nls
                     },
                     error: function (jqXHR) {
                         var form = _this.form;
-                        var error_placement = form.data('error-placement');
-                        var errors = {};
-                        if (jqXHR.status === 422) {
-                            $.each(jqXHR.responseJSON, function (key, values) {
-                                errors[key] = values[0];
-                            });
-                        }
-                        else {
-                            errors[0] = jqXHR.responseText;
-                        }
-                        if (error_placement === 'inline') {
+                        var errorPlacement = form.data('error-placement');
+                        if (errorPlacement === 'inline') {
                             $('.error-block', form).remove();
-                            $.each(errors, function (key, value) {
-                                var element = $('[name="' + key + '"]', form);
-                                var help_block = element.siblings('div.error-block').length
-                                    ? element.siblings('div.error-block').first()
-                                    : $('<div class="help-block error-block"></div>');
-                                if (!element.siblings('div.error-block').length) {
-                                    element.parent().append(help_block);
-                                }
-                                console.log(key, element.siblings('div.help-block'));
-                                element.closest('.form-group')
-                                    .addClass('has-error');
-                                help_block.text(value);
-                            });
+                            if (jqXHR.status === 422) {
+                                $.each(jqXHR.responseJSON, function (key, values) {
+                                    var element = $('[name="' + key + '"]', form);
+                                    var helpBlock = element.siblings('div.error-block').length
+                                        ? element.siblings('div.error-block').first()
+                                        : $('<div class="help-block error-block"></div>');
+                                    if (!element.siblings('div.error-block').length) {
+                                        element.parent().append(helpBlock);
+                                    }
+                                    element.closest('.form-group')
+                                        .addClass('has-error');
+                                    helpBlock.text(values[0]);
+                                });
+                            }
                         }
                         else {
                             var responseText_1 = '<ul class="list-unstyled">';
-                            $.each(errors, function (key, value) {
-                                responseText_1 += '<li>' + value + '</li>';
-                            });
+                            if (jqXHR.status === 422) {
+                                $.each(jqXHR.responseJSON, function (key, values) {
+                                    responseText_1 += '<li>' + values[0] + '</li>';
+                                });
+                            }
+                            else {
+                                responseText_1 += '<li>' + jqXHR.responseText + '</li>';
+                            }
                             responseText_1 += '</ul>';
                             backend_1.RabbitCMS.customMessage(responseText_1, 'danger', _this.form.find('.form-body:first'));
                         }

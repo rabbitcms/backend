@@ -75,6 +75,7 @@ export class DataTable {
     constructor(options:DataTableOptions) {
         // default settings
         let filters = $('.form-filter', options.src);
+
         options = $.extend(true, {
             src: "", // actual table
             filterApplyAction: "filter",
@@ -95,6 +96,7 @@ export class DataTable {
                 processing: false, // enable/disable display message box on record load
                 serverSide: true, // enable/disable server side ajax loading
                 stateSave: true,
+                /* deferLoading: 0, */ //TODO: Решыть проблему с лтшним обновлением таблицы
                 stateLoadParams: (settings:DataTables.SettingsLegacy, data:Object):void => {
                     if (filters.length) {
                         filters.each((index, elem) => {
@@ -102,10 +104,11 @@ export class DataTable {
                             let name = $(elem).attr('name');
 
                             if (data.hasOwnProperty(name))
-                                filter.val(data[name])
-                                    .change();
+                                filter.val(data[name]);
                         });
                     }
+
+                    this.submitFilter();
                 },
                 stateSaveParams: (settings:DataTables.SettingsLegacy, data:Object):Object => {
                     filters.each(function() {

@@ -32,16 +32,17 @@ define(["require", "exports", "jquery", "jszip", "rabbitcms/backend", "i18n!rabb
                     processing: false,
                     serverSide: true,
                     stateSave: true,
+                    /* deferLoading: 0, */ //TODO: Решыть проблему с лтшним обновлением таблицы
                     stateLoadParams: function (settings, data) {
                         if (filters.length) {
                             filters.each(function (index, elem) {
                                 var filter = $(elem);
                                 var name = $(elem).attr('name');
                                 if (data.hasOwnProperty(name))
-                                    filter.val(data[name])
-                                        .change();
+                                    filter.val(data[name]);
                             });
                         }
+                        _this.submitFilter();
                     },
                     stateSaveParams: function (settings, data) {
                         filters.each(function () {

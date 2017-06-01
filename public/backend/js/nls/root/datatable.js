@@ -7,16 +7,20 @@ define(["require", "exports"], function (require, exports) {
             // data tables spesific
             lengthMenu: "<span class='seperator'>|</span>View _MENU_ records",
             info: "<span class='seperator'>|</span>Found total _TOTAL_ records",
-            infoEmpty: "No records found to show",
+            infoEmpty: "<span class='seperator'>|</span>No records found to show",
+            infoFiltered: "(Filtered from _MAX_ total entries)",
             emptyTable: "No data available in table",
             zeroRecords: "No matching records found",
             paginate: {
-                previous: "Prev",
-                next: "Next",
-                last: "Last",
                 first: "First",
+                last: "Last",
+                next: "Next",
+                previous: "Prev",
                 page: "Page",
                 pageOf: "of"
+            },
+            buttons: {
+                colvis: 'Column visibility'
             }
         }
     };

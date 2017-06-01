@@ -19,7 +19,7 @@
                             <i class="fa fa-angle-down"></i></a>
                         <ul class="dropdown-menu">
                             <li><a href="{{route('backend.auth.logout')}}">
-                                    <i class="fa fa-sign-out"></i> Вийти</a></li>
+                                    <i class="fa fa-sign-out"></i> {{trans('backend::common.logout')}}</a></li>
                         </ul>
                     </li>
                 </ul>

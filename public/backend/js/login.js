@@ -1,44 +1,16 @@
 /// <reference path="../dt/index.d.ts" />
-define(["require", "exports", "jquery", "rabbitcms/backend", "jquery.backstretch", "jquery.validation"], function (require, exports, $, backend_1) {
+define(["require", "exports", "jquery", "rabbitcms/backend", "rabbitcms/form", "jquery.backstretch", "jquery.validation"], function (require, exports, $, backend_1, form_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     function init(portlet) {
-        var _imgPath = backend_1.RabbitCMS.getAssetsPath() + '/img/bg/';
-        var _images = [_imgPath + '1.jpg', _imgPath + '2.jpg', _imgPath + '3.jpg', _imgPath + '4.jpg'];
-        $.backstretch(_images, { fade: 1000, duration: 8000 });
-        var loginForm = $('form', portlet);
-        loginForm.validate({
-            errorElement: 'span',
-            errorClass: 'help-block',
-            focusInvalid: false,
-            rules: {
-                email: {
-                    required: true
-                },
-                password: {
-                    required: true
-                }
-            },
-            highlight: function (element) {
-                $(element).closest('.form-group').addClass('has-error');
-            },
-            success: function (label) {
-                label.closest('.form-group').removeClass('has-error');
-                label.remove();
-            },
-            errorPlacement: function (error, element) {
-                error.insertAfter(element.closest('.input-icon'));
-            },
-            submitHandler: function (form) {
-                form.submit();
-            }
-        });
-        loginForm.on('keypress', 'input', function (e) {
-            if (e.which == 13) {
-                if (loginForm.validate().form()) {
-                    loginForm.submit();
-                }
-                return false;
+        var imgPath = backend_1.RabbitCMS.getAssetsPath() + '/img/bg/';
+        var images = [imgPath + '1.jpg', imgPath + '2.jpg', imgPath + '3.jpg', imgPath + '4.jpg'];
+        $.backstretch(images, { fade: 1000, duration: 8000 });
+        var form = $('form', portlet);
+        new form_1.Form(form, {
+            ajax: false,
+            completeSubmit: function (data) {
+                return true;
             }
         });
     }

@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>Адміністрування</title>
+    <title>{{trans('backend::common.administration')}}</title>
 
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -36,6 +36,7 @@
     <link href="{{asset_module('backend/css/layout/layout.css', 'backend')}}" rel="stylesheet" type="text/css">
     <link href="{{asset_module('backend/css/layout/themes/default.css', 'backend')}}" rel="stylesheet" type="text/css">
     <link href="{{asset_module('backend/css/layout/custom.css', 'backend')}}" rel="stylesheet" type="text/css">
+
     @stack('styles')
     <!-- Scripts -->
     <script src="{{asset_module('backend/plugins/jquery.min.js', 'backend')}}" type="text/javascript"></script>

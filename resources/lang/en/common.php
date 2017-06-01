@@ -16,5 +16,7 @@ return [
     'back'           => 'Back',
     'cancel'         => 'Cancel',
     'all'            => 'All',
-    'ok'            => 'OK'
+    'ok'             => 'OK',
+    'administration' => 'Administration panel',
+    'logout' => 'Log out'
 ];

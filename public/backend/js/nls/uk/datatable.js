@@ -7,16 +7,20 @@ define(["require", "exports"], function (require, exports) {
             // data tables spesific
             lengthMenu: "<span class='seperator'>|</span>_MENU_  записів",
             info: "<span class='seperator'>|</span>Всього знайдено _TOTAL_ записів",
-            infoEmpty: "Записи відсутні",
+            infoEmpty: "<span class='seperator'>|</span>Записи відсутні",
+            infoFiltered: "(Вибрано із _MAX_ записів)",
             emptyTable: "Дані відсутні в таблиці",
             zeroRecords: "Не знайдено жодного запису",
             paginate: {
-                previous: "Попередня",
-                next: "Наступна",
-                last: "Остання",
                 first: "Перша",
+                last: "Остання",
+                next: "Наступна",
+                previous: "Попередня",
                 page: "Сторінка",
                 pageOf: "з"
+            },
+            buttons: {
+                colvis: 'Колонки'
             }
         }
     };

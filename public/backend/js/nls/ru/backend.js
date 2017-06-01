@@ -10,7 +10,15 @@ define(["require", "exports"], function (require, exports) {
         dataHasBeenModified: 'Данные были изменены. Сохранить изменения?',
         yes: 'Да',
         no: 'Нет',
-        select: 'Выбрать'
+        select: 'Выбрать',
+        apply: 'Применить',
+        cancel: 'Отменить',
+        today: 'Сегодня',
+        yesterday: 'Вчера',
+        last_7_days: 'Последние 7 дней',
+        last_30_days: 'Последние 30 дней',
+        this_month: 'Этот месяц',
+        last_month: 'Прошлый месяц'
     };
 });
 //# sourceMappingURL=backend.js.map

@@ -21,6 +21,16 @@ declare module "i18n!rabbitcms/nls/backend" {
         yes:string;
         no:string;
         select:string;
+
+        apply: string;
+        cancel: string;
+        today: string;
+        yesterday: string;
+        last_7_days: string;
+        last_30_days: string;
+        this_month: string;
+        last_month: string;
+
     };
     export = _default;
 }

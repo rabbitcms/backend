@@ -12,5 +12,14 @@ export =  <typeof i18n>{
     dataHasBeenModified: 'Дані було змінено. Зберегти внесені зміни?',
     yes: 'Так',
     no: 'Ні',
-    select: 'Вибрати'
+    select: 'Вибрати',
+
+    apply: 'Вибрати',
+    cancel: 'Скасувати',
+    today: 'Сьогодні',
+    yesterday: 'Вчора',
+    last_7_days: 'Останні 7 днів',
+    last_30_days: 'Останні 30 днів',
+    this_month: 'Цього місяця',
+    last_month: 'Минулого місяця'
 };

@@ -12,5 +12,14 @@ export = <typeof i18n>{
     dataHasBeenModified: 'The data has been modified. Save changes?',
     yes:'Yes',
     no:'No',
-    select: 'Select'
+    select: 'Select',
+
+    apply: 'Apply',
+    cancel: 'Cancel',
+    today: 'Today',
+    yesterday: 'Yesterday',
+    last_7_days: 'Last 7 Days',
+    last_30_days: 'Last 30 Days',
+    this_month: 'This Month',
+    last_month: 'Last Month'
 };
