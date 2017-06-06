@@ -137,6 +137,10 @@ return [
             'moment' => [
                 'location' => 'plugins/moment',
                 'main' => 'moment'
+            ],
+            'ace' => [
+                'location' => 'plugins/ace',
+                'main' => 'ace'
             ]
         ],
         'modules'  => [

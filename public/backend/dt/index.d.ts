@@ -34,3 +34,5 @@
 /// <reference path="typings/rabbitcms/jquery-backstretch.d.ts" />
 /// <reference path="typings/rabbitcms/jszip.d.ts" />
 /// <reference path="typings/rabbitcms/nls.d.ts" />
+
+// <reference path="typings/ace/index.d.ts" />
