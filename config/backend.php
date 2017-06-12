@@ -128,7 +128,7 @@ return [
             ],
             'jquery.inputmask' => [
                 'location' => 'plugins/jquery-inputmask',
-                'main' => 'jquery.inputmask.bundle.min'
+                'main' => 'inputmask'
             ],
             'bootstrap-touchspin' => [
                 'location' => 'plugins/bootstrap-touchspin',
@@ -141,6 +141,10 @@ return [
             'ace' => [
                 'location' => 'plugins/ace',
                 'main' => 'ace'
+            ],
+            'intl-tel-input' => [
+                'location' => 'plugins/intl-tel-input',
+                'main' => 'intlTelInput'
             ]
         ],
         'modules'  => [

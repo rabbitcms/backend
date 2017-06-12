@@ -41,8 +41,8 @@ define(["require", "exports", "jquery", "jszip", "rabbitcms/backend", "i18n!rabb
                                 if (data.hasOwnProperty(name))
                                     filter.val(data[name]);
                             });
+                            _this.submitFilter();
                         }
-                        _this.submitFilter();
                     },
                     stateSaveParams: function (settings, data) {
                         filters.each(function () {

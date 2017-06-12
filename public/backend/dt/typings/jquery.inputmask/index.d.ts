@@ -12,7 +12,7 @@ interface JQueryInputMaskOptions {
     groupmarker?: StartEnd;
     alternatormarker?: string;
     escapeChar?: string;
-    mask?: string;
+    mask?: any;
     //mask?: () => string;
     oncomplete?: (value?: any) => void; //executes when the mask is complete
     onincomplete?: () => void; //executes when the mask is incomplete and focus is lost

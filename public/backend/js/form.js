@@ -108,6 +108,8 @@ define(["require", "exports", "jquery", "rabbitcms/backend", "i18n!rabbitcms/nls
                             if (jqXHR.status === 422) {
                                 $.each(jqXHR.responseJSON, function (key, values) {
                                     var element = $('[name="' + key + '"]', form);
+                                    var container = element.parents('.input-group-lg');
+                                    element = container.length ? container : element;
                                     var helpBlock = element.siblings('div.error-block').length
                                         ? element.siblings('div.error-block').first()
                                         : $('<div class="help-block error-block"></div>');

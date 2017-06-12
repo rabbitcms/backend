@@ -35,4 +35,5 @@
 /// <reference path="typings/rabbitcms/jszip.d.ts" />
 /// <reference path="typings/rabbitcms/nls.d.ts" />
 
-// <reference path="typings/ace/index.d.ts" />
+/// <reference path="typings/ace/index.d.ts" />
+/// <reference path="typings/intl-tel-input/index.d.ts" />

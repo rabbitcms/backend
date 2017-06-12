@@ -106,9 +106,9 @@ export class DataTable {
                             if (data.hasOwnProperty(name))
                                 filter.val(data[name]);
                         });
-                    }
 
-                    this.submitFilter();
+                        this.submitFilter();
+                    }
                 },
                 stateSaveParams: (settings:DataTables.SettingsLegacy, data:Object):Object => {
                     filters.each(function() {

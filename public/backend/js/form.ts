@@ -129,6 +129,9 @@ export class Form {
                         if (jqXHR.status === 422) {
                             $.each(jqXHR.responseJSON, function (key, values) {
                                 let element = $('[name="' + key + '"]', form);
+                                let container = element.parents('.input-group-lg');
+                                element = container.length ? container : element;
+
                                 let helpBlock = element.siblings('div.error-block').length
                                     ? element.siblings('div.error-block').first()
                                     : $('<div class="help-block error-block"></div>');
