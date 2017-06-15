@@ -157,8 +157,8 @@ return [
             'jquery.blockui' => 'plugins/jquery.blockui.min',
             'jquery.maskMoney' => 'plugins/jquery.maskMoney.min',
             'datatables.net' => [
-                'path' => 'plugins/datatables/jquery.dataTables.min',
-                'css' => 'plugins/datatables/css/jquery.dataTables.min.css'
+                'path' => 'plugins/datatables/jquery.dataTables',
+                'css' => 'plugins/datatables/css/jquery.dataTables.css'
             ],
             'datatables.net-bs' => [
                 'path' => 'plugins/datatables/plugins/bootstrap/datatables.bootstrap',

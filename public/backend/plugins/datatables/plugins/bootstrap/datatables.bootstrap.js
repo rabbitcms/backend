@@ -120,7 +120,7 @@
                             'aria-controls': settings.sTableId,
                             'tabindex': settings.iTabIndex,
                             'id': idx === 0 && typeof button === 'string' ?
-                            settings.sTableId + '_' + button : null
+                                settings.sTableId + '_' + button : null
                         })
                             .append($('<a>', {
                                     'href': '#'
@@ -218,6 +218,7 @@
                     iStart = oPaging.iPage - iHalf + 1;
                     iEnd = iStart + iListLength - 1;
                 }
+
 
 
                 for (i = 0, iLen = an.length; i < iLen; i++) {
@@ -364,7 +365,7 @@
                     '<a href="#" class="btn btn-sm default prev disabled"><i class="fa fa-angle-left"></i></a>' +
                     '<input type="text" class="pagination-panel-input form-control input-sm input-inline input-mini" maxlenght="5" style="text-align:center; margin: 0 5px;">' +
                     '<a href="#" class="btn btn-sm default next disabled"><i class="fa fa-angle-right"></i></a> ' +
-                    (oLang.pageOf ? oLang.pageOf + ' <span class="pagination-panel-total"></span>' : '') +
+                    (oLang.pageOf ? oLang.pageOf + ' <span class="pagination-panel-total"></span>': '') +
                     '</div>'
                 );
 
