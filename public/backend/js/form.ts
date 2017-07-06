@@ -128,7 +128,21 @@ export class Form {
 
                         if (jqXHR.status === 422) {
                             $.each(jqXHR.responseJSON, function (key, values) {
-                                let element = $('[name="' + key + '"]', form);
+                                let nKey = key.split('.');
+                                let key2 = '';
+                                if (nKey.length > 1) {
+                                    for (let i = 0; i < nKey.length; i++) {
+                                        if (i === 0) {
+                                            key2 += nKey[i];
+                                        } else {
+                                            key2 += '[' + nKey[i] + ']';
+                                        }
+                                    }
+                                } else {
+                                    key2 = nKey[0];
+                                }
+
+                                let element = $('[name="' + key2 + '"]', form);
                                 let container = element.parents('.input-group-lg');
                                 element = container.length ? container : element;
 

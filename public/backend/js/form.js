@@ -107,7 +107,22 @@ define(["require", "exports", "jquery", "rabbitcms/backend", "i18n!rabbitcms/nls
                             $('.error-block', form).remove();
                             if (jqXHR.status === 422) {
                                 $.each(jqXHR.responseJSON, function (key, values) {
-                                    var element = $('[name="' + key + '"]', form);
+                                    var nKey = key.split('.');
+                                    var key2 = '';
+                                    if (nKey.length > 1) {
+                                        for (var i = 0; i < nKey.length; i++) {
+                                            if (i === 0) {
+                                                key2 += nKey[i];
+                                            }
+                                            else {
+                                                key2 += '[' + nKey[i] + ']';
+                                            }
+                                        }
+                                    }
+                                    else {
+                                        key2 = nKey[0];
+                                    }
+                                    var element = $('[name="' + key2 + '"]', form);
                                     var container = element.parents('.input-group-lg');
                                     element = container.length ? container : element;
                                     var helpBlock = element.siblings('div.error-block').length
