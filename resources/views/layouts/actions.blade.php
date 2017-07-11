@@ -7,7 +7,8 @@
         <ul class="dropdown-menu pull-right">
             @foreach($actions as $action)
                 <li>
-                    <a href="{{$action->getAction()}}">{{$action->getLabel()}}</a>
+                    <a rel="action-handler" href="{{$action->getAction()}}" data-entity="{{$entity->getMorphClass()}}" data-key="{{$entity->getKey()}}">
+                        {{$action->getLabel()}}</a>
                 </li>
             @endforeach
         </ul>
