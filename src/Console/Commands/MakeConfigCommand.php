@@ -54,10 +54,12 @@ class MakeConfigCommand extends Command
                 if (is_array($value) && array_key_exists('requirejs', $value) && is_array($value['requirejs'])) {
                     foreach ($value['requirejs'] as $m => $c) {
                         if (is_string($c)) {
-                            $config['paths'][$m] = $module->getName() . '/backend/' . ltrim($c, '/');
-                        } elseif (is_array($c)) {
+                            $c = ['path' => $c];
+                        }
+                        if (is_array($c)) {
                             if (array_key_exists('path', $c)) {
-                                $config['paths'][$m] = $module->getName() . '/backend/' . ltrim($c['path'], '/');
+                                $config['paths'][$m] = filter_var($c['path'], FILTER_VALIDATE_URL)
+                                    ?: $module->getName() . '/backend/' . ltrim($c['path'], '/');
                             }
                             if (array_key_exists('deps', $c)) {
                                 $config['shim'][$m] = ['deps'=>(array)$c['deps']];
