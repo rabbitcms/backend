@@ -2,7 +2,7 @@
 import * as $ from "jquery";
 import "jquery.cookie";
 import * as i18n from "i18n!rabbitcms/nls/backend";
-import {Metronic, BlockUIOptions, MetronicOptions} from "rabbitcms/metronic";
+import {BlockUIOptions, Metronic, MetronicOptions} from "rabbitcms/metronic";
 
 var $body:JQuery = $('body');
 
@@ -417,6 +417,7 @@ export class RabbitCMS extends Metronic {
                     $('.modal').remove();
                     let modal = $(data);
                     $('.page-content').append(modal);
+                    this.updatePlugins(modal);
 
                     modal.modal();
 

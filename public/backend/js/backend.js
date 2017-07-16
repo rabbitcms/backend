@@ -366,6 +366,7 @@ define(["require", "exports", "jquery", "i18n!rabbitcms/nls/backend", "rabbitcms
                         $('.modal').remove();
                         var modal = $(data);
                         $('.page-content').append(modal);
+                        _this.updatePlugins(modal);
                         modal.modal();
                         resolve(modal);
                     },
