@@ -325,11 +325,11 @@ declare module 'rabbitcms/datatable' {
 }
 
 declare module 'rabbitcms/form' {
-    import {RabbitCMS, State, ValidationOptions} from "rabbitcms/backend";
+    import {AjaxSettings, RabbitCMS, State, ValidationOptions} from "rabbitcms/backend";
 
     export interface FormOptions {
         validation?: ValidationOptions;
-        ajax?: DataTables.AjaxSettings|boolean;
+        ajax?: AjaxSettings|boolean;
         completeSubmit: (data?)=>void;
         canSubmit?: ()=>boolean;
         state?: State;
