@@ -83,7 +83,7 @@ use Illuminate\Support\Facades\Lang;
 </head>
 @yield('main')
 
-<script src="{{asset('/backend/config.js')}}" type="text/javascript"></script>
+<script src="{{asset('/backend/config.js')}}?{{time()}}" type="text/javascript"></script>
 <script>
     define('jquery', [], function() { return jQuery; });
     define('bootbox', [], function() { return bootbox; });
