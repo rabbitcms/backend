@@ -73,7 +73,7 @@ define(['jquery', 'bootbox'], function ($, bootbox) {
     RabbitCMS.prototype._visiblePortlet = $();
 
     /* Portlets and Modals */
-    RabbitCMS.prototype.loadModule = function (portlet) {
+    RabbitCMS.prototype.loadModule = function (portlet, recurse) {
         var _module = portlet.data('require');
 
         if (_module) {
@@ -83,6 +83,13 @@ define(['jquery', 'bootbox'], function ($, bootbox) {
                     _module[_tmp[1]](portlet);
                 else
                     _module(portlet);
+            });
+        }
+
+        if (recurse !== false) {
+            var self = this;
+            $('[data-require]', portlet).each(function () {
+                self.loadModule($(this), false);
             });
         }
     };
@@ -513,7 +520,7 @@ define(['jquery', 'bootbox'], function ($, bootbox) {
         options = $.extend(true, settings, options);
 
         _this.blockUI();
-        $.ajax(options);
+        return $.ajax(options);
     };
 
     /* Dialogs */
