@@ -145,6 +145,10 @@ return [
             'intl-tel-input' => [
                 'location' => 'plugins/intl-tel-input',
                 'main' => 'intlTelInput'
+            ],
+            'bootstrap-tagsinput' => [
+                'location' => 'plugins/bootstrap-tagsinput',
+                'main' => 'bootstrap-tagsinput'
             ]
         ],
         'modules'  => [
