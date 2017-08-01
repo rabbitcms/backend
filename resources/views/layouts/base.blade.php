@@ -1,5 +1,8 @@
+<?php
+use Illuminate\Support\Facades\Lang;
+?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{Lang::locale()}}">
 <head>
     <meta charset="utf-8">
     <title>Адміністрування</title>
@@ -11,10 +14,10 @@
     <!-- Styles -->
     <link href="//fonts.googleapis.com/css?family=Open+Sans:400,300,600,700&subset=all" rel="stylesheet" type="text/css">
     <link href="{{asset_module('css/init.css', 'backend')}}" rel="stylesheet" type="text/css">
-    <link href="{{asset_module('plugins/font-awesome/css/font-awesome.min.css', 'backend')}}" rel="stylesheet" type="text/css">
-    <link href="{{asset_module('plugins/simple-line-icons/simple-line-icons.min.css', 'backend')}}" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/simple-line-icons/2.4.1/css/simple-line-icons.min.css" integrity="sha256-7O1DfUu4pybYI7uAATw34eDrgQaWGOfMV/8erfDQz/Q=" crossorigin="anonymous" />
     <link href="{{asset_module('plugins/jquery-ui/jquery-ui.custom.min.css', 'backend')}}" rel="stylesheet" type="text/css">
-    <link href="{{asset_module('plugins/bootstrap/css/bootstrap.min.css', 'backend')}}" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha256-916EbMg70RQy9LHiGkXzG8hSg9EdNy97GazNG/aiY1w=" crossorigin="anonymous" />
     <link href="{{asset_module('plugins/uniform/css/uniform.default.css', 'backend')}}" rel="stylesheet" type="text/css">
     <link href="{{asset_module('plugins/select2/select2.css', 'backend')}}" rel="stylesheet" type="text/css">
     <link href="{{asset_module('plugins/bootstrap-datepicker/css/datepicker.css', 'backend')}}" rel="stylesheet" type="text/css">
@@ -39,16 +42,15 @@
     <script> var _TOKEN = '{{Session::token()}}'; </script>
     <script src="{{asset_module('plugins/jquery.min.js', 'backend')}}" type="text/javascript"></script>
     <script src="{{asset_module('plugins/jquery-ui/jquery-ui.custom.min.js', 'backend')}}" type="text/javascript"></script>
-    <script src="{{asset_module('plugins/bootstrap/js/bootstrap.min.js', 'backend')}}" type="text/javascript"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script>
     <script src="{{module_asset('backend', 'plugins/js.cookie.js')}}" type="text/javascript"></script>
     <script src="{{asset_module('plugins/jquery.block-ui.js', 'backend')}}" type="text/javascript"></script>
     <script src="{{asset_module('plugins/uniform/jquery.uniform.min.js', 'backend')}}" type="text/javascript"></script>
-    <script src="{{asset_module('plugins/bootbox.js', 'backend')}}" type="text/javascript"></script>
-    <script src="{{asset_module('plugins/jquery-validation/jquery.validate.min.js', 'backend')}}" type="text/javascript"></script>
-    <script src="{{asset_module('plugins/jquery-validation/additional-methods.min.js', 'backend')}}" type="text/javascript"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/4.4.0/bootbox.min.js" integrity="sha256-4F7e4JsAJyLUdpP7Q8Sah866jCOhv72zU5E8lIRER4w=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.16.0/jquery.validate.min.js" integrity="sha256-UOSXsAgYN43P/oVrmU+JlHtiDGYWN2iHnJuKY9WD+Jg=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.16.0/additional-methods.min.js" integrity="sha256-ixVUAy0s+/DoWFGN9kYLK0M2viz7HxiN/REIo65Qsug=" crossorigin="anonymous"></script>
     <script src="{{asset_module('plugins/select2/select2.min.js', 'backend')}}" type="text/javascript"></script>
-    <script src="{{asset_module('plugins/bootstrap-datepicker/js/bootstrap-datepicker.js', 'backend')}}" type="text/javascript"></script>
-    <script src="{{asset_module('plugins/bootstrap-datepicker/js/locales/bootstrap-datepicker.uk.js', 'backend')}}" type="text/javascript"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.7.1/js/bootstrap-datepicker.min.js" integrity="sha256-TueWqYu0G+lYIimeIcMI8x1m14QH/DQVt4s9m/uuhPw=" crossorigin="anonymous"></script>
     <script src="{{asset_module('plugins/bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js', 'backend')}}" type="text/javascript"></script>
     <script src="{{asset_module('plugins/bootstrap-timepicker/js/bootstrap-timepicker.js', 'backend')}}" type="text/javascript"></script>
     <script src="{{asset_module('plugins/datatables/media/js/jquery.dataTables.min.js', 'backend')}}" type="text/javascript"></script>
@@ -67,13 +69,21 @@
     <script src="{{module_asset('backend', 'plugins/bootstrap-daterangepicker/daterangepicker.js')}}" type="text/javascript"></script>
     <script src="{{module_asset('backend', 'plugins/jquery.maskMoney.js')}}" type="text/javascript"></script>
 
+    @if(app()->getLocale() === 'ru')
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.15.1/localization/messages_ru.min.js" integrity="sha256-zeB7JCDLJZfVpbmGUgBydwtADoHH7xXQ5csK4ZpcmEI=" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.7.1/locales/bootstrap-datepicker.ru.min.js" integrity="sha256-iGDUwn2IPSzlnLlVeCe3M4ZIxQxjUoDYdEO6oBZw/Go=" crossorigin="anonymous"></script>
+    @else
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.15.1/localization/messages_uk.min.js" integrity="sha256-4Yu+8eUOvMXkgfz/SVviJCCWghnrZUibPvkUu5qz+wQ=" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.7.1/locales/bootstrap-datepicker.uk.min.js" integrity="sha256-gJ+sB+muQyOKhTNx/XvtaXXkEr88FXSS3xMgtVR3V+E=" crossorigin="anonymous"></script>
+    @endif
+
     <script src="{{asset_module('js/metronic.js', 'backend')}}" type="text/javascript"></script>
     <script src="{{asset_module('js/datatable.js', 'backend')}}" type="text/javascript"></script>
     <script src="{{asset_module('plugins/require.js', 'backend')}}" type="text/javascript"></script>
 </head>
 @yield('main')
 
-<script src="{{asset('/backend/config.js')}}" type="text/javascript"></script>
+<script src="{{asset('/backend/config.js')}}?{{time()}}" type="text/javascript"></script>
 <script>
     define('jquery', [], function() { return jQuery; });
     define('bootbox', [], function() { return bootbox; });

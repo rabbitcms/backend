@@ -7,6 +7,7 @@ use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\AliasLoader;
 use Illuminate\Foundation\Application;
+use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Routing\Router;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 use RabbitCMS\Backend\Console\Commands\MakeConfigCommand;
@@ -16,7 +17,6 @@ use RabbitCMS\Backend\Http\Controllers\Backend\Auth as AuthController;
 use RabbitCMS\Backend\Http\Controllers\Backend\Main;
 use RabbitCMS\Backend\Http\Middleware\Authenticate;
 use RabbitCMS\Backend\Http\Middleware\AuthenticateWithBasicAuth;
-use RabbitCMS\Backend\Http\Middleware\BackendVerifyCsrfToken;
 use RabbitCMS\Backend\Http\Middleware\SetBackendGuard;
 use RabbitCMS\Backend\Http\Middleware\StartSession;
 use RabbitCMS\Backend\Support\Backend;
@@ -107,7 +107,7 @@ class ModuleProvider extends BaseModuleProvider
             AddQueuedCookiesToResponse::class,
             StartSession::class,
             ShareErrorsFromSession::class,
-            BackendVerifyCsrfToken::class
+            VerifyCsrfToken::class
         ]);
 
         if (version_compare(Application::VERSION, '5.4') === -1) {
