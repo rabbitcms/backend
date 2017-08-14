@@ -175,9 +175,10 @@ define(["require", "exports", "jquery", "i18n!rabbitcms/nls/backend", "rabbitcms
             });
             $body.on('click', 'a[href^="#exec"]', function (event) {
                 event.preventDefault();
-                var exec = $(event.currentTarget).attr('href');
+                var btn = $(event.currentTarget);
+                var exec = btn.attr('href');
                 var _tmp = exec.split(':');
-                _this.execute(_tmp[1], _tmp.length > 2 ? _tmp[2] : 'init');
+                _this.execute(_tmp[1], _tmp.length > 2 ? _tmp[2] : 'init', btn.data());
             });
             $body.on('click', 'a:not([href^="#"])', function (event) {
                 if ($(event.currentTarget).attr('rel') === 'back') {

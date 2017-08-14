@@ -207,10 +207,11 @@ export class RabbitCMS extends Metronic {
         $body.on('click', 'a[href^="#exec"]', (event:JQueryEventObject) => {
             event.preventDefault();
 
-            let exec = $(event.currentTarget).attr('href');
+            let btn = $(event.currentTarget);
+            let exec = btn.attr('href');
             let _tmp = exec.split(':');
 
-            this.execute(_tmp[1], _tmp.length > 2 ? _tmp[2] : 'init');
+            this.execute(_tmp[1], _tmp.length > 2 ? _tmp[2] : 'init', btn.data());
         });
 
         $body.on('click', 'a:not([href^="#"])', (event:JQueryEventObject) => {
