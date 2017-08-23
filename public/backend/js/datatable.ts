@@ -74,7 +74,7 @@ export class DataTable {
     //main function to initiate the module
     constructor(options:DataTableOptions) {
         // default settings
-        let filters = $('.form-filter', options.src);
+        let filters = $('.form-filter', $(options.src).parents(".table-container"));
 
         options = $.extend(true, {
             src: "", // actual table
@@ -224,7 +224,7 @@ export class DataTable {
             this.countSelectedRecords();
         });
 
-        this.table.on('change', '.form-filter', () => {
+        this.tableContainer.on('change', '.form-filter', () => {
             this.submitFilter();
         });
 
@@ -234,13 +234,13 @@ export class DataTable {
         });
 
         // handle filter submit button click
-        this.table.on('click', '.filter-submit', (e)=> {
+        this.tableContainer.on('click', '.filter-submit', (e)=> {
             e.preventDefault();
             this.submitFilter();
         });
 
         // handle filter cancel button click
-        this.table.on('click', '.filter-cancel', (e)=> {
+        this.tableContainer.on('click', '.filter-cancel', (e)=> {
             e.preventDefault();
             this.resetFilter();
         });
@@ -250,17 +250,17 @@ export class DataTable {
         this.setAjaxParam("action", this.tableOptions.filterApplyAction);
 
         // get all typeable inputs
-        $('textarea.form-filter, select.form-filter, input.form-filter:not([type="radio"],[type="checkbox"])', this.table).each((i, e)=> {
+        $('textarea.form-filter, select.form-filter, input.form-filter:not([type="radio"],[type="checkbox"])', this.tableContainer).each((i, e)=> {
             this.setAjaxParam($(e).attr("name"), $(e).val());
         });
 
         // get all checkboxes
-        $('input.form-filter[type="checkbox"]:checked', this.table).each((i, e)=> {
+        $('input.form-filter[type="checkbox"]:checked', this.tableContainer).each((i, e)=> {
             this.addAjaxParam($(e).attr("name"), $(e).val());
         });
 
         // get all radio buttons
-        $('input.form-filter[type="radio"]:checked', this.table).each((i, e)=> {
+        $('input.form-filter[type="radio"]:checked', this.tableContainer).each((i, e)=> {
             this.setAjaxParam($(e).attr("name"), $(e).val());
         });
 
@@ -268,10 +268,10 @@ export class DataTable {
     }
 
     resetFilter() {
-        $('textarea.form-filter, select.form-filter, input.form-filter', this.table).each(function () {
+        $('textarea.form-filter, select.form-filter, input.form-filter', this.tableContainer).each(function () {
             $(this).val("").trigger('change');
         });
-        $('input.form-filter[type="checkbox"]', this.table).each(function () {
+        $('input.form-filter[type="checkbox"]', this.tableContainer).each(function () {
             $(this).prop("checked", false);
         });
         this.clearAjaxParams();

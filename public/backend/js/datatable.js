@@ -13,7 +13,7 @@ define(["require", "exports", "jquery", "jszip", "rabbitcms/backend", "i18n!rabb
             this.tableInitialized = false;
             this.ajaxParams = {}; // set filter mode
             // default settings
-            var filters = $('.form-filter', options.src);
+            var filters = $('.form-filter', $(options.src).parents(".table-container"));
             options = $.extend(true, {
                 src: "",
                 filterApplyAction: "filter",
@@ -144,7 +144,7 @@ define(["require", "exports", "jquery", "jszip", "rabbitcms/backend", "i18n!rabb
                 });
                 _this.countSelectedRecords();
             });
-            this.table.on('change', '.form-filter', function () {
+            this.tableContainer.on('change', '.form-filter', function () {
                 _this.submitFilter();
             });
             // handle row's checkbox click
@@ -152,12 +152,12 @@ define(["require", "exports", "jquery", "jszip", "rabbitcms/backend", "i18n!rabb
                 _this.countSelectedRecords();
             });
             // handle filter submit button click
-            this.table.on('click', '.filter-submit', function (e) {
+            this.tableContainer.on('click', '.filter-submit', function (e) {
                 e.preventDefault();
                 _this.submitFilter();
             });
             // handle filter cancel button click
-            this.table.on('click', '.filter-cancel', function (e) {
+            this.tableContainer.on('click', '.filter-cancel', function (e) {
                 e.preventDefault();
                 _this.resetFilter();
             });
@@ -176,24 +176,24 @@ define(["require", "exports", "jquery", "jszip", "rabbitcms/backend", "i18n!rabb
             var _this = this;
             this.setAjaxParam("action", this.tableOptions.filterApplyAction);
             // get all typeable inputs
-            $('textarea.form-filter, select.form-filter, input.form-filter:not([type="radio"],[type="checkbox"])', this.table).each(function (i, e) {
+            $('textarea.form-filter, select.form-filter, input.form-filter:not([type="radio"],[type="checkbox"])', this.tableContainer).each(function (i, e) {
                 _this.setAjaxParam($(e).attr("name"), $(e).val());
             });
             // get all checkboxes
-            $('input.form-filter[type="checkbox"]:checked', this.table).each(function (i, e) {
+            $('input.form-filter[type="checkbox"]:checked', this.tableContainer).each(function (i, e) {
                 _this.addAjaxParam($(e).attr("name"), $(e).val());
             });
             // get all radio buttons
-            $('input.form-filter[type="radio"]:checked', this.table).each(function (i, e) {
+            $('input.form-filter[type="radio"]:checked', this.tableContainer).each(function (i, e) {
                 _this.setAjaxParam($(e).attr("name"), $(e).val());
             });
             this.update();
         };
         DataTable.prototype.resetFilter = function () {
-            $('textarea.form-filter, select.form-filter, input.form-filter', this.table).each(function () {
+            $('textarea.form-filter, select.form-filter, input.form-filter', this.tableContainer).each(function () {
                 $(this).val("").trigger('change');
             });
-            $('input.form-filter[type="checkbox"]', this.table).each(function () {
+            $('input.form-filter[type="checkbox"]', this.tableContainer).each(function () {
                 $(this).prop("checked", false);
             });
             this.clearAjaxParams();
