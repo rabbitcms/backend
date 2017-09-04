@@ -1,5 +1,5 @@
 <?php
-declare(strict_types = 1);
+declare(strict_types=1);
 
 use RabbitCMS\Backend\Support\Backend;
 
@@ -185,12 +185,12 @@ return [
         'groups\/create' => [
             'module' => 'rabbitcms/groups',
             'exec' => 'form',
-            'menuPath' => 'system.users'
+            'menuPath' => 'system.groups'
         ],
         'groups\/edit\/(\d+)' => [
             'module' => 'rabbitcms/groups',
             'exec' => 'form',
-            'menuPath' => 'system.users'
+            'menuPath' => 'system.groups'
         ],
         'users' => [
             'module' => 'rabbitcms/users',
