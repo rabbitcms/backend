@@ -13,43 +13,40 @@ return [
     'create_user' => 'Создание пользователя',
     'active' => 'Активен',
     'non_active' => 'Не активен',
-    'rules' => [
-        'read' => 'Просмотр',
-        'write' => 'Редактирование'
-    ],
-    'buttons' => [
-        'create' => 'Создать',
-        'edit' => 'Редактировать',
-        'destroy' => 'Удалить',
-        'back' => 'Назад',
-        'cancel' => 'Отменить',
-        'save' => 'Сохранить',
-        'search' => 'Поиск',
-        'reset' => 'Сброс'
-    ],
-    'table' => [
-        'actions' => 'Действия',
-        'id' => 'ID',
-        'email' => 'E-mail',
-        'status' => 'Статус',
-        'select' => 'Выберите...',
-        'name' => 'Имя'
-    ],
-    'form' => [
-        'caption' => 'Название',
-        'email' => 'E-mail',
-        'password' => 'Пароль',
-        'change_password' => 'Для смены пароля - введите новый пароль',
-        'status' => 'Статус',
-        'active' => 'Активен',
-        'non_active' => 'Не активен',
-        'name' => 'Имя'
-    ],
+
+    'rules.read' => 'Просмотр',
+    'rules.write' => 'Редактирование',
+
+    'buttons.create' => 'Создать',
+    'buttons.edit' => 'Редактировать',
+    'buttons.destroy' => 'Удалить',
+    'buttons.back' => 'Назад',
+    'buttons.cancel' => 'Отменить',
+    'buttons.save' => 'Сохранить',
+    'buttons.search' => 'Поиск',
+    'buttons.reset' => 'Сброс',
+
+    'table.actions' => 'Действия',
+    'table.id' => 'ID',
+    'table.email' => 'E-mail',
+    'table.status' => 'Статус',
+    'table.select' => 'Выберите...',
+    'table.name' => 'Имя',
+
+    'form.caption' => 'Название',
+    'form.email' => 'E-mail',
+    'form.password' => 'Пароль',
+    'form.change_password' => 'Для смены пароля - введите новый пароль',
+    'form.status' => 'Статус',
+    'form.active' => 'Активен',
+    'form.non_active' => 'Не активен',
+    'form.name' => 'Имя',
+
     'not_selected' => 'Не выбрано',
     'no' => 'Нет',
     'yes' => 'Да',
     'search' => 'Поиск',
-    'reset' => 'Спрос',
+    'reset' => 'Сброс',
     'id' => 'ID',
     'create' => 'Создать',
     'save' => 'Сохранить',
