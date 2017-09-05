@@ -9,49 +9,40 @@
     <meta name="description" content="">
 
     <!-- Styles -->
+    <link href="//fonts.googleapis.com/css?family=Open+Sans:400,300,600,700&subset=all" rel="stylesheet" type="text/css">
+    <link href="{{module_asset('backend', 'backend/css/init.css')}}" rel="stylesheet" type="text/css">
+    <link href="{{module_asset('backend', 'backend/plugins/font-awesome/css/font-awesome.min.css')}}" rel="stylesheet" type="text/css">
+    <link href="{{module_asset('backend', 'backend/plugins/simple-line-icons/simple-line-icons.min.css')}}" rel="stylesheet" type="text/css">
+    <link href="{{module_asset('backend', 'backend/plugins/jquery-ui/jquery-ui.custom.min.css')}}" rel="stylesheet" type="text/css">
+    <link href="{{module_asset('backend', 'backend/plugins/bootstrap/css/bootstrap.min.css')}}" rel="stylesheet" type="text/css">
 
-    <link href="//fonts.googleapis.com/css?family=Open+Sans:400,300,600,700&subset=all" rel="stylesheet"
-          type="text/css">
-    <link href="{{asset_module('backend/css/init.css', 'backend')}}" rel="stylesheet" type="text/css">
-    <link href="{{asset_module('backend/plugins/font-awesome/css/font-awesome.min.css', 'backend')}}" rel="stylesheet"
-          type="text/css">
-    <link href="{{asset_module('backend/plugins/simple-line-icons/simple-line-icons.min.css', 'backend')}}"
-          rel="stylesheet" type="text/css">
-    <link href="{{asset_module('backend/plugins/jquery-ui/jquery-ui.custom.min.css', 'backend')}}" rel="stylesheet"
-          type="text/css">
-    <link href="{{asset_module('backend/plugins/bootstrap/css/bootstrap.min.css', 'backend')}}" rel="stylesheet"
-          type="text/css">
+    <link href="{{module_asset('backend', 'backend/css/components.css')}}" rel="stylesheet" type="text/css">
+    <link href="{{module_asset('backend', 'backend/css/plugins.css')}}" rel="stylesheet" type="text/css">
+    <link href="{{module_asset('backend', 'backend/css/layout/layout.css')}}" rel="stylesheet" type="text/css">
+    <link href="{{module_asset('backend', 'backend/css/layout/themes/default.css')}}" rel="stylesheet" type="text/css">
+    <link href="{{module_asset('backend', 'backend/css/layout/custom.css')}}" rel="stylesheet" type="text/css">
 
-    {{--<link href="{{asset_module('plugins/uniform/css/uniform.default.css', 'backend')}}" rel="stylesheet" type="text/css">--}}
-    {{--<link href="{{asset_module('plugins/select2/select2.css', 'backend')}}" rel="stylesheet" type="text/css">--}}
-    {{--<link href="{{asset_module('plugins/bootstrap-datepicker/css/datepicker.css', 'backend')}}" rel="stylesheet" type="text/css">--}}
-    {{--<link href="{{asset_module('plugins/bootstrap-datepicker/css/datepicker3.css', 'backend')}}" rel="stylesheet" type="text/css">--}}
-    {{--<link href="{{asset_module('plugins/bootstrap-datetimepicker/css/datetimepicker.css', 'backend')}}" rel="stylesheet" type="text/css">--}}
-    {{--<link href="{{asset_module('plugins/datatables/plugins/bootstrap/dataTables.bootstrap.css', 'backend')}}" rel="stylesheet" type="text/css">--}}
-    {{--<link href="{{asset_module('plugins/colorbox/colorbox.css', 'backend')}}" rel="stylesheet" type="text/css">--}}
-
-    {{--<link href="{{asset_module('css/login.css', 'backend')}}" rel="stylesheet" type="text/css">--}}
-    <link href="{{asset_module('backend/css/components.css', 'backend')}}" rel="stylesheet" type="text/css">
-    <link href="{{asset_module('backend/css/plugins.css', 'backend')}}" rel="stylesheet" type="text/css">
-    <link href="{{asset_module('backend/css/layout/layout.css', 'backend')}}" rel="stylesheet" type="text/css">
-    <link href="{{asset_module('backend/css/layout/themes/default.css', 'backend')}}" rel="stylesheet" type="text/css">
-    <link href="{{asset_module('backend/css/layout/custom.css', 'backend')}}" rel="stylesheet" type="text/css">
+    <link href="{{module_asset('backend', 'css/custom.css')}}" rel="stylesheet" type="text/css">
 
     @stack('styles')
+
     <!-- Scripts -->
-    <script src="{{asset_module('backend/plugins/jquery.min.js', 'backend')}}" type="text/javascript"></script>
-    <script src="{{asset_module('backend/plugins/jquery-ui/jquery-ui.custom.min.js', 'backend')}}" type="text/javascript"></script>
-    <script src="{{asset_module('backend/plugins/bootstrap/js/bootstrap.min.js', 'backend')}}" type="text/javascript"></script>
-    <script src="{{asset_module('backend/plugins/require.js', 'backend')}}" type="text/javascript"></script>
+    <script src="{{module_asset('backend', 'backend/plugins/jquery.min.js')}}" type="text/javascript"></script>
+    <script src="{{module_asset('backend', 'backend/plugins/jquery-ui/jquery-ui.custom.min.js')}}" type="text/javascript"></script>
+    <script src="{{module_asset('backend', 'backend/plugins/bootstrap/js/bootstrap.min.js')}}" type="text/javascript"></script>
+    <script src="{{module_asset('backend', 'backend/plugins/require.js')}}" type="text/javascript"></script>
+
     <script src="{{route('backend.config.js',[],false)}}" type="text/javascript"></script>
     <script>
         require.config({
-            config: { i18n: {
+            config: {
+                i18n: {
                     locale: "{{str_replace('_','-',Lang::getLocale())}}"
-            }}
+                }
+            }
         });
         require(["jquery", "rabbitcms/backend"], function ($, rbc) {
-            rbc.RabbitCMS.setAssetsPath('{{asset_module('backend','backend')}}');
+            rbc.RabbitCMS.setAssetsPath('{{module_asset('backend', 'backend')}}');
             rbc.RabbitCMS.setLocale('{{\Lang::getLocale()}}');
             rbc.RabbitCMS.setToken('{{csrf_token()}}');
             $('body').removeClass('loading');

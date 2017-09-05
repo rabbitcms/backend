@@ -4,8 +4,8 @@
     <div class="page-header navbar navbar-fixed-top">
         <div class="page-header-inner">
             <div class="page-logo">
-                <a href="{{ relative_route('backend.index') }}" rel="ajax-portlet">
-                    <img src="{{ asset('backend/logo.png') }}" alt="logo" class="logo-default"></a>
+                <a href="{{relative_route('backend.index')}}" rel="ajax-portlet">
+                    <img src="{{module_asset('backend', 'img/logo.png')}}" alt="logo" class="logo-default"></a>
                 <div class="menu-toggler sidebar-toggler"></div>
             </div>
             <a href="javascript:void(0);" class="menu-toggler responsive-toggler" data-toggle="collapse" data-target=".navbar-collapse"></a>
@@ -13,7 +13,7 @@
                 <ul class="nav navbar-nav pull-right">
                     <li class="dropdown dropdown-user">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" data-hover="dropdown" data-close-others="true">
-                            <img class="img-circle hide1" src="{{asset_module('backend/img/avatar.png','backend')}}" alt="">
+                            <img class="img-circle hide1" src="{{module_asset('backend', 'backend/img/avatar.png')}}" alt="">
                             <span class="username username-hide-on-mobile">
                                 {{Auth::guard('backend')->user()->email}}</span>
                             <i class="fa fa-angle-down"></i></a>
@@ -48,7 +48,7 @@
         </div>
     </div>
     <div class="page-footer">
-        <div class="page-footer-inner">{{date('Y')}} &copy; DK</div>
+        <div class="page-footer-inner">{{date('Y')}} &copy; {{env('ADMIN_COPYRIGHT', 'RabbitCMS')}}</div>
         <div class="scroll-to-top"><i class="icon-arrow-up"></i></div>
     </div>
     </body>

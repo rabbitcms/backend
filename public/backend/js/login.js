@@ -5,7 +5,7 @@ define(["require", "exports", "jquery", "rabbitcms/backend", "rabbitcms/form", "
     function init(portlet) {
         var imgPath = backend_1.RabbitCMS.getAssetsPath() + '/img/bg/';
         var images = [imgPath + '1.jpg', imgPath + '2.jpg', imgPath + '3.jpg', imgPath + '4.jpg'];
-        $.backstretch(images, { fade: 1000, duration: 8000 });
+        $.backstretch(images.sort(function () { return 0.5 - Math.random(); }), { fade: 1000, duration: 8000 });
         var form = $('form', portlet);
         new form_1.Form(form, {
             ajax: false,
