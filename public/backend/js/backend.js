@@ -243,10 +243,14 @@ define(["require", "exports", "jquery", "i18n!rabbitcms/nls/backend", "rabbitcms
             return map && map.has(this._locale) ? map.get(this._locale) : this._locale;
         };
         RabbitCMS.loadModuleByHandler = function (handler, widget, state) {
+            var _this = this;
             if (widget.data('loaded')) {
                 return;
             }
             widget.data('loaded', true);
+            $('[data-require]', widget).each(function (i, e) {
+                _this.loadModule($(e));
+            });
             this.updatePlugins(widget);
             this.execute(handler.module, handler.exec !== void 0 ? handler.exec : 'init', widget, state);
         };

@@ -295,6 +295,11 @@ export class RabbitCMS extends Metronic {
         }
 
         widget.data('loaded', true);
+
+        $('[data-require]', widget).each((i, e)=> {
+            this.loadModule($(e));
+        });
+
         this.updatePlugins(widget);
 
         this.execute(handler.module, handler.exec !== void 0 ? handler.exec : 'init', widget, state);
