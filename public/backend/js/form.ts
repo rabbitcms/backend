@@ -121,59 +121,22 @@ export class Form {
                 },
                 error: (jqXHR: JQueryXHR) => {
                     let form = this.form;
-                    let errorPlacement = form.data('error-placement');
+                    let helpBlock = $('<div class="help-block error-block"></div>');
 
-                    if (errorPlacement === 'inline') {
-                        $('.error-block', form).remove();
+                    $('.error-block', form).remove();
+                    if (jqXHR.status === 422) {
+                        $.each(jqXHR.responseJSON.errors, (key, values) => {
+                            let element = $('[name="' + Form.parseName(key) + '"]', form);
+                            let container = element.parents('.input-group-lg');
+                            element = container.length ? container : element;
 
-                        if (jqXHR.status === 422) {
-                            $.each(jqXHR.responseJSON, function (key, values) {
-                                let nKey = key.split('.');
-                                let key2 = '';
-                                if (nKey.length > 1) {
-                                    for (let i = 0; i < nKey.length; i++) {
-                                        if (i === 0) {
-                                            key2 += nKey[i];
-                                        } else {
-                                            key2 += '[' + nKey[i] + ']';
-                                        }
-                                    }
-                                } else {
-                                    key2 = nKey[0];
-                                }
+                            element.parent().append(helpBlock.text(values[0]));
 
-                                let element = $('[name="' + key2 + '"]', form);
-                                let container = element.parents('.input-group-lg');
-                                element = container.length ? container : element;
-
-                                let helpBlock = element.siblings('div.error-block').length
-                                    ? element.siblings('div.error-block').first()
-                                    : $('<div class="help-block error-block"></div>');
-
-                                if (!element.siblings('div.error-block').length) {
-                                    element.parent().append(helpBlock);
-                                }
-
-                                element.closest('.form-group')
-                                    .addClass('has-error');
-
-                                helpBlock.text(values[0]);
-                            });
-                        }
+                            element.closest('.form-group')
+                                .addClass('has-error');
+                        });
                     } else {
-                        let responseText = '<ul class="list-unstyled">';
-
-                        if (jqXHR.status === 422) {
-                            $.each(jqXHR.responseJSON, function (key, values) {
-                                responseText += '<li>' + values[0] + '</li>';
-                            });
-                        } else {
-                            responseText += '<li>' + jqXHR.responseText + '</li>';
-                        }
-
-                        responseText += '</ul>';
-
-                        RabbitCMS.customMessage(responseText, 'danger', this.form.find('.form-body:first'));
+                        RabbitCMS.customMessage('<ul class="list-unstyled"><li>' + jqXHR.responseText + '</li></ul>', 'danger', this.form.find('.form-body:first'));
                     }
                 }
             }, this.options.ajax);
@@ -183,5 +146,20 @@ export class Form {
             (<HTMLFormElement>this.form[0]).submit();
             this.options.completeSubmit();
         }
+    }
+
+    static parseName(source) {
+        let result = '';
+        let key = source.split('.');
+
+        if (key.length > 1) {
+            for (let i = 0; i < key.length; i++) {
+                result += (i === 0) ? key[i] : '[' + key[i] + ']';
+            }
+        } else {
+            result = key[0];
+        }
+
+        return result;
     }
 }

@@ -102,53 +102,20 @@ define(["require", "exports", "jquery", "rabbitcms/backend", "i18n!rabbitcms/nls
                     },
                     error: function (jqXHR) {
                         var form = _this.form;
-                        var errorPlacement = form.data('error-placement');
-                        if (errorPlacement === 'inline') {
-                            $('.error-block', form).remove();
-                            if (jqXHR.status === 422) {
-                                $.each(jqXHR.responseJSON, function (key, values) {
-                                    var nKey = key.split('.');
-                                    var key2 = '';
-                                    if (nKey.length > 1) {
-                                        for (var i = 0; i < nKey.length; i++) {
-                                            if (i === 0) {
-                                                key2 += nKey[i];
-                                            }
-                                            else {
-                                                key2 += '[' + nKey[i] + ']';
-                                            }
-                                        }
-                                    }
-                                    else {
-                                        key2 = nKey[0];
-                                    }
-                                    var element = $('[name="' + key2 + '"]', form);
-                                    var container = element.parents('.input-group-lg');
-                                    element = container.length ? container : element;
-                                    var helpBlock = element.siblings('div.error-block').length
-                                        ? element.siblings('div.error-block').first()
-                                        : $('<div class="help-block error-block"></div>');
-                                    if (!element.siblings('div.error-block').length) {
-                                        element.parent().append(helpBlock);
-                                    }
-                                    element.closest('.form-group')
-                                        .addClass('has-error');
-                                    helpBlock.text(values[0]);
-                                });
-                            }
+                        var helpBlock = $('<div class="help-block error-block"></div>');
+                        $('.error-block', form).remove();
+                        if (jqXHR.status === 422) {
+                            $.each(jqXHR.responseJSON.errors, function (key, values) {
+                                var element = $('[name="' + Form.parseName(key) + '"]', form);
+                                var container = element.parents('.input-group-lg');
+                                element = container.length ? container : element;
+                                element.parent().append(helpBlock.text(values[0]));
+                                element.closest('.form-group')
+                                    .addClass('has-error');
+                            });
                         }
                         else {
-                            var responseText_1 = '<ul class="list-unstyled">';
-                            if (jqXHR.status === 422) {
-                                $.each(jqXHR.responseJSON, function (key, values) {
-                                    responseText_1 += '<li>' + values[0] + '</li>';
-                                });
-                            }
-                            else {
-                                responseText_1 += '<li>' + jqXHR.responseText + '</li>';
-                            }
-                            responseText_1 += '</ul>';
-                            backend_1.RabbitCMS.customMessage(responseText_1, 'danger', _this.form.find('.form-body:first'));
+                            backend_1.RabbitCMS.customMessage('<ul class="list-unstyled"><li>' + jqXHR.responseText + '</li></ul>', 'danger', _this.form.find('.form-body:first'));
                         }
                     }
                 }, this.options.ajax);
@@ -158,6 +125,19 @@ define(["require", "exports", "jquery", "rabbitcms/backend", "i18n!rabbitcms/nls
                 this.form[0].submit();
                 this.options.completeSubmit();
             }
+        };
+        Form.parseName = function (source) {
+            var result = '';
+            var key = source.split('.');
+            if (key.length > 1) {
+                for (var i = 0; i < key.length; i++) {
+                    result += (i === 0) ? key[i] : '[' + key[i] + ']';
+                }
+            }
+            else {
+                result = key[0];
+            }
+            return result;
         };
         return Form;
     }());

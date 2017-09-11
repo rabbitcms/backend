@@ -238,11 +238,11 @@ export class RabbitCMS extends Metronic {
             this._stack.add(new State(link, handler, widget), StateType.Replace);
             this.loadModuleByHandler(handler, widget, this._stack.current);
             this.showPortlet(handler, widget);
+        } else {
+            $('[data-require]').each((i, e)=> {
+                this.loadModule($(e));
+            });
         }
-
-        $('[data-require]').each((i, e)=> {
-            this.loadModule($(e));
-        });
 
         this.initSidebar();
     }

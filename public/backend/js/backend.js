@@ -201,9 +201,11 @@ define(["require", "exports", "jquery", "i18n!rabbitcms/nls/backend", "rabbitcms
                 this.loadModuleByHandler(handler, widget, this._stack.current);
                 this.showPortlet(handler, widget);
             }
-            $('[data-require]').each(function (i, e) {
-                _this.loadModule($(e));
-            });
+            else {
+                $('[data-require]').each(function (i, e) {
+                    _this.loadModule($(e));
+                });
+            }
             this.initSidebar();
         };
         /**
