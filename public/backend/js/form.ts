@@ -136,7 +136,7 @@ export class Form {
                                 .addClass('has-error');
                         });
                     } else {
-                        RabbitCMS.customMessage('<ul class="list-unstyled"><li>' + jqXHR.responseText + '</li></ul>', 'danger', this.form.find('.form-body:first'));
+                        RabbitCMS.customMessage('<ul class="list-unstyled"><li>' + jqXHR.responseJSON.message + '</li></ul>', 'danger', this.form.find('.form-body:first'));
                     }
                 }
             }, this.options.ajax);

@@ -115,7 +115,7 @@ define(["require", "exports", "jquery", "rabbitcms/backend", "i18n!rabbitcms/nls
                             });
                         }
                         else {
-                            backend_1.RabbitCMS.customMessage('<ul class="list-unstyled"><li>' + jqXHR.responseText + '</li></ul>', 'danger', _this.form.find('.form-body:first'));
+                            backend_1.RabbitCMS.customMessage('<ul class="list-unstyled"><li>' + jqXHR.responseJSON.message + '</li></ul>', 'danger', _this.form.find('.form-body:first'));
                         }
                     }
                 }, this.options.ajax);
