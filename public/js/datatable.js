@@ -302,8 +302,8 @@ var Datatable = function() {
             dataTable.ajax.reload();
         },
 
-        exportHandler: function (link) {
-            var params = {};
+        exportHandler: function (link, params) {
+            params = params || {};
             var form = $('<form/>')
                 .attr('action', link)
                 .attr('target', '_blank')
