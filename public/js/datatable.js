@@ -302,14 +302,9 @@ var Datatable = function() {
             dataTable.ajax.reload();
         },
 
-        exportHandler: function (link, params) {
+        exportHandler: function (link, params, ajax) {
             params = params || {};
-            var form = $('<form/>')
-                .attr('action', link)
-                .attr('target', '_blank')
-                .attr('method', 'post')
-                .css({'display': 'none'});
-
+            
             var eventData = the.trigger('beforeSubmitFilter');
             if (eventData) {
                 params['qBuilder'] = eventData.filters;
@@ -321,17 +316,31 @@ var Datatable = function() {
                 params[self.attr('name')] = self.val();
             });
 
-            $.each(params, function(name, value) {
-                form.append(
-                    $('<input/>').attr('type', 'hidden')
-                        .attr('name', name)
-                        .attr('value', value)
-                );
-            });
 
-            tableContainer.append(form);
-            form.submit();
-            form.remove();
+            if (ajax) {
+                RabbitCMS._ajax({url: link, method: 'POST', data: params}, function(data) {
+                    if (ajax instanceof Function) {
+                        ajax(data);
+                    }
+                });
+            } else {
+                var form = $('<form/>')
+                    .attr('action', link)
+                    .attr('target', '_blank')
+                    .attr('method', 'post')
+                    .css({'display': 'none'});
+                $.each(params, function(name, value) {
+                    form.append(
+                        $('<input/>').attr('type', 'hidden')
+                            .attr('name', name)
+                            .attr('value', value)
+                    );
+                });
+
+                tableContainer.append(form);
+                form.submit();
+                form.remove();
+            }
         },
 
         trigger: function(eventType) {
