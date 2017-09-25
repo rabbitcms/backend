@@ -45,12 +45,16 @@ class MakeConfigCommand extends Command
         if (!is_dir($dir)) {
             mkdir($dir);
         }
+        $bootstraps = [[],[]];
 
         /* @var Module $module */
         foreach ($modules->enabled() as $module) {
             $path = $module->getPath('config/backend.php');
             if (file_exists($path)) {
                 $value = require($path);
+                if (is_array($value) && array_key_exists('bootstrap', $value) && is_array($value['bootstrap'])) {
+                    $bootstraps[] = (array)$value['bootstrap'];
+                }
                 if (is_array($value) && array_key_exists('requirejs', $value) && is_array($value['requirejs'])) {
                     foreach ($value['requirejs'] as $m => $c) {
                         if (is_string($c)) {
@@ -70,12 +74,13 @@ class MakeConfigCommand extends Command
             }
         }
 
+        $bootstraps = json_encode(array_merge(...$bootstraps));
 
         $config = json_encode($config, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
         file_put_contents(
             public_path('backend/config.js'),
             /* @lang JavaScript */
-            "require.config(${config});"
+            "require.config(${config});\nrequire({$bootstraps}, function () {});"
         );
     }
 }
