@@ -171,7 +171,13 @@ return [
                     'css/plugins/datatable.css'
                 ]
             ],
-            'datatables.net-colReorder' => 'plugins/datatables/plugins/colReorder/dataTables.colReorder.min'
+            'datatables.net-colReorder' => 'plugins/datatables/plugins/colReorder/dataTables.colReorder.min',
+            'datatables.net-rowReorder' => [
+                'path' => 'plugins/datatables/plugins/rowReorder/dataTables.rowReorder',
+                'css' => [
+                    'plugins/datatables/plugins/rowReorder/rowReorder.bootstrap.css'
+                ]
+            ]
         ]
     ],
     'handlers'  => [

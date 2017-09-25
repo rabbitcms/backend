@@ -16,7 +16,7 @@ import "datatables.net-buttons/js/buttons.colVis.min";
 import "datatables.net-buttons/js/buttons.html5.min";
 import "datatables.net-buttons/js/buttons.print.min";
 import "datatables.net-colReorder";
-import "datatables.net-colReorder";
+import "datatables.net-rowReorder";
 import {RabbitCMS} from "rabbitcms/backend";
 import * as i18n from "i18n!rabbitcms/nls/datatable";
 import "css!datatables.net-buttons/css/buttons.bootstrap.min.css";

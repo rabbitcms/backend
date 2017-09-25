@@ -12,6 +12,7 @@
 /// <reference path="typings/jquery.datatables/index.d.ts" />
 /// <reference path="typings/jquery.datatables/datatables-buttons.d.ts" />
 /// <reference path="typings/jquery.datatables/datatables-colreorder.d.ts" />
+/// <reference path="typings/jquery.datatables/datatables-rowreorder.d.ts" />
 
 /// <reference path="typings/bootstrap/index.d.ts" />
 /// <reference path="typings/bootstrap-datepicker/index.d.ts" />
