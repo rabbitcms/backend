@@ -45,7 +45,7 @@ class SetBackendGuard
     {
         $this->config->set('auth.defaults.guard', 'backend');
         $this->config->set('session.cookie', 'rbc_backend');
-        $this->config->set('session.path', rtrim($this->module()->config('path'), '/') . '/');
+        $this->config->set('session.path', '/' . ltrim($this->module()->config('path'), '/'));
         $this->config->set('session.domain', $this->module()->config('domain'));
         return $next($request);
     }
