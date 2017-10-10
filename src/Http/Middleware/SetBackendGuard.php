@@ -1,17 +1,21 @@
 <?php
 declare(strict_types=1);
+
 namespace RabbitCMS\Backend\Http\Middleware;
 
 use Closure;
 use Illuminate\Config\Repository;
 use Illuminate\Http\Request;
+use RabbitCMS\Modules\Support\ModuleDetect;
 
 /**
  * Class SetBackendGuard
+ *
  * @package RabbitCMS\Backend\Http\Middleware
  */
 class SetBackendGuard
 {
+    use ModuleDetect;
     /**
      * The Guard implementation.
      *
@@ -34,12 +38,15 @@ class SetBackendGuard
      *
      * @param  Request $request
      * @param  Closure $next
+     *
      * @return mixed
      */
     public function handle(Request $request, Closure $next)
     {
         $this->config->set('auth.defaults.guard', 'backend');
         $this->config->set('session.cookie', 'rbc_backend');
+        $this->config->set('session.path', rtrim($this->module()->config('path'), '/') . '/');
+        $this->config->set('session.domain', $this->module()->config('domain'));
         return $next($request);
     }
 }
