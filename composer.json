@@ -13,8 +13,8 @@
     }
   },
   "require": {
-    "rabbitcms/modules": "^1.0",
-    "illuminate/support": "^5.3"
+    "rabbitcms/modules": "^2.0",
+    "illuminate/support": "^5.5"
   },
   "extra": {
     "module": {
