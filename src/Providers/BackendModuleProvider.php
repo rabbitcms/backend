@@ -8,6 +8,8 @@ use Illuminate\Foundation\AliasLoader;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Routing\Router;
+use Illuminate\Support\Facades\Route;
+use Illuminate\Support\ServiceProvider;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 use RabbitCMS\Backend\Console\Commands\MakeConfigCommand;
 use RabbitCMS\Backend\Entities\User as UserEntity;
@@ -19,22 +21,22 @@ use RabbitCMS\Backend\Http\Middleware\Authenticate;
 use RabbitCMS\Backend\Http\Middleware\AuthenticateWithBasicAuth;
 use RabbitCMS\Backend\Http\Middleware\StartSession;
 use RabbitCMS\Backend\Support\Backend;
-use RabbitCMS\Modules\Managers\Modules;
-use RabbitCMS\Modules\ModuleProvider;
+use RabbitCMS\Modules\Facades\Modules;
 
 /**
  * Class BackendModuleProvider
  *
  * @package RabbitCMS\Backend\Providers
+ * @property Application $app
  */
-class BackendModuleProvider extends ModuleProvider
+class BackendModuleProvider extends ServiceProvider
 {
+    use BelongsToModule;
+
     /**
      * Boot the application events.
-     *
-     * @param Modules $modules
      */
-    public function boot(Modules $modules)
+    public function boot()
     {
         $this->app->make('config')->set('auth.guards.backend', [
             'driver' => 'session',
@@ -46,32 +48,27 @@ class BackendModuleProvider extends ModuleProvider
             'model' => UserEntity::class,
         ]);
 
-        $this->loadRoutes(function (Router $router) use ($modules) {
-            $router->get('backend/config.js', [
-                'uses'=> Config::class.'@make',
-                'as' => 'backend.config.js',
-                'domain' => $this->module->config('domain')
-            ]);
-
-            $router->group([
-                'prefix' => $this->module->config('path'),
-                'domain' => $this->module->config('domain'),
+        if (!$this->app->routesAreCached()) {
+            Route::group([
+                'prefix' => self::module()->config('path'),
+                'domain' => self::module()->config('domain'),
                 'middleware' => ['backend']
-            ], function (Router $router) use ($modules) {
+            ], function (Router $router) {
+                $router->get('backend/config.js', Config::class.'@make')->name('backend.config.js');
                 $auth = AuthController::class;
                 $router->get('auth/login', ['uses' => "{$auth}@getLogin", 'as' => 'backend.auth']);
                 $router->post('auth/login', ['uses' => "{$auth}@postLogin", 'as' => 'backend.auth.login']);
                 $router->get('auth/logout', ['uses' => "{$auth}@getLogout", 'as' => 'backend.auth.logout']);
 
-                $router->group(['middleware' => ['backend.auth']], function (Router $router) use ($modules) {
+                $router->group(['middleware' => ['backend.auth']], function (Router $router) {
                     $router->get('', [
                         'uses' => Dashboard::class.'@index',
                         'as' => 'backend.index'
                     ]);
-                    $modules->loadRoutes('backend');
+                    Modules::loadRoutes('backend');
                 });
             });
-        });
+        }
     }
 
     /**
@@ -81,8 +78,6 @@ class BackendModuleProvider extends ModuleProvider
      */
     public function register()
     {
-        parent::register();
-
         $this->app->singleton(Backend::class, function () {
             return new Backend($this->app);
         });
@@ -100,13 +95,8 @@ class BackendModuleProvider extends ModuleProvider
             VerifyCsrfToken::class
         ]);
 
-        if (version_compare(Application::VERSION, '5.4') === -1) {
-            $this->app->make('router')->middleware('backend.auth', Authenticate::class);
-            $this->app->make('router')->middleware('backend.auth.base', AuthenticateWithBasicAuth::class);
-        } else {
-            $this->app->make('router')->aliasMiddleware('backend.auth', Authenticate::class);
-            $this->app->make('router')->aliasMiddleware('backend.auth.base', AuthenticateWithBasicAuth::class);
-        }
+        $this->app->make('router')->aliasMiddleware('backend.auth', Authenticate::class);
+        $this->app->make('router')->aliasMiddleware('backend.auth.base', AuthenticateWithBasicAuth::class);
 
         AliasLoader::getInstance(['Backend'=> BackendFacade::class]);
     }

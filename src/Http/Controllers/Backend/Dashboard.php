@@ -1,6 +1,9 @@
 <?php
 declare(strict_types = 1);
+
 namespace RabbitCMS\Backend\Http\Controllers\Backend;
+
+use Illuminate\Contracts\View\View;
 
 /**
  * Class Dashboard
@@ -10,10 +13,10 @@ namespace RabbitCMS\Backend\Http\Controllers\Backend;
 class Dashboard extends Controller
 {
     /**
-     * @return \Illuminate\View\View
+     * @return View
      */
-    public function index()
+    public function index():View
     {
-        return $this->view('index');
+        return self::module()->view('index');
     }
 }

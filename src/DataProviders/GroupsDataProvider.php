@@ -1,20 +1,33 @@
 <?php
+declare(strict_types=1);
 
 namespace RabbitCMS\Backend\DataProviders;
-
 
 use Illuminate\Database\Eloquent\Model as Eloquent;
 use RabbitCMS\Backend\Entities\Group as GroupEntity;
 use RabbitCMS\Carrot\Support\Grid2 as BaseDataProvider;
 
+/**
+ * Class GroupsDataProvider
+ *
+ * @package RabbitCMS\Backend\DataProviders
+ */
 class GroupsDataProvider extends BaseDataProvider
 {
-    public function getModel() :Eloquent
+    /**
+     * @return Eloquent
+     */
+    public function getModel(): Eloquent
     {
-        return new GroupEntity;
+        return new GroupEntity();
     }
 
-    protected function prepareRow(Eloquent $row) :array
+    /**
+     * @param Eloquent $row
+     *
+     * @return array
+     */
+    protected function prepareRow(Eloquent $row): array
     {
         /* @var GroupEntity $row */
 

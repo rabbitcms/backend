@@ -1,12 +1,18 @@
 <?php
+declare(strict_types=1);
 
 namespace RabbitCMS\Backend\Support;
 
 use Illuminate\Contracts\Container\Container;
 use RabbitCMS\Backend\Entities\User;
-use RabbitCMS\Modules\Managers\Modules;
+use RabbitCMS\Modules\Facades\Modules;
 use RabbitCMS\Modules\Module;
 
+/**
+ * Class Backend
+ *
+ * @package RabbitCMS\Backend\Support
+ */
 class Backend
 {
     const MENU_PRIORITY_MENU = 0;
@@ -84,7 +90,7 @@ class Backend
         if ($this->loaded) {
             return;
         }
-        $this->container->make(Modules::class)->enabled()->each(function (Module $module) {
+        array_walk(Modules::enabled(), function (Module $module) {
             $path = $module->getPath('config/backend.php');
             if (file_exists($path)) {
                 $value = require_once($path);

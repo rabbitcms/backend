@@ -1,20 +1,31 @@
 <?php
+declare(strict_types=1);
 
 namespace RabbitCMS\Backend\Http\Requests;
 
-
 use RabbitCMS\Carrot\Http\Request;
 
+/**
+ * Class UsersCreateRequest
+ *
+ * @package RabbitCMS\Backend\Http\Requests
+ */
 class UsersCreateRequest extends Request
 {
     protected $errorBag = 'users';
 
-    public function authorize()
+    /**
+     * @return bool
+     */
+    public function authorize(): bool
     {
         return true;
     }
 
-    public function rules()
+    /**
+     * @return array
+     */
+    public function rules(): array
     {
         $rules = [
             'email'    => 'required|unique:backend_users,email',
@@ -26,7 +37,10 @@ class UsersCreateRequest extends Request
         return $rules;
     }
 
-    public function attributes()
+    /**
+     * @return array
+     */
+    public function attributes(): array
     {
         return [
             'email'    => trans('backend::users.email'),

@@ -27,6 +27,7 @@
     @stack('styles')
 
     <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tslib/1.8.0/tslib.min.js" integrity="sha256-NQe2Oeyk/OcS0zWpBtBXQd5/t17yOF8QRV3lfOp8+yQ=" crossorigin="anonymous"></script>
     <script src="{{module_asset('backend', 'backend/plugins/jquery.min.js')}}" type="text/javascript"></script>
     <script src="{{module_asset('backend', 'backend/plugins/jquery-ui/jquery-ui.custom.min.js')}}" type="text/javascript"></script>
     <script src="{{module_asset('backend', 'backend/plugins/bootstrap/js/bootstrap.min.js')}}" type="text/javascript"></script>

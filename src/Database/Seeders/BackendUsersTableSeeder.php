@@ -1,9 +1,17 @@
-<?php namespace RabbitCMS\Backend\Database\Seeders;
+<?php
+declare(strict_types=1);
 
-use Illuminate\Database\Seeder;
+namespace RabbitCMS\Backend\Database\Seeders;
+
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Seeder;
 use RabbitCMS\Backend\Entities\User;
 
+/**
+ * Class BackendUsersTableSeeder
+ *
+ * @package RabbitCMS\Backend\Database\Seeders
+ */
 class BackendUsersTableSeeder extends Seeder
 {
 

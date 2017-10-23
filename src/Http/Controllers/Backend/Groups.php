@@ -1,13 +1,12 @@
 <?php
-
+declare(strict_types=1);
 namespace RabbitCMS\Backend\Http\Controllers\Backend;
 
-
+use Illuminate\Contracts\View\View as ViewContract;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\View\Factory as ViewFactory;
-use Illuminate\View\View;
+use Illuminate\Support\Facades\View;
 use RabbitCMS\Backend\Annotation\Permissions;
 use RabbitCMS\Backend\DataProviders\GroupsDataProvider;
 use RabbitCMS\Backend\Entities\Group as GroupModel;
@@ -22,26 +21,20 @@ class Groups extends Controller
 {
     /**
      * Init controller.
-     *
-     * @param Backend     $backend
-     * @param ViewFactory $factory
      */
-    public function init(Backend $backend, ViewFactory $factory)
+    public function before(): void
     {
-        $factory->composer(
-            $this->viewName('groups.form'),
-            function (View $view) use ($backend) {
-                $view->with('rules', $backend->getAclGroups());
-            }
-        );
+        View::composer(self::module()->viewName('groups.form'), function (ViewContract $view) {
+            $view->with('rules', app(Backend::class)->getAclGroups());
+        });
     }
 
     /**
-     * @return View
+     * @return ViewContract
      */
-    public function getIndex()
+    public function getIndex(): ViewContract
     {
-        return $this->view('groups.index');
+        return self::module()->view('groups.index');
     }
 
     /**
@@ -49,20 +42,20 @@ class Groups extends Controller
      *
      * @return JsonResponse
      */
-    public function postIndex(Request $request)
+    public function postIndex(Request $request): JsonResponse
     {
-        return (new GroupsDataProvider)->response($request);
+        return (new GroupsDataProvider())->response($request);
     }
 
     /**
-     * @return View
+     * @return ViewContract
      * @Permissions("system.groups.write")
      */
-    public function getCreate()
+    public function getCreate(): ViewContract
     {
-        $model = new GroupModel;
+        $model = new GroupModel();
 
-        return $this->view('groups.form', ['model' => $model]);
+        return self::module()->view('groups.form', ['model' => $model]);
     }
 
     /**
@@ -73,23 +66,23 @@ class Groups extends Controller
      */
     public function postCreate(Request $request)
     {
-        $model = new GroupModel;
+        $model = new GroupModel();
 
         return $this->save($model, $request);
     }
 
     /**
-     * @param $id
+     * @param string $id
      *
-     * @return View
+     * @return ViewContract
      * @Permissions("system.groups.write")
      */
-    public function getEdit($id)
+    public function getEdit(string $id): ViewContract
     {
         $model = GroupModel::query()
             ->findOrFail($id);
 
-        return $this->view('groups.form', ['model' => $model]);
+        return self::module()->view('groups.form', ['model' => $model]);
     }
 
     /**
@@ -99,7 +92,7 @@ class Groups extends Controller
      * @return JsonResponse
      * @Permissions("system.groups.write")
      */
-    public function postEdit($id, Request $request)
+    public function postEdit(string $id, Request $request)
     {
         /* @var GroupModel $model */
         $model = GroupModel::query()
@@ -111,6 +104,8 @@ class Groups extends Controller
     /**
      * @param $id
      * @Permissions("system.groups.read")
+     *
+     * @throws \Exception
      */
     public function postDelete($id)
     {
@@ -131,7 +126,7 @@ class Groups extends Controller
      *
      * @return JsonResponse
      */
-    protected function save(GroupModel $model, Request $request)
+    protected function save(GroupModel $model, Request $request): JsonResponse
     {
         $data = $request->only('caption');
         $data['permissions'] = $request->input('permissions', []);
@@ -139,7 +134,7 @@ class Groups extends Controller
         $model->fill($data);
         $result = $model->save();
 
-        return \Response::json(['result' => $result]);
+        return new JsonResponse(['result' => $result]);
     }
 
     /**
@@ -148,7 +143,7 @@ class Groups extends Controller
      *
      * @return JsonResponse
      */
-    public function getUsers($id, Request $request)
+    public function getUsers($id, Request $request): JsonResponse
     {
         /* @var GroupModel $group */
         $group = GroupModel::query()
@@ -173,7 +168,10 @@ class Groups extends Controller
                 'id'      => $item->id,
                 'name'    => $item->email . ($item->name === '' ? '' : ' - ' . $item->name),
                 'actions' => [
-                    'delete' => route('backend.backend.groups.users.delete', ['group_id' => $group->id, 'user_id' => $item->id]),
+                    'delete' => route('backend.backend.groups.users.delete', [
+                        'group_id' => $group->id,
+                        'user_id'  => $item->id,
+                    ]),
                 ],
             ];
         }
@@ -185,7 +183,7 @@ class Groups extends Controller
             'draw'            => $request->input('draw'),
         ];
 
-        return \Response::json($data, 200, [], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+        return new JsonResponse($data, 200, [], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
     }
 
     /**

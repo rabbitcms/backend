@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace RabbitCMS\Backend\Annotation;
 
@@ -19,6 +20,7 @@ final class Permissions
      * @var array
      */
     public $permissions;
+
     /**
      * @var bool
      */

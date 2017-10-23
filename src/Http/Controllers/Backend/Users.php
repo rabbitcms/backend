@@ -1,12 +1,13 @@
 <?php
+declare(strict_types=1);
 
 namespace RabbitCMS\Backend\Http\Controllers\Backend;
 
-
+use Illuminate\Contracts\View\View as ViewContract;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\View\Factory as ViewFactory;
-use Illuminate\View\View;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\View;
 use RabbitCMS\Backend\Annotation\Permissions;
 use RabbitCMS\Backend\DataProviders\UsersDataProvider;
 use RabbitCMS\Backend\Entities\Group as GroupModel;
@@ -20,25 +21,19 @@ use RabbitCMS\Backend\Http\Requests\UsersUpdateRequest;
  */
 class Users extends Controller
 {
-    /**
-     * @param ViewFactory $factory
-     */
-    public function init(ViewFactory $factory)
+    protected function before(): void
     {
-        $factory->composer(
-            $this->viewName('users.form'),
-            function (View $view) {
-                $view->with('groups', GroupModel::query()->get());
-            }
-        );
+        View::composer(self::module()->viewName('users.form'), function (ViewContract $view) {
+            $view->with('groups', GroupModel::query()->get());
+        });
     }
 
     /**
-     * @return View
+     * @return ViewContract
      */
-    public function getIndex()
+    public function getIndex(): ViewContract
     {
-        return $this->view('users.index');
+        return self::module()->view('users.index');
     }
 
     /**
@@ -46,20 +41,20 @@ class Users extends Controller
      *
      * @return JsonResponse
      */
-    public function postIndex(Request $request)
+    public function postIndex(Request $request): JsonResponse
     {
-        return (new UsersDataProvider)->response($request);
+        return (new UsersDataProvider())->response($request);
     }
 
     /**
-     * @return View
+     * @return ViewContract
      * @Permissions("system.users.write")
      */
-    public function getCreate()
+    public function getCreate(): ViewContract
     {
-        $model = new UserModel;
+        $model = new UserModel();
 
-        return $this->view('users.form', ['model' => $model]);
+        return self::module()->view('users.form', ['model' => $model]);
     }
 
     /**
@@ -67,10 +62,11 @@ class Users extends Controller
      *
      * @return JsonResponse
      * @Permissions("system.users.write")
+     * @throws \Exception|\Throwable
      */
-    public function postCreate(UsersCreateRequest $request)
+    public function postCreate(UsersCreateRequest $request): JsonResponse
     {
-        $model = new UserModel;
+        $model = new UserModel();
 
         return $this->save($model, $request);
     }
@@ -78,25 +74,26 @@ class Users extends Controller
     /**
      * @param $id
      *
-     * @return View
+     * @return ViewContract
      * @Permissions("system.users.write")
      */
-    public function getEdit($id)
+    public function getEdit($id): ViewContract
     {
         $model = UserModel::query()
             ->findOrFail($id);
 
-        return $this->view('users.form', ['model' => $model]);
+        return self::module()->view('users.form', ['model' => $model]);
     }
 
     /**
-     * @param              $id
+     * @param                    $id
      * @param UsersUpdateRequest $request
      *
      * @return JsonResponse
      * @Permissions("system.users.write")
+     * @throws \Exception|\Throwable
      */
-    public function postEdit($id, UsersUpdateRequest $request)
+    public function postEdit($id, UsersUpdateRequest $request): JsonResponse
     {
         /* @var UserModel $model */
         $model = UserModel::query()
@@ -108,6 +105,8 @@ class Users extends Controller
     /**
      * @param $id
      * @Permissions("system.users.write")
+     *
+     * @throws \Exception
      */
     public function postDelete($id)
     {
@@ -123,30 +122,29 @@ class Users extends Controller
     }
 
     /**
-     * @param UserModel    $model
-     * @param Request $request
+     * @param UserModel $model
+     * @param Request   $request
      *
      * @return JsonResponse
+     * @throws \Exception|\Throwable
      */
-    protected function save(UserModel $model, Request $request)
+    protected function save(UserModel $model, Request $request): JsonResponse
     {
-        return \DB::transaction(
-            function () use ($model, $request) {
-                $data = $request->only('email', 'active', 'name');
+        return DB::transaction(function () use ($model, $request) {
+            $data = $request->only('email', 'active', 'name');
 
-                $model->fill($data);
+            $model->fill($data);
 
-                $password = $request->input('password');
-                if ($password !== null && strlen($password = trim($password)) > 0) {
-                    $model->setPasswordAttribute($password);
-                }
-
-                $result = $model->save();
-                $model->groups()
-                    ->sync($request->input('groups', []));
-
-                return \Response::json(['result' => $result]);
+            $password = $request->input('password');
+            if ($password !== null && strlen($password = trim($password)) > 0) {
+                $model->setPasswordAttribute($password);
             }
-        );
+
+            $result = $model->save();
+            $model->groups()
+                ->sync($request->input('groups', []));
+
+            return new JsonResponse(['result' => $result]);
+        });
     }
 }

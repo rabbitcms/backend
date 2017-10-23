@@ -1,7 +1,13 @@
 <?php
+declare(strict_types=1);
 
 namespace RabbitCMS\Backend\Contracts;
 
+/**
+ * Interface HasAccessEntity
+ *
+ * @package RabbitCMS\Backend\Contracts
+ */
 interface HasAccessEntity
 {
     /**

@@ -1,24 +1,25 @@
 <?php
+declare(strict_types=1);
 
 namespace RabbitCMS\Backend\Http\Controllers\Backend;
 
-use Illuminate\Auth\AuthManager;
 use Illuminate\Contracts\Auth\StatefulGuard;
-use Illuminate\Foundation\Application;
 use Illuminate\Http\Exceptions\HttpResponseException;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Auth as AuthFacade;
 use RabbitCMS\Backend\Entities\User;
-use RabbitCMS\Modules\ModuleController;
+use RabbitCMS\Modules\Concerns\BelongsToModule;
 
-abstract class Controller extends ModuleController
+/**
+ * Class Controller
+ *
+ * @package RabbitCMS\Backend\Http\Controllers\Backend
+ */
+abstract class Controller extends \Illuminate\Routing\Controller
 {
-    protected $module = 'backend';
+    use BelongsToModule;
 
     protected $denyView = 'backend::deny';
-
-    public function __construct(Application $app)
-    {
-        parent::__construct($app);
-    }
 
     /**
      * Get current user.
@@ -33,9 +34,9 @@ abstract class Controller extends ModuleController
     /**
      * @return StatefulGuard
      */
-    protected function guard():StatefulGuard
+    protected function guard(): StatefulGuard
     {
-        return $this->app->make(AuthManager::class)->guard('backend');
+        return AuthFacade::guard('backend');
     }
 
     /**
@@ -50,7 +51,10 @@ abstract class Controller extends ModuleController
     protected function message(string $message, string $type = 'danger', int $code = 418)
     {
         throw new HttpResponseException(
-            \Response::json(['message' => $message, 'type' => $type], $code, [], JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT)
+            new JsonResponse([
+                'message' => $message,
+                'type'    => $type,
+            ], $code, [], JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT)
         );
     }
 
@@ -68,5 +72,25 @@ abstract class Controller extends ModuleController
     protected function error(string $message)
     {
         $this->message($message, 'danger', 418);
+    }
+
+    /**
+     * @param string $method
+     * @param array  $parameters
+     *
+     * @return mixed|\Symfony\Component\HttpFoundation\Response
+     */
+    public function callAction($method, $parameters)
+    {
+        $this->before();
+
+        return parent::callAction($method, $parameters);
+    }
+
+    /**
+     * Call before call the action.
+     */
+    protected function before(): void
+    {
     }
 }

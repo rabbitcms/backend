@@ -1,21 +1,35 @@
 <?php
+declare(strict_types=1);
 
 namespace RabbitCMS\Backend\DataProviders;
-
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model as Eloquent;
 use RabbitCMS\Backend\Entities\User as UserEntity;
 use RabbitCMS\Carrot\Support\Grid2 as BaseDataProvider;
 
+/**
+ * Class UsersDataProvider
+ *
+ * @package RabbitCMS\Backend\DataProviders
+ */
 class UsersDataProvider extends BaseDataProvider
 {
-    public function getModel() :Eloquent
+    /**
+     * @return Eloquent
+     */
+    public function getModel(): Eloquent
     {
-        return new UserEntity;
+        return new UserEntity();
     }
 
-    protected function filters(Builder $query, array $filters) :Builder
+    /**
+     * @param Builder $query
+     * @param array   $filters
+     *
+     * @return Builder
+     */
+    protected function filters(Builder $query, array $filters): Builder
     {
         if (array_key_exists('id', $filters) && $filters['id'] !== '') {
             $query->where('id', '=', $filters['id']);
@@ -31,7 +45,12 @@ class UsersDataProvider extends BaseDataProvider
         return $query;
     }
 
-    protected function prepareRow(Eloquent $row) :array
+    /**
+     * @param Eloquent $row
+     *
+     * @return array
+     */
+    protected function prepareRow(Eloquent $row): array
     {
         /* @var UserEntity $row */
 

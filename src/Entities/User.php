@@ -1,30 +1,29 @@
 <?php
+declare(strict_types=1);
 
 namespace RabbitCMS\Backend\Entities;
 
-use Illuminate\Auth\Authenticatable;
 use Illuminate\Auth\Passwords\CanResetPassword;
 use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
 use Illuminate\Database\Eloquent\Model as Eloquent;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Foundation\Auth\Access\Authorizable;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Facades\Hash;
 use RabbitCMS\Backend\Contracts\HasAccessEntity;
 
 /**
  * Class User
  *
- * @property-read int $id
- * @property string $email
- * @property boolean $active
- * @property string $name
+ * @property-read int     $id
+ * @property string       $email
+ * @property boolean      $active
+ * @property string       $name
  * @property-write string $password
- *
  * @property-read Group[] $groups
  */
-class User extends Eloquent implements AuthenticatableContract, AuthorizableContract, CanResetPasswordContract, HasAccessEntity
+class User extends Eloquent
+    implements AuthenticatableContract, AuthorizableContract, CanResetPasswordContract, HasAccessEntity
 {
     use Authenticatable, Authorizable, CanResetPassword, SoftDeletes;
 
@@ -61,9 +60,9 @@ class User extends Eloquent implements AuthenticatableContract, AuthorizableCont
     }
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     * @return BelongsToMany
      */
-    public function groups()
+    public function groups(): BelongsToMany
     {
         return $this->belongsToMany(Group::class, 'backend_users_groups', 'user_id', 'group_id');
     }
@@ -75,7 +74,7 @@ class User extends Eloquent implements AuthenticatableContract, AuthorizableCont
      *
      * @return bool
      */
-    public function hasAnyAccess(array $permissions)
+    public function hasAnyAccess(array $permissions): bool
     {
         return $this->hasAccess($permissions, false);
     }
@@ -84,17 +83,16 @@ class User extends Eloquent implements AuthenticatableContract, AuthorizableCont
      * See if a user has access to the passed permission(s).
      * Permissions are merged from all groups the user belongs to
      * and then are checked against the passed permission(s).
-     *
      * If multiple permissions are passed, the user must
      * have access to all permissions passed through, unless the
      * "all" flag is set to false.
      *
      * @param  string|array $permissions
-     * @param  bool $all
+     * @param  bool         $all
      *
      * @return bool
      */
-    public function hasAccess($permissions, $all = true)
+    public function hasAccess($permissions, $all = true): bool
     {
         $allPermissions = $this->getPermissions();
 

@@ -1,11 +1,16 @@
 <?php
-
+declare(strict_types=1);
 namespace RabbitCMS\Backend\Http\Middleware;
 
 use Illuminate\Config\Repository as ConfigRepository;
 use Illuminate\Session\Middleware\StartSession as StartSessionMiddleware;
 use Illuminate\Session\SessionManager;
 
+/**
+ * Class StartSession
+ *
+ * @package RabbitCMS\Backend\Http\Middleware
+ */
 class StartSession extends StartSessionMiddleware
 {
     /**

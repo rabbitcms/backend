@@ -1,15 +1,18 @@
-<?php namespace RabbitCMS\Backend\Entities;
+<?php
+declare(strict_types=1);
+
+namespace RabbitCMS\Backend\Entities;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use RabbitCMS\Carrot\Eloquent\PrintableJson;
 
 /**
  * Class Group
  *
- * @property-read int $id
- * @property string $caption
- * @property string[] $permissions
+ * @property-read int    $id
+ * @property string      $caption
+ * @property string[]    $permissions
  * @property-read User[] $users
  */
 class Group extends Model
@@ -38,9 +41,9 @@ class Group extends Model
     protected $casts = ['permissions' => 'array'];
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     * @return BelongsToMany
      */
-    public function users()
+    public function users():BelongsToMany
     {
         return $this->belongsToMany(User::class, 'backend_users_groups', 'group_id', 'user_id');
     }
@@ -48,7 +51,7 @@ class Group extends Model
     /**
      * @return array
      */
-    public function getPermissions()
+    public function getPermissions(): array
     {
         return $this->permissions ?: [];
     }

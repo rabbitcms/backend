@@ -2,9 +2,8 @@
 declare(strict_types = 1);
 namespace RabbitCMS\Backend\Support;
 
-use Illuminate\Config\Repository as ConfigRepository;
-use RabbitCMS\Modules\Managers\Modules;
-use RabbitCMS\Modules\Module;
+use Illuminate\Support\Facades\Config;
+use RabbitCMS\Modules\Facades\Modules;
 
 /**
  * Class ConfigMaker.
@@ -12,11 +11,9 @@ use RabbitCMS\Modules\Module;
 class ConfigMaker
 {
     /**
-     * @param Modules $modules
-     * @param ConfigRepository $cfg
      * @return string
      */
-    public function handle(Modules $modules, ConfigRepository $cfg): string
+    public function handle(): string
     {
         $baseUrl = str_replace(public_path(), '', public_path('modules'));
         $config = [
@@ -26,7 +23,7 @@ class ConfigMaker
             'paths' => [],
             'packages' => []
         ];
-        $prefix = $cfg->get('module.backend.path');
+        $prefix =Config::get('module.backend.path');
         $opts = [
             'path' => module_asset("backend", "backend"),
             'prefix' => $prefix,
@@ -37,8 +34,7 @@ class ConfigMaker
             mkdir($dir);
         }
 
-        /* @var Module $module */
-        foreach ($modules->enabled() as $module) {
+        foreach (Modules::enabled() as $module) {
             $path = $module->getPath('config/backend.php');
             $name = $module->getName();
             if (file_exists($path)) {
@@ -116,9 +112,9 @@ class ConfigMaker
             /* @lang JavaScript */
             <<<JS
 (function() {
-    var config = ${config};
+    var config = {$config};
     config.urlArgs = function(id, url) {
-        return (url.indexOf('?') === -1 ? '?' : '&') + ${time};
+        return (url.indexOf('?') === -1 ? '?' : '&') + {$time};
     };
     require.config(config);
     //detect jquery
@@ -129,12 +125,6 @@ class ConfigMaker
         rbc.RabbitCMS.init(${opts});
     });
 })();
-
-function __extends(d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-};
 JS;
         return $out;
     }
