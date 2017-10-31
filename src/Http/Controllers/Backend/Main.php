@@ -2,6 +2,8 @@
 declare(strict_types = 1);
 namespace RabbitCMS\Backend\Http\Controllers\Backend;
 
+use Illuminate\Contracts\View\View;
+
 /**
  * Class Main
  * @package RabbitCMS\Backend\Http\Controllers\Backend
@@ -9,9 +11,9 @@ namespace RabbitCMS\Backend\Http\Controllers\Backend;
 class Main extends Controller
 {
     /**
-     * @return \Illuminate\View\View
+     * @return View
      */
-    public function index()
+    public function index():View
     {
         return $this->view('index');
     }

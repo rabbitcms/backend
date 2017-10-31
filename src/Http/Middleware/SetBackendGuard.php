@@ -6,7 +6,7 @@ namespace RabbitCMS\Backend\Http\Middleware;
 use Closure;
 use Illuminate\Config\Repository;
 use Illuminate\Http\Request;
-use RabbitCMS\Modules\Support\ModuleDetect;
+use RabbitCMS\Modules\Concerns\BelongsToModule;
 
 /**
  * Class SetBackendGuard
@@ -15,7 +15,8 @@ use RabbitCMS\Modules\Support\ModuleDetect;
  */
 class SetBackendGuard
 {
-    use ModuleDetect;
+    use BelongsToModule;
+
     /**
      * The Guard implementation.
      *
@@ -45,8 +46,8 @@ class SetBackendGuard
     {
         $this->config->set('auth.defaults.guard', 'backend');
         $this->config->set('session.cookie', 'rbc_backend');
-        $this->config->set('session.path', '/' . ltrim($this->module()->config('path'), '/'));
-        $this->config->set('session.domain', $this->module()->config('domain'));
+        $this->config->set('session.path', '/' . ltrim(self::module()->config('path'), '/'));
+        $this->config->set('session.domain', self::module()->config('domain'));
         return $next($request);
     }
 }

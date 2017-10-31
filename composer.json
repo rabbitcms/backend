@@ -4,7 +4,7 @@
     "require": {
         "rabbitcms/carrot": "^0.3.3",
         "doctrine/annotations": "1.*",
-        "rabbitcms/modules": "^1.5.0"
+        "rabbitcms/modules": "^2.0"
     },
     "authors": [
         {

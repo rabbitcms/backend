@@ -15,6 +15,7 @@ use Illuminate\Routing\Route;
 use Illuminate\Support\Facades\View;
 use RabbitCMS\Backend\Annotation\Permissions as PermissionAnnotation;
 use RabbitCMS\Backend\Contracts\HasAccessEntity;
+use RabbitCMS\Modules\Concerns\BelongsToModule;
 use ReflectionClass;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use URL;
@@ -26,6 +27,8 @@ use URL;
  */
 class Authenticate
 {
+    use BelongsToModule;
+
     /**
      * The Guard implementation.
      *
@@ -106,7 +109,7 @@ class Authenticate
             if ($request->ajax()) {
                 throw new HttpResponseException(new JsonResponse([], Response::HTTP_FORBIDDEN));
             }
-            throw new HttpResponseException(new Response(View::make('backend::deny'), Response::HTTP_FORBIDDEN));
+            throw new HttpResponseException(new Response(self::module()->view('deny'), Response::HTTP_FORBIDDEN));
         }
     }
 }

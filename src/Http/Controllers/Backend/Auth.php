@@ -2,10 +2,11 @@
 declare(strict_types = 1);
 namespace RabbitCMS\Backend\Http\Controllers\Backend;
 
+use Illuminate\Contracts\View\View;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\View\View;
+use Illuminate\Support\Facades\Redirect;
 use RabbitCMS\Backend\Support\Metronic;
 
 /**
@@ -39,10 +40,10 @@ class Auth extends Controller
         $credentials = $request->only('email', 'password');
         $credentials['active'] = 1;
         if ($this->guard()->attempt($credentials, $request->has('remember'))) {
-            return \Redirect::intended();
+            return Redirect::intended();
         }
 
-        return \Redirect::route('backend.auth')
+        return Redirect::route('backend.auth')
             ->withInput($request->only('email'))
             ->withErrors(['email' => 'Введено невірний логін або пароль']);
     }
@@ -54,6 +55,6 @@ class Auth extends Controller
     {
         $this->guard()->logout();
 
-        return redirect()->route('backend.index');
+        return Redirect::route('backend.index');
     }
 }

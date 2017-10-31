@@ -1,27 +1,32 @@
 <?php
+declare(strict_types=1);
+
 namespace RabbitCMS\Backend\Http\Controllers\Backend;
 
 use Illuminate\Auth\AuthManager;
 use Illuminate\Contracts\Auth\StatefulGuard;
+use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\App;
 use RabbitCMS\Backend\Entities\User;
-use RabbitCMS\Modules\ModuleController;
+use RabbitCMS\Modules\Concerns\BelongsToModule;
+use Illuminate\Routing\Controller as IlluminateController;
 
 /**
  * Class Controller
  */
-abstract class Controller extends ModuleController
+abstract class Controller extends IlluminateController
 {
-    protected $module = 'backend';
+    use BelongsToModule;
 
     protected $denyView = 'backend::deny';
 
     /**
      * @return StatefulGuard
      */
-    protected function guard():StatefulGuard
+    protected function guard(): StatefulGuard
     {
-        return $this->app->make(AuthManager::class)->guard('backend');
+        return App::make(AuthManager::class)->guard('backend');
     }
 
     /**
@@ -71,5 +76,71 @@ abstract class Controller extends ModuleController
     protected function error(string $message)
     {
         $this->message($message, 'danger', 418);
+    }
+
+    /**
+     * Execute an action on the controller.
+     *
+     * @param  string $method
+     * @param  array  $parameters
+     *
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public function callAction($method, $parameters)
+    {
+        if (method_exists($this, 'init')) {
+            App::call([$this, 'init']);
+        }
+
+        if (method_exists($this, 'before')) {
+            App::call([$this, 'before'], ['method' => $method]);
+        }
+
+        return parent::callAction($method, $parameters);
+    }
+
+    /**
+     * @param string $path
+     *
+     * @return string
+     */
+    public function asset($path)
+    {
+        return static::module()->asset($path);
+    }
+
+    /**
+     * @param string $key
+     * @param array  $parameters
+     * @param null   $locale
+     *
+     * @return array|null|string
+     */
+    public function trans($key, array $parameters = [], $locale = null)
+    {
+        return static::module()->trans($key, $parameters, $locale);
+    }
+
+    /**
+     * @param string $view
+     * @param array  $data
+     *
+     * @return View
+     */
+    protected function view($view, array $data = []): View
+    {
+        return static::module()->view($view, $data);
+    }
+
+    /**
+     * Get module view name.
+     *
+     * @param string $view
+     *
+     * @return string
+     */
+    protected function viewName($view): string
+    {
+        return static::module()->viewName($view);
     }
 }

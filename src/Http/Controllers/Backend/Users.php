@@ -1,11 +1,14 @@
 <?php
 declare(strict_types=1);
+
 namespace RabbitCMS\Backend\Http\Controllers\Backend;
 
+use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\Factory as ViewFactory;
-use Illuminate\View\View;
 use RabbitCMS\Backend\Annotation\Permissions;
 use RabbitCMS\Backend\Entities\Group as GroupModel;
 use RabbitCMS\Backend\Entities\User as UserModel;
@@ -21,7 +24,8 @@ class Users extends Controller
 {
     /**
      * Controller init.
-     * @param Backend $backend
+     *
+     * @param Backend     $backend
      * @param ViewFactory $view
      */
     public function init(Backend $backend, ViewFactory $view)
@@ -43,6 +47,7 @@ class Users extends Controller
 
     /**
      * @param Request $request
+     *
      * @return JsonResponse
      */
     public function postIndex(Request $request): JsonResponse
@@ -120,10 +125,12 @@ class Users extends Controller
 
     /**
      * @param UsersRequest $request
+     *
      * @return Response
      * @Permissions("system.users.write")
+     * @throws \Exception|\Throwable
      */
-    public function postCreate(UsersRequest $request):Response
+    public function postCreate(UsersRequest $request): Response
     {
         $model = new UserModel;
 
@@ -131,13 +138,15 @@ class Users extends Controller
     }
 
     /**
-     * @param UserModel $model
+     * @param UserModel    $model
      * @param UsersRequest $request
+     *
      * @return Response
+     * @throws \Exception|\Throwable
      */
-    private function save(UserModel $model, UsersRequest $request):Response
+    private function save(UserModel $model, UsersRequest $request): Response
     {
-        return \DB::transaction(function () use ($model, $request) {
+        return DB::transaction(function () use ($model, $request) {
             $data = $request->input('user', []);
 
             $model->fill($data);
@@ -155,12 +164,13 @@ class Users extends Controller
                 return new JsonResponse(['result' => $result]);
             }
 
-            return \Redirect::route('backend.backend.users.');
+            return Redirect::route('backend.backend.users.');
         });
     }
 
     /**
      * @param $id
+     *
      * @return View
      * @Permissions("system.users.write")
      */
@@ -174,10 +184,12 @@ class Users extends Controller
     /**
      * @param              $id
      * @param UsersRequest $request
+     *
      * @return Response
      * @Permissions("system.users.write")
+     * @throws \Exception|\Throwable
      */
-    public function postEdit($id, UsersRequest $request):Response
+    public function postEdit($id, UsersRequest $request): Response
     {
         /**
          * @var UserModel $model
@@ -190,6 +202,7 @@ class Users extends Controller
 
     /**
      * @param $id
+     *
      * @return JsonResponse
      * @throws \Exception
      * @Permissions("system.users.write")

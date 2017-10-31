@@ -1,10 +1,13 @@
 <?php
 declare(strict_types=1);
+
 namespace RabbitCMS\Backend\Http\Controllers\Backend;
 
+use Illuminate\Contracts\View\View;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\Factory as ViewFactory;
-use Illuminate\View\View;
 use RabbitCMS\Backend\Annotation\Permissions;
 use RabbitCMS\Backend\Entities\Group as GroupModel;
 use RabbitCMS\Backend\Support\Backend;
@@ -17,7 +20,8 @@ class Groups extends Controller
 {
     /**
      * Init controller.
-     * @param Backend $backend
+     *
+     * @param Backend     $backend
      * @param ViewFactory $view
      */
     public function init(Backend $backend, ViewFactory $view)
@@ -29,18 +33,19 @@ class Groups extends Controller
     }
 
     /**
-     * @return \Illuminate\View\View
+     * @return View
      */
-    public function getIndex()
+    public function getIndex(): View
     {
         return $this->view('groups.index');
     }
 
     /**
      * @param Request $request
-     * @return \Illuminate\Http\JsonResponse
+     *
+     * @return JsonResponse
      */
-    public function postIndex(Request $request)
+    public function postIndex(Request $request): JsonResponse
     {
         $query = GroupModel::query();
         $recordsFiltered = $recordsTotal = $query->count();
@@ -83,14 +88,14 @@ class Groups extends Controller
             'draw' => $request->input('draw')
         ];
 
-        return \Response::json($data, 200, [], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+        return new JsonResponse($data, 200, [], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
     }
 
     /**
-     * @return \Illuminate\View\View
+     * @return View
      * @Permissions("system.groups.write")
      */
-    public function getCreate()
+    public function getCreate(): View
     {
         return $this->view('groups.form', [
             'model' => new GroupModel
@@ -112,7 +117,7 @@ class Groups extends Controller
 
     /**
      * @param GroupModel $model
-     * @param Request $request
+     * @param Request    $request
      *
      * @return array|\Illuminate\Http\RedirectResponse
      */
@@ -129,16 +134,16 @@ class Groups extends Controller
             return ['result' => $result];
         }
 
-        return \Redirect::route('backend.backend.groups.');
+        return Redirect::route('backend.backend.groups.');
     }
 
     /**
      * @param $id
      *
-     * @return \Illuminate\View\View
+     * @return View
      * @Permissions("system.groups.write")
      */
-    public function getEdit($id)
+    public function getEdit($id): View
     {
         return $this->view('groups.form', [
             'model' => GroupModel::query()->findOrFail($id)
@@ -147,7 +152,7 @@ class Groups extends Controller
 
     /**
      * @param              $id
-     * @param Request $request
+     * @param Request      $request
      *
      * @return array|\Illuminate\Http\RedirectResponse
      * @Permissions("system.groups.write")
@@ -170,7 +175,7 @@ class Groups extends Controller
      * @throws \Exception
      * @Permissions("system.groups.read")
      */
-    public function anyDelete($id)
+    public function anyDelete($id): array
     {
         $result = GroupModel::query()
             ->findOrFail($id)
@@ -180,11 +185,12 @@ class Groups extends Controller
     }
 
     /**
-     * @param $id
+     * @param         $id
      * @param Request $request
-     * @return \Illuminate\Http\JsonResponse
+     *
+     * @return JsonResponse
      */
-    public function getUsers($id, Request $request)
+    public function getUsers($id, Request $request):JsonResponse
     {
         /**
          * @var GroupModel $group
@@ -227,7 +233,7 @@ class Groups extends Controller
             'draw' => $request->input('draw')
         ];
 
-        return \Response::json($data, 200, [], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+        return new JsonResponse($data, 200, [], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
     }
 
     /**
