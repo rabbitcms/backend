@@ -1,4 +1,4 @@
-define(['jquery', 'bootbox'], function ($, bootbox) {
+define(['jquery', 'bootbox', 'jquery.cookie'], function ($, bootbox) {
     "use strict";
 
     var _Body = $('body');
@@ -17,6 +17,12 @@ define(['jquery', 'bootbox'], function ($, bootbox) {
         this.prefix = options.prefix;
 
         _this = this;
+
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': _TOKEN
+            }
+        });
 
         window.onpopstate = function (e) {
             var link = (e.state && e.state.link && e.state.link !== '') ? e.state.link : _pathname;

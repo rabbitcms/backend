@@ -5,7 +5,7 @@
         <div class="page-header-inner">
             <div class="page-logo">
                 <a href="{{relative_route('backend.index')}}" rel="ajax-portlet">
-                    <img src="{{asset('backend/img/logo.png')}}" alt="logo" class="logo-default"></a>
+                    <img src="@masset('img/logo.png')" alt="logo" class="logo-default"></a>
                 <div class="menu-toggler sidebar-toggler"></div>
             </div>
             <a href="javascript:void(0);" class="menu-toggler responsive-toggler" data-toggle="collapse" data-target=".navbar-collapse"></a>
@@ -13,7 +13,7 @@
                 <ul class="nav navbar-nav pull-right">
                     <li class="dropdown dropdown-user">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" data-hover="dropdown" data-close-others="true">
-                            <img class="img-circle hide1" src="{{asset_module('img/avatar.png','backend')}}" alt="">
+                            <img class="img-circle hide1" src="@masset('img/avatar.png')" alt="">
                             <span class="username username-hide-on-mobile">
                                 {{Auth::guard('backend')->user()->email}}</span>
                             <i class="fa fa-angle-down"></i></a>
