@@ -65,9 +65,9 @@ class ModuleProvider extends ServiceProvider
             if (file_exists($path)) {
                 $value = require_once($path);
                 if (is_callable($value)) {
-                    $this->app->call($value);
+                    $this->app->call($value, ['module' => $module]);
                 } elseif (is_array($value) && array_key_exists('boot', $value) && is_callable($value['boot'])) {
-                    $this->app->call($value['boot']);
+                    $this->app->call($value['boot'], ['module' => $module]);
                 }
             }
         }, Modules::enabled());
