@@ -1,6 +1,27 @@
 <?php
 
 return [
+        'not_selected' => 'Не вибрано',
+        'no' => 'Ні',
+        'yes' => 'Так',
+        'search' => 'Пошук',
+        'reset' => 'Скинути',
+        'id' => 'ID',
+        'create' => 'Створити',
+        'save' => 'Зберегти',
+        'deleting_ok' => 'Record deleted successfully',
+        'deleting_error' => 'An error occurred while deleting',
+        'close' => 'Закрити',
+        'back' => 'Повернутись',
+        'cancel' => 'Відмінити',
+        'all' => 'Все',
+        'ok' => 'OK',
+        'administration' => 'Administration panel',
+        'logout' => 'Log out',
+        'actions' => 'Дії',
+
+
+
     'system'       => 'Система',
     'users'        => 'Користувачі',
     'groups'       => 'Групи',

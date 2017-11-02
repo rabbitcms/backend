@@ -47,8 +47,8 @@ use Illuminate\Support\Facades\Lang;
     <script src="@masset('plugins/jquery.block-ui.js')" type="text/javascript"></script>
     <script src="@masset('plugins/uniform/jquery.uniform.min.js')" type="text/javascript"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/4.4.0/bootbox.min.js" integrity="sha256-4F7e4JsAJyLUdpP7Q8Sah866jCOhv72zU5E8lIRER4w=" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.16.0/jquery.validate.min.js" integrity="sha256-UOSXsAgYN43P/oVrmU+JlHtiDGYWN2iHnJuKY9WD+Jg=" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.16.0/additional-methods.min.js" integrity="sha256-ixVUAy0s+/DoWFGN9kYLK0M2viz7HxiN/REIo65Qsug=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.17.0/jquery.validate.min.js" integrity="sha256-F6h55Qw6sweK+t7SiOJX+2bpSAa3b/fnlrVCJvmEj1A=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.17.0/additional-methods.min.js" integrity="sha256-0Yg/eibVdKyxkuVo1Qwh0DspoUCHvSbm/oOoYVz32BQ=" crossorigin="anonymous"></script>
     <script src="@masset('plugins/select2/select2.min.js')" type="text/javascript"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.7.1/js/bootstrap-datepicker.min.js" integrity="sha256-TueWqYu0G+lYIimeIcMI8x1m14QH/DQVt4s9m/uuhPw=" crossorigin="anonymous"></script>
 
@@ -71,11 +71,11 @@ use Illuminate\Support\Facades\Lang;
     <script src="@masset('plugins/jquery.maskMoney.js')" type="text/javascript"></script>
 
     @if(app()->getLocale() === 'ru')
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.15.1/localization/messages_ru.min.js" integrity="sha256-zeB7JCDLJZfVpbmGUgBydwtADoHH7xXQ5csK4ZpcmEI=" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.17.0/localization/messages_ru.min.js" integrity="sha256-pW/I4s3iAUclf7Y7eM20ZSAyHq8yehOG8GRUvXcVnF8=" crossorigin="anonymous"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.7.1/locales/bootstrap-datepicker.ru.min.js" integrity="sha256-iGDUwn2IPSzlnLlVeCe3M4ZIxQxjUoDYdEO6oBZw/Go=" crossorigin="anonymous"></script>
         <script>jQuery(function($){$.fn.datepicker.defaults.language = 'ru';});</script>
     @else
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.15.1/localization/messages_uk.min.js" integrity="sha256-4Yu+8eUOvMXkgfz/SVviJCCWghnrZUibPvkUu5qz+wQ=" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.17.0/localization/messages_uk.min.js" integrity="sha256-HL/bvGBevAn+B2oTm4MJzK3EjlChK4Sl7Jc2XOWmu0U=" crossorigin="anonymous"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.7.1/locales/bootstrap-datepicker.uk.min.js" integrity="sha256-gJ+sB+muQyOKhTNx/XvtaXXkEr88FXSS3xMgtVR3V+E=" crossorigin="anonymous"></script>
         <script>jQuery(function($){$.fn.datepicker.defaults.language = 'uk';});</script>
     @endif

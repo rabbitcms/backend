@@ -19,5 +19,5 @@ return [
     'ok' => 'OK',
     'administration' => 'Administration panel',
     'logout' => 'Log out',
-    'actions' => 'actions'
+    'actions' => 'Actions'
 ];

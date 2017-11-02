@@ -3,7 +3,7 @@ declare(strict_types=1);
 namespace RabbitCMS\Backend\Console\Commands;
 
 use Illuminate\Console\Command;
-use RabbitCMS\Modules\Managers\Modules;
+use RabbitCMS\Modules\Facades\Modules;
 use RabbitCMS\Modules\Module;
 
 /**
@@ -32,9 +32,9 @@ class MakeConfigCommand extends Command
      *
      * @return mixed
      */
-    public function handle(Modules $modules)
+    public function handle()
     {
-        $baseUrl = str_replace(public_path(), '/', $modules->getAssetsPath());
+        $baseUrl = str_replace(public_path(), '/', Modules::getModulesAssetsRoot());
         $config = [
             'baseUrl' => '/'.rtrim($baseUrl, '/') . '/',
             'shim' => [],
@@ -48,7 +48,7 @@ class MakeConfigCommand extends Command
         $bootstraps = [[],[]];
 
         /* @var Module $module */
-        foreach ($modules->enabled() as $module) {
+        foreach (Modules::enabled() as $module) {
             $path = $module->getPath('config/backend.php');
             if (file_exists($path)) {
                 $value = require($path);
