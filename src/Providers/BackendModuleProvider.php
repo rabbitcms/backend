@@ -9,7 +9,6 @@ use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\ServiceProvider;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 use RabbitCMS\Backend\Console\Commands\MakeConfigCommand;
 use RabbitCMS\Backend\Entities\User as UserEntity;
@@ -21,7 +20,9 @@ use RabbitCMS\Backend\Http\Middleware\Authenticate;
 use RabbitCMS\Backend\Http\Middleware\AuthenticateWithBasicAuth;
 use RabbitCMS\Backend\Http\Middleware\StartSession;
 use RabbitCMS\Backend\Support\Backend;
+use RabbitCMS\Modules\Concerns\BelongsToModule;
 use RabbitCMS\Modules\Facades\Modules;
+use RabbitCMS\Modules\ModuleProvider;
 
 /**
  * Class BackendModuleProvider
@@ -29,7 +30,7 @@ use RabbitCMS\Modules\Facades\Modules;
  * @package RabbitCMS\Backend\Providers
  * @property Application $app
  */
-class BackendModuleProvider extends ServiceProvider
+class BackendModuleProvider extends ModuleProvider
 {
     use BelongsToModule;
 
@@ -78,6 +79,7 @@ class BackendModuleProvider extends ServiceProvider
      */
     public function register()
     {
+        parent::register();
         $this->app->singleton(Backend::class, function () {
             return new Backend($this->app);
         });

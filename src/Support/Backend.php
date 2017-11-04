@@ -15,7 +15,7 @@ use RabbitCMS\Modules\Module;
  */
 class Backend
 {
-    const MENU_PRIORITY_MENU = 0;
+    const MENU_PRIORITY_MENU  = 0;
     const MENU_PRIORITY_ITEMS = 1;
 
     /**
@@ -63,7 +63,7 @@ class Backend
      *
      * @var string
      */
-    protected $activeMenu;
+    protected $activeMenu = '';
 
     /**
      * @var bool
@@ -90,17 +90,19 @@ class Backend
         if ($this->loaded) {
             return;
         }
-        array_walk(Modules::enabled(), function (Module $module) {
-            $path = $module->getPath('config/backend.php');
-            if (file_exists($path)) {
-                $value = require_once($path);
-                if (is_callable($value)) {
-                    $this->container->call($value);
-                } elseif (is_array($value) && array_key_exists('boot', $value) && is_callable($value['boot'])) {
-                    $this->container->call($value['boot']);
+        foreach (Modules::enabled() as $module) {
+            call_user_func(function (Module $module) {
+                $path = $module->getPath('config/backend.php');
+                if (file_exists($path)) {
+                    $value = require($path);
+                    if (is_callable($value)) {
+                        $this->container->call($value);
+                    } elseif (is_array($value) && array_key_exists('boot', $value) && is_callable($value['boot'])) {
+                        $this->container->call($value['boot']);
+                    }
                 }
-            }
-        });
+            }, $module);
+        }
         $this->loaded = true;
     }
 
@@ -173,6 +175,7 @@ class Backend
 
     /**
      * Call all callbacks.
+     *
      * @param array $callbacks
      */
     protected function callAll(array $callbacks)
@@ -192,7 +195,7 @@ class Backend
      */
     public function getGroupPermissions($group, $acl = null)
     {
-        $rule = '/^' . preg_quote($group . '.' . ($acl ? $acl . '.' : '')) . '/';
+        $rule = '/^' . preg_quote($group . '.' . ($acl ? $acl . '.' : ''), '/') . '/';
 
         $result = [];
 
@@ -209,7 +212,7 @@ class Backend
      * Add menu resolver.
      *
      * @param callable|string $callback
-     * @param int $priority
+     * @param int             $priority
      */
     public function addMenuResolver($callback, $priority = self::MENU_PRIORITY_ITEMS)
     {
@@ -224,12 +227,12 @@ class Backend
      * Define backend item.
      *
      * @param string|null $parent
-     * @param string $name
-     * @param string $caption
-     * @param string $url
-     * @param array|null $permissions
+     * @param string      $name
+     * @param string      $caption
+     * @param string      $url
+     * @param array|null  $permissions
      * @param string|null $icon
-     * @param int $position
+     * @param int         $position
      */
     public function addMenu($parent, $name, $caption, $url, $icon = null, array $permissions = null, $position = 0)
     {
@@ -279,7 +282,7 @@ class Backend
     /**
      * Check items permissions.
      *
-     * @param User $user
+     * @param User  $user
      * @param array $items
      *
      * @return array
@@ -361,6 +364,7 @@ class Backend
 
     /**
      * Set active path.
+     *
      * @param string[] ...$path
      */
     public function setActiveMenu(...$path)
@@ -370,6 +374,7 @@ class Backend
 
     /**
      * Get active path.
+     *
      * @return string
      */
     public function getActiveMenu()
@@ -384,17 +389,19 @@ class Backend
      *
      * @return bool
      */
-    public function isActiveMenu(array $item)
+    public function isActiveMenu(array $item): bool
     {
-        return preg_match('/^' . preg_quote($item['path']) . '/', $this->activeMenu) != 0;
+        return preg_match('/^' . preg_quote($item['path'], '/') . '/', $this->activeMenu) !== 0;
     }
 
     /**
      * Get active items.
+     *
      * @param array $prepend
+     *
      * @return array
      */
-    public function getActiveMenuItems(array $prepend = [])
+    public function getActiveMenuItems(array $prepend = []): array
     {
         $path = explode('.', $this->activeMenu);
         $items = $this->getMenu();

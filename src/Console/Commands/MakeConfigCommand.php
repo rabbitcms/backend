@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace RabbitCMS\Backend\Console\Commands;
 
 use Illuminate\Console\Command;
+use Illuminate\Foundation\Bus\DispatchesJobs;
 use RabbitCMS\Backend\Support\ConfigMaker;
 
 /**

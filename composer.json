@@ -14,7 +14,7 @@
   "require": {
     "doctrine/annotations": "1.*",
     "rabbitcms/carrot": "^0.3.0",
-    "rabbitcms/modules": "^2.0"
+    "rabbitcms/modules": "^1.6 | ^2.0"
   },
   "autoload": {
     "classmap": [

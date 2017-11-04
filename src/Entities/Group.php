@@ -6,6 +6,7 @@ namespace RabbitCMS\Backend\Entities;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use RabbitCMS\Carrot\Eloquent\PrintableJson;
 
 /**
  * Class Group

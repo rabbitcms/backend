@@ -7,6 +7,7 @@ use Illuminate\Contracts\Auth\StatefulGuard;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth as AuthFacade;
 use Illuminate\Support\Facades\View as ViewFacade;
 use RabbitCMS\Backend\Entities\User;
@@ -88,6 +89,9 @@ abstract class Controller extends \Illuminate\Routing\Controller
      */
     public function callAction($method, $parameters)
     {
+        if (method_exists($this, 'init')) {
+            App::call([$this, 'init']);
+        }
         $this->before();
 
         return parent::callAction($method, $parameters);
