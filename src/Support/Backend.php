@@ -96,9 +96,9 @@ class Backend
                 if (file_exists($path)) {
                     $value = require($path);
                     if (is_callable($value)) {
-                        $this->container->call($value);
+                        $this->container->call($value, ['module' => $module]);
                     } elseif (is_array($value) && array_key_exists('boot', $value) && is_callable($value['boot'])) {
-                        $this->container->call($value['boot']);
+                        $this->container->call($value['boot'], ['module' => $module]);
                     }
                 }
             }, $module);
