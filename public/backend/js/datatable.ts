@@ -6,8 +6,8 @@
 
 import * as $ from "jquery";
 import * as jszip from "jszip";
-import "pdfmake";
-import "pdfmake/vfs_fonts";
+/*import "pdfmake";
+import "pdfmake/vfs_fonts";*/
 import "datatables.net";
 import "datatables.net-bs";
 import "datatables.net-buttons";
