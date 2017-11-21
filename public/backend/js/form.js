@@ -102,10 +102,10 @@ define(["require", "exports", "jquery", "rabbitcms/backend", "i18n!rabbitcms/nls
                     },
                     error: function (jqXHR) {
                         var form = _this.form;
-                        var helpBlock = $('<div class="help-block error-block"></div>');
                         $('.error-block', form).remove();
                         if (jqXHR.status === 422) {
                             $.each(jqXHR.responseJSON.errors, function (key, values) {
+                                var helpBlock = $('<div class="help-block error-block"></div>');
                                 var element = $('[name="' + Form.parseName(key) + '"]', form);
                                 var container = element.parents('.input-group-lg');
                                 element = container.length ? container : element;

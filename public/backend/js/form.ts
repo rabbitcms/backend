@@ -121,11 +121,11 @@ export class Form {
                 },
                 error: (jqXHR: JQueryXHR) => {
                     let form = this.form;
-                    let helpBlock = $('<div class="help-block error-block"></div>');
 
                     $('.error-block', form).remove();
                     if (jqXHR.status === 422) {
                         $.each(jqXHR.responseJSON.errors, (key, values) => {
+                            let helpBlock = $('<div class="help-block error-block"></div>');
                             let element = $('[name="' + Form.parseName(key) + '"]', form);
                             let container = element.parents('.input-group-lg');
                             element = container.length ? container : element;
