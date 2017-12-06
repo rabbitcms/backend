@@ -47,7 +47,7 @@ return [
                     20
                 );
             },
-            Backend::MENU_PRIORITY_MENU
+            -1
         );
     },
     'requirejs' => [
