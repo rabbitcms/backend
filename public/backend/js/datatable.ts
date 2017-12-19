@@ -198,6 +198,9 @@ export class DataTable {
         $.fn.dataTableExt.oStdClasses.sFilterInput = "form-control input-xs input-sm input-inline";
         $.fn.dataTableExt.oStdClasses.sLengthSelect = "form-control input-xs input-sm input-inline";
 
+        // initialize filters on first datatable load
+        this.updateFilters();
+
         // initialize a datatable
         this.dataTable = this.table.DataTable(options.dataTable);
 
@@ -246,9 +249,7 @@ export class DataTable {
         });
     };
 
-    submitFilter() {
-        this.setAjaxParam("action", this.tableOptions.filterApplyAction);
-
+    updateFilters() {
         // get all typeable inputs
         $('textarea.form-filter, select.form-filter, input.form-filter:not([type="radio"],[type="checkbox"])', this.tableContainer).each((i, e)=> {
             this.setAjaxParam($(e).attr("name"), $(e).val());
@@ -263,6 +264,12 @@ export class DataTable {
         $('input.form-filter[type="radio"]:checked', this.tableContainer).each((i, e)=> {
             this.setAjaxParam($(e).attr("name"), $(e).val());
         });
+    };
+
+    submitFilter() {
+        this.setAjaxParam("action", this.tableOptions.filterApplyAction);
+
+        this.updateFilters();
 
         this.update();
     }
