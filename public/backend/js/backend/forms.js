@@ -23,11 +23,11 @@ define(['jquery'], function ($) {
                                 url: $form.attr('action'),
                                 data: $form.serialize(),
                                 beforeSend: function () {
-                                    $form.block();
+                                    RabbitCMS.blockUI($form);
                                     lock = true;
                                 },
                                 complete: function () {
-                                    $form.unblock();
+                                    RabbitCMS.unblockUI($form);
                                     lock = false;
                                 },
                                 success: function (data) {
