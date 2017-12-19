@@ -1,7 +1,8 @@
 define(['jquery'], function ($) {
-    return function ($form, ajax) {
-        return new Promise((resolve, reject) => {
-            let lock = false, validator = $form.validate({
+    return function ($form, ajax, callback) {
+        callback = callback || function () {};
+        let lock = false,
+            validator = $form.validate({
                 ignore: '',
                 highlight: function (element) {
                     $(element).closest('.form-group').addClass('has-error');
@@ -10,7 +11,7 @@ define(['jquery'], function ($) {
                     $(element).closest('.form-group').removeClass('has-error');
                 },
                 errorPlacement: function (error, element) {
-                    var group = element.closest('.input-group');
+                    let group = element.closest('.input-group');
                     error.insertAfter(group.length ? group : element);
                 },
                 submitHandler: function (form) {
@@ -22,15 +23,15 @@ define(['jquery'], function ($) {
                                 url: $form.attr('action'),
                                 data: $form.serialize(),
                                 beforeSend: function () {
-                                    $form.blockUI();
+                                    $form.block();
                                     lock = true;
                                 },
                                 complete: function () {
-                                    $form.unblockUI();
+                                    $form.unblock();
                                     lock = false;
                                 },
                                 success: function (data) {
-                                    resolve(data);
+                                    callback(null, data);
                                 },
                                 error: function (response) {
                                     lock = false;
@@ -43,7 +44,7 @@ define(['jquery'], function ($) {
                                             return errors;
                                         }, {}));
                                     } else {
-                                        reject(response.responseJSON);
+                                        callback(response.responseJSON);
                                     }
                                 }
                             }, $form.attr('enctype') === 'multipart/form-data'
@@ -61,6 +62,5 @@ define(['jquery'], function ($) {
                     }
                 }
             });
-        });
     }
 });
