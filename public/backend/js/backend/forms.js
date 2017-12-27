@@ -21,11 +21,10 @@ define(['jquery'], function ($) {
                 submitHandler: function (form) {
                     if (lock) return;
                     try {
-                        if (ajax !== false) {
+                        if (check($form, 'ajax') || ajax !== false) {
                             $.ajax($.extend(true, {
                                 method: $form.attr('method'),
                                 url: $form.attr('action'),
-                                data: $form.serialize(),
                                 beforeSend: function () {
                                     lock = true;
                                     RabbitCMS.blockUI($form);
@@ -60,9 +59,11 @@ define(['jquery'], function ($) {
                                 ? {
                                     data: new FormData(form),
                                     processData: false,
-                                    contentType: false,
+                                    contentType: false
                                 }
-                                : {}));
+                                : {
+                                    data: $form.serialize()
+                                }));
                         } else {
                             form.submit();
                         }
