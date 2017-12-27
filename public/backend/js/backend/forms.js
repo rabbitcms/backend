@@ -1,6 +1,14 @@
 define(['jquery'], function ($) {
+    function quote(str) {
+        return (str + '').replace(/[.?*+^$[\]\\(){}|-]/g, "\\$&");
+    }
+
+    function check($form, check) {
+        return $form.data('form').match(new RegExp(`(^|\s)${quote(check)}($|\s)`)).length > 0;
+    }
+
     return function ($form, ajax, callback) {
-        callback = callback || function () {};
+        callback = callback || (() => undefined);
         let lock = false,
             validator = $form.validate({
                 ignore: '',
@@ -23,18 +31,23 @@ define(['jquery'], function ($) {
                                 url: $form.attr('action'),
                                 data: $form.serialize(),
                                 beforeSend: function () {
-                                    RabbitCMS.blockUI($form);
                                     lock = true;
-                                },
-                                complete: function () {
-                                    RabbitCMS.unblockUI($form);
-                                    lock = false;
+                                    RabbitCMS.blockUI($form);
                                 },
                                 success: function (data) {
+                                    lock = false;
+                                    RabbitCMS.unblockUI($form);
+                                    if (check($form, 'hide')) {
+                                        $form.closest('.modal').modal('hide');
+                                    }
+                                    if (check($form, 'reset')) {
+                                        form.reset();
+                                    }
                                     callback(null, data);
                                 },
                                 error: function (response) {
                                     lock = false;
+                                    RabbitCMS.unblockUI($form);
                                     if (response.status === 422) {
                                         let rawErrors = response.responseJSON.errors;
                                         validator.showErrors(Object.keys(rawErrors).reduce(function (errors, key) {
