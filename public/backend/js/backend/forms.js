@@ -1,10 +1,6 @@
 define(['jquery'], function ($) {
-    function quote(str) {
-        return (str + '').replace(/[.?*+^$[\]\\(){}|-]/g, "\\$&");
-    }
-
     function check($form, check) {
-        return $form.data('form').match(new RegExp(`(^|\s)${quote(check)}($|\s)`)).length > 0;
+        return $form.data('form').split(/\s+/).includes(check);
     }
 
     return function ($form, ajax, callback) {
