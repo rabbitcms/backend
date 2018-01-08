@@ -127,7 +127,7 @@ export class Form {
                         $.each(jqXHR.responseJSON.errors, (key, values) => {
                             let helpBlock = $('<div class="help-block error-block"></div>');
                             let element = $('[name="' + Form.parseName(key) + '"]', form);
-                            let container = element.parents('.input-group-lg');
+                            let container = element.parents('.input-group-lg, .input-group');
                             element = container.length ? container : element;
 
                             element.parent().append(helpBlock.text(values[0]));

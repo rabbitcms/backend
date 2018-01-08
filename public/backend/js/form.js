@@ -107,7 +107,7 @@ define(["require", "exports", "jquery", "rabbitcms/backend", "i18n!rabbitcms/nls
                             $.each(jqXHR.responseJSON.errors, function (key, values) {
                                 var helpBlock = $('<div class="help-block error-block"></div>');
                                 var element = $('[name="' + Form.parseName(key) + '"]', form);
-                                var container = element.parents('.input-group-lg');
+                                var container = element.parents('.input-group-lg, .input-group');
                                 element = container.length ? container : element;
                                 element.parent().append(helpBlock.text(values[0]));
                                 element.closest('.form-group')
