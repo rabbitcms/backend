@@ -5,6 +5,10 @@ define(['jquery'], function ($) {
 
     return function ($form, ajax, callback) {
         callback = callback || (() => undefined);
+        if (ajax instanceof Function) {
+            callback = ajax;
+            ajax = false;
+        }
         let lock = false,
             validator = $form.validate({
                 ignore: '',
@@ -37,6 +41,9 @@ define(['jquery'], function ($) {
                                     }
                                     if (check($form, 'reset')) {
                                         form.reset();
+                                    }
+                                    if (check($form, 'back') && history.state !== null) {
+                                        history.back();
                                     }
                                     callback(null, data);
                                 },
