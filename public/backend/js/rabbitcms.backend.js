@@ -515,12 +515,24 @@ define(['jquery', 'bootbox', 'jquery.cookie'], function ($, bootbox) {
             }
         };
 
-        if (token !== false) {
-            settings = $.extend(true, {
-                headers: {
-                    'X-CSRF-TOKEN': _TOKEN
-                }
-            }, settings);
+        if (token === false) {
+            settings.xhr = function xhr() {
+                // Get new xhr object using default factory
+                let xhr = jQuery.ajaxSettings.xhr();
+                // Copy the browser's native setRequestHeader method
+                let setRequestHeader = xhr.setRequestHeader;
+                // Replace with a wrapper
+                xhr.setRequestHeader = function (name, value) {
+                    // Ignore the X-Requested-With header
+                    if (name === 'X-CSRF-TOKEN') return;
+                    // Otherwise call the native setRequestHeader method
+                    // Note: setRequestHeader requires its 'this' to be the xhr object,
+                    // which is what 'this' is here when executed.
+                    setRequestHeader.call(this, name, value);
+                };
+                // pass it on to jQuery
+                return xhr;
+            };
         }
 
         options = $.extend(true, settings, options);
