@@ -594,6 +594,9 @@ define(["require", "exports", "jquery", "i18n!rabbitcms/nls/backend", "rabbitcms
                 }
             }, options);
             options.error = function (jqXHR, textStatus, errorThrown) {
+                if ($.isFunction(originalOptions.error)) {
+                    originalOptions.error(jqXHR, textStatus, errorThrown);
+                }
                 setTimeout(function () {
                     switch (jqXHR.status) {
                         case 404:

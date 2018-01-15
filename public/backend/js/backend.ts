@@ -676,6 +676,10 @@ export class RabbitCMS extends Metronic {
         }, options);
 
         options.error = (jqXHR: JQueryXHR, textStatus: string, errorThrown: string): any => {
+            if ($.isFunction(originalOptions.error)) {
+                originalOptions.error(jqXHR, textStatus, errorThrown);
+            }
+
             setTimeout(() => {
                 switch (jqXHR.status) {
                     case 404:
