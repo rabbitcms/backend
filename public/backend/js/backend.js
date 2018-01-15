@@ -593,6 +593,24 @@ define(["require", "exports", "jquery", "i18n!rabbitcms/nls/backend", "rabbitcms
                     'X-CSRF-TOKEN': this.getToken()
                 }
             }, options);
+            options.error = function (jqXHR, textStatus, errorThrown) {
+                setTimeout(function () {
+                    switch (jqXHR.status) {
+                        case 404:
+                            _this.dangerMessage(i18n.pageNotFound, options.warningTarget);
+                            break;
+                        case 403:
+                            _this.dangerMessage(i18n.accessDenied, options.warningTarget);
+                            break;
+                        case 401:
+                            location.reload(true);
+                            break;
+                        default:
+                            _this.dangerMessage(jqXHR.responseJSON.message, options.warningTarget);
+                            break;
+                    }
+                }, 100);
+            };
             options.complete = function (jqXHR, textStatus) {
                 RabbitCMS.unblockUI(options.blockTarget);
                 if ($.isFunction(originalOptions.complete)) {
@@ -603,15 +621,6 @@ define(["require", "exports", "jquery", "i18n!rabbitcms/nls/backend", "rabbitcms
                         case 202:
                         case 418:
                             _this.customMessage(jqXHR.responseJSON.message, jqXHR.responseJSON.type, options.warningTarget);
-                            break;
-                        case 404:
-                            _this.dangerMessage(i18n.pageNotFound, options.warningTarget);
-                            break;
-                        case 403:
-                            _this.dangerMessage(i18n.accessDenied, options.warningTarget);
-                            break;
-                        case 401:
-                            location.reload(true);
                             break;
                     }
                 }, 100);

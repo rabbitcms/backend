@@ -671,9 +671,28 @@ export class RabbitCMS extends Metronic {
 
         options = $.extend(true, {
             headers:{
-                'X-CSRF-TOKEN':this.getToken()
+                'X-CSRF-TOKEN': this.getToken()
             }
         }, options);
+
+        options.error = (jqXHR: JQueryXHR, textStatus: string, errorThrown: string): any => {
+            setTimeout(() => {
+                switch (jqXHR.status) {
+                    case 404:
+                        this.dangerMessage(i18n.pageNotFound, options.warningTarget);
+                        break;
+                    case 403:
+                        this.dangerMessage(i18n.accessDenied, options.warningTarget);
+                        break;
+                    case 401:
+                        location.reload(true);
+                        break;
+                    default:
+                        this.dangerMessage(jqXHR.responseJSON.message, options.warningTarget);
+                        break;
+                }
+            }, 100);
+        };
 
         options.complete = (jqXHR:JQueryXHR, textStatus:string):any => {
             RabbitCMS.unblockUI(options.blockTarget);
@@ -687,15 +706,6 @@ export class RabbitCMS extends Metronic {
                     case 202:
                     case 418:
                         this.customMessage(jqXHR.responseJSON.message, jqXHR.responseJSON.type, options.warningTarget);
-                        break;
-                    case 404:
-                        this.dangerMessage(i18n.pageNotFound, options.warningTarget);
-                        break;
-                    case 403:
-                        this.dangerMessage(i18n.accessDenied, options.warningTarget);
-                        break;
-                    case 401:
-                        location.reload(true);
                         break;
                 }
             }, 100);
