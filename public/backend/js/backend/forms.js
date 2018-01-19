@@ -1,9 +1,10 @@
 define(['jquery'], function ($) {
     function check($form, check) {
-        return $form.data('form').split(/\s+/).includes(check);
+        let data = $form.data('form');
+        return data && data.split(/\s+/).includes(check);
     }
 
-    return function ($form, ajax, callback) {
+    function forms($form, ajax, callback) {
         callback = callback || (() => undefined);
         if (ajax instanceof Function) {
             callback = ajax;
@@ -80,4 +81,24 @@ define(['jquery'], function ($) {
                 }
             });
     }
+
+    forms.depend = function depend(select) {
+        let $select = $(select),
+            $depend = $($select.data('depends')),
+            options = $('[data-depends-id]', $select),
+            update = function () {
+                let value = $depend.val();
+                options.detach().each(function (idx, option) {
+                    let $option = $(option);
+                    if ($option.data('dependsId') == value) {
+                        $select.append($option);
+                    }
+                });
+            };
+
+        $depend.on('change', update);
+        update();
+    };
+
+    return forms;
 });
