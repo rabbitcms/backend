@@ -46,6 +46,11 @@ define(['jquery', 'bootbox', 'jquery.cookie'], function ($, bootbox) {
             return false;
         });
 
+        _Body.on('show.bs.tab', '.nav-tabs a[data-toggle="tab"]' ,(e) =>{
+            let link = `${location.pathname}${e.currentTarget.hash || ''}`;
+            history.replaceState({link: location.pathname}, null, link);
+        });
+
         _Body.on('click', '[rel="ajax-portlet"]', function (event) {
             var self = $(this);
             var link = self.attr('href');
@@ -151,6 +156,9 @@ define(['jquery', 'bootbox', 'jquery.cookie'], function ($, bootbox) {
 
         if (portlet.length)
             portlet.addClass('show');
+            if(location.hash) {
+                portlet.find(`.nav-tabs a[data-toggle="tab"][href="${location.hash}"]`).tab('show');
+            }
         else
             this.dangerMessage('Помилка. RabbitCMS.prototype.showPortlet');
 
