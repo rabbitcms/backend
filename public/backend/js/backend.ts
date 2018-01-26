@@ -244,6 +244,10 @@ export class RabbitCMS extends Metronic {
             });
         }
 
+        $('[data-widget]').each((i, e)=> {
+            this.loadModule($(e));
+        });
+
         this.initSidebar();
     }
 

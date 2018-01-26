@@ -99,8 +99,8 @@
 
                 //begin: windows phone fix added by keenthemes
                 if ('ontouchstart' in window && window.navigator.msPointerEnabled) {
-                  me.css("-ms-touch-action", "none");
-              }
+                    me.css("-ms-touch-action", "none");
+                }
                 //end: windows phone fix added by keenthemes
 
                 // ensure we are not binding it again

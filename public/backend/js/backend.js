@@ -206,6 +206,9 @@ define(["require", "exports", "jquery", "i18n!rabbitcms/nls/backend", "rabbitcms
                     _this.loadModule($(e));
                 });
             }
+            $('[data-widget]').each(function (i, e) {
+                _this.loadModule($(e));
+            });
             this.initSidebar();
         };
         /**
