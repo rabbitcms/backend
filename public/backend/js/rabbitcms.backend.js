@@ -11,7 +11,7 @@ define(['jquery', 'bootbox', 'jquery.cookie'], function ($, bootbox) {
 
     var RabbitCMS = function (options) {
         options = $.extend({
-           prefix: '/'
+            prefix: '/'
         }, options);
 
         this.prefix = options.prefix;
@@ -46,7 +46,12 @@ define(['jquery', 'bootbox', 'jquery.cookie'], function ($, bootbox) {
             return false;
         });
 
-        _Body.on('show.bs.tab', '.nav-tabs a[data-toggle="tab"]' ,(e) =>{
+        _Body.on('show.bs.tab', '.nav-tabs a[data-toggle="tab"]', (e) => {
+            $('[data-require-lazy]', e.currentTarget.hash).each(function () {
+                _this.loadModule($(this), false);
+                $(this).removeAttr('data-require-lazy');
+            });
+
             let link = `${location.pathname}${e.currentTarget.hash || ''}`;
             history.replaceState({link: location.pathname}, null, link);
         });
@@ -85,7 +90,7 @@ define(['jquery', 'bootbox', 'jquery.cookie'], function ($, bootbox) {
 
     /* Portlets and Modals */
     RabbitCMS.prototype.loadModule = function (portlet, recurse) {
-        var _module = portlet.data('require');
+        var _module = portlet.data('require') || portlet.data('require-lazy');
 
         if (_module) {
             var _tmp = _module.split(':');
@@ -105,7 +110,7 @@ define(['jquery', 'bootbox', 'jquery.cookie'], function ($, bootbox) {
         }
     };
 
-    RabbitCMS.prototype.onNavigate = function(cb){
+    RabbitCMS.prototype.onNavigate = function (cb) {
         onNavigate.push(cb);
     };
 
@@ -135,11 +140,10 @@ define(['jquery', 'bootbox', 'jquery.cookie'], function ($, bootbox) {
     };
 
 
-
     RabbitCMS.prototype.cachePortlet = function (link, portlet, pushState) {
         _this._cache[link] = portlet;
 
-        onNavigate.forEach(function(cb) {
+        onNavigate.forEach(function (cb) {
             cb(link);
         });
         if (pushState === undefined || pushState === true)
@@ -156,9 +160,9 @@ define(['jquery', 'bootbox', 'jquery.cookie'], function ($, bootbox) {
 
         if (portlet.length)
             portlet.addClass('show');
-            if(location.hash) {
-                portlet.find(`.nav-tabs a[data-toggle="tab"][href="${location.hash}"]`).tab('show');
-            }
+        if (location.hash) {
+            portlet.find(`.nav-tabs a[data-toggle="tab"][href="${location.hash}"]`).tab('show');
+        }
         else
             this.dangerMessage('Помилка. RabbitCMS.prototype.showPortlet');
 
@@ -475,7 +479,7 @@ define(['jquery', 'bootbox', 'jquery.cookie'], function ($, bootbox) {
                 _this.unblockUI();
             },
             complete: function (jqXHR) {
-                if(jqXHR.status !== 200) {
+                if (jqXHR.status !== 200) {
                     setTimeout(function () {
                         switch (jqXHR.status) {
                             case 202:
@@ -647,12 +651,12 @@ define(['jquery', 'bootbox', 'jquery.cookie'], function ($, bootbox) {
     MicroEvent.prototype = {
         bind: function (event, fct) {
             this._events = this._events || {};
-            this._events[event] = this._events[event]	|| [];
+            this._events[event] = this._events[event] || [];
             this._events[event].push(fct);
         },
         unbind: function (event, fct) {
             this._events = this._events || {};
-            if( event in this._events === false  )	return;
+            if (event in this._events === false) return;
             this._events[event].splice(this._events[event].indexOf(fct), 1);
         },
         trigger: function (event /* , args... */) {
