@@ -46,6 +46,12 @@ define(['jquery', 'bootbox', 'jquery.cookie'], function ($, bootbox) {
             return false;
         });
 
+        _Body.on('show.bs.modal', '.modal[data-require-lazy]', (e) => {
+            let modal = $(e.currentTarget);
+            _this.loadModule(modal);
+            modal.removeAttr('data-require-lazy');
+        });
+
         _Body.on('show.bs.tab', '.nav-tabs a[data-toggle="tab"]', (e) => {
             $('[data-require-lazy]', e.currentTarget.hash).each(function () {
                 _this.loadModule($(this), false);
