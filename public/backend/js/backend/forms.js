@@ -59,6 +59,11 @@ define(['jquery'], function ($) {
                                             }).join('')] = rawErrors[key][0];
                                             return errors;
                                         }, {}));
+                                    } else if (response.status === 418) {
+                                        RabbitCMS.message({
+                                            type: response.responseJSON.type,
+                                            message: response.responseJSON.message
+                                        });
                                     } else {
                                         callback(response.responseJSON);
                                     }
