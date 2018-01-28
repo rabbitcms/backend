@@ -1,4 +1,20 @@
 define(['jquery'], function ($) {
+    //Ukrainian phone number.
+    $.validator.addMethod("phoneUA", function (a, b) {
+        a = a.replace(/(?!^\+)\D/g, "");
+        return this.optional(b) || a.length > 8 && a.match(/^(\+?380|0)?[345679]\d\d{3}\d{2}\d{2}$/)
+    });
+
+    let language = $('html').prop('lang');
+    $.extend($.validator.messages, {
+        'phoneUA': language === 'ru'
+            ? 'Пожалуйста, введите правильный номер телефона.'
+            : 'Будь ласка, введіть правильний номер телефону.',
+        'notEqualTo': language === 'ru'
+            ? 'Пожалуйста, введите другое значение.'
+            : 'Будь ласка, введіть інше значення.'
+    });
+
     function check($form, check) {
         let data = $form.data('form');
         return data && data.split(/\s+/).includes(check);
