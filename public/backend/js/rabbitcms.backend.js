@@ -53,7 +53,9 @@ define(['jquery', 'bootbox', 'jquery.cookie'], function ($, bootbox) {
         });
 
         _Body.on('show.bs.tab', '.nav-tabs a[data-toggle="tab"]', (e) => {
-            $('[data-require-lazy]', e.currentTarget.hash).each(function () {
+            let portlet = $(e.currentTarget.hash);
+            _this.loadModule(portlet, false);
+            $('[data-require-lazy]', portlet).each(function () {
                 _this.loadModule($(this), false);
                 $(this).removeAttr('data-require-lazy');
             });
