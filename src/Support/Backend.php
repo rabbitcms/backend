@@ -7,6 +7,7 @@ use Illuminate\Contracts\Container\Container;
 use RabbitCMS\Backend\Entities\User;
 use RabbitCMS\Modules\Facades\Modules;
 use RabbitCMS\Modules\Module;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Class Backend
@@ -71,6 +72,11 @@ class Backend
     protected $menuChanged = false;
 
     protected $loaded = false;
+
+    /**
+     * @var \Closure|null
+     */
+    protected $dashboardAction;
 
     /**
      * BackendAcl constructor.
@@ -412,5 +418,31 @@ class Backend
         }
 
         return $result;
+    }
+
+    /**
+     * @param \Closure $closure
+     *
+     * @return Backend
+     */
+    public function setDashboardAction(\Closure $closure): self
+    {
+        $this->dashboardAction = $closure;
+
+        return $this;
+    }
+
+    /**
+     * @param \Closure $closure
+     *
+     * @return Response
+     */
+    public function getDashboardAction(\Closure $closure): Response
+    {
+        if ($this->dashboardAction !== null) {
+            return \call_user_func($this->dashboardAction);
+        }
+
+        return $closure();
     }
 }

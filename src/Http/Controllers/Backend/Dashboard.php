@@ -3,7 +3,9 @@ declare(strict_types = 1);
 
 namespace RabbitCMS\Backend\Http\Controllers\Backend;
 
-use Illuminate\Contracts\View\View;
+use Illuminate\Http\Response as IlluminateResponse;
+use RabbitCMS\Backend\Facades\Backend;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Class Dashboard
@@ -13,10 +15,14 @@ use Illuminate\Contracts\View\View;
 class Dashboard extends Controller
 {
     /**
-     * @return View
+     * @return Response
+     *
+     * @throws \InvalidArgumentException
      */
-    public function index():View
+    public function index(): Response
     {
-        return self::module()->view('index');
+        return Backend::getDashboardAction(function () {
+            return new IlluminateResponse(self::module()->view('index'));
+        });
     }
 }
