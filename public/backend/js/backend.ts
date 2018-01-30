@@ -24,11 +24,13 @@ export class State {
     handler:Handler;
     private checkers:((replay:ReplayFunc)=>Promise<void>)[] = [];
     widget:JQuery;
+    hash: string;
 
-    constructor(link:string, handler:Handler, widget:JQuery) {
+    constructor(link:string, handler:Handler, widget:JQuery, hash:string = '') {
         this.link = link;
         this.handler = handler;
         this.widget = widget;
+        this.hash = hash;
     }
 
     public check(replay:ReplayFunc):Promise<void[]> {
@@ -100,10 +102,10 @@ class Stack {
         this._position = this.states.push(state) - 1;
         switch (type) {
             case StateType.Push:
-                history.pushState({state: this._position, link: state.link, index: ++this.index}, null, state.link);
+                history.pushState({state: this._position, link: state.link, index: ++this.index}, null, state.link + state.hash);
                 break;
             case StateType.Replace:
-                history.replaceState({state: this._position, link: state.link, index: this.index}, null, state.link);
+                history.replaceState({state: this._position, link: state.link, index: this.index}, null, state.link + state.hash);
                 break;
         }
 
@@ -230,12 +232,25 @@ export class RabbitCMS extends Metronic {
             }
         });
 
+        $body.on('show.bs.tab', '.nav-tabs a[data-toggle="tab"]', (e) => {
+            $(`${e.currentTarget.hash}[data-require-lazy]`).each((index, widget) => {
+                let _widget = $(widget);
+
+                this.loadModule(_widget);
+                _widget.removeAttr('data-require-lazy');
+            });
+
+            let state = this._stack.current;
+            state.hash = e.currentTarget.hash || '';
+            history.replaceState({state: state._position, link: state.link, index: state.index}, null, state.link + state.hash);
+        });
+
         let link = location.pathname.length > 1 ? location.pathname.replace(/\/$/, '') : location.pathname;
         let handler = this.findHandler(link);
         if (handler) {
             _currentHandler = handler;
             let widget = $('[data-require]:first', defaultTarget);
-            this._stack.add(new State(link, handler, widget), StateType.Replace);
+            this._stack.add(new State(link, handler, widget, location.hash), StateType.Replace);
             this.loadModuleByHandler(handler, widget, this._stack.current);
             this.showPortlet(handler, widget);
         } else {
@@ -304,6 +319,15 @@ export class RabbitCMS extends Metronic {
             this.loadModule($(e));
         });
 
+        if (state.hash) {
+            $(`${state.hash}[data-require-lazy]`).each((index, widget) => {
+                let _widget = $(widget);
+
+                this.loadModule(_widget);
+                _widget.removeAttr('data-require-lazy');
+            })
+        }
+
         this.updatePlugins(widget);
 
         this.execute(handler.module, handler.exec !== void 0 ? handler.exec : 'init', widget, state);
@@ -325,7 +349,7 @@ export class RabbitCMS extends Metronic {
         widget.data('loaded', true);
         this.updatePlugins(widget);
 
-        let _module = widget.data('require');
+        let _module = widget.data('require') || widget.data('require-lazy');
 
         if (_module) {
             let _tmp = _module.split(':');
@@ -408,6 +432,10 @@ export class RabbitCMS extends Metronic {
         }
 
         widget.appendTo(defaultTarget);
+
+        if (location.hash) {
+            widget.find(`.nav-tabs a[data-toggle="tab"][href="${location.hash}"]`).tab('show');
+        }
 
         if (h.modal) {
             console.log(widget);

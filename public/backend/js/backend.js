@@ -7,11 +7,13 @@ define(["require", "exports", "jquery", "i18n!rabbitcms/nls/backend", "rabbitcms
     var _currentHandler;
     var defaultTarget = '.page-content';
     var State = (function () {
-        function State(link, handler, widget) {
+        function State(link, handler, widget, hash) {
+            if (hash === void 0) { hash = ''; }
             this.checkers = [];
             this.link = link;
             this.handler = handler;
             this.widget = widget;
+            this.hash = hash;
         }
         State.prototype.check = function (replay) {
             return Promise.all(this.checkers.map(function (a) { return a(replay); }));
@@ -86,10 +88,10 @@ define(["require", "exports", "jquery", "i18n!rabbitcms/nls/backend", "rabbitcms
             this._position = this.states.push(state) - 1;
             switch (type) {
                 case StateType.Push:
-                    history.pushState({ state: this._position, link: state.link, index: ++this.index }, null, state.link);
+                    history.pushState({ state: this._position, link: state.link, index: ++this.index }, null, state.link + state.hash);
                     break;
                 case StateType.Replace:
-                    history.replaceState({ state: this._position, link: state.link, index: this.index }, null, state.link);
+                    history.replaceState({ state: this._position, link: state.link, index: this.index }, null, state.link + state.hash);
                     break;
             }
             return this._position;
@@ -192,12 +194,22 @@ define(["require", "exports", "jquery", "i18n!rabbitcms/nls/backend", "rabbitcms
                     event.preventDefault();
                 }
             });
+            $body.on('show.bs.tab', '.nav-tabs a[data-toggle="tab"]', function (e) {
+                $(e.currentTarget.hash + "[data-require-lazy]").each(function (index, widget) {
+                    var _widget = $(widget);
+                    _this.loadModule(_widget);
+                    _widget.removeAttr('data-require-lazy');
+                });
+                var state = _this._stack.current;
+                state.hash = e.currentTarget.hash || '';
+                history.replaceState({ state: state._position, link: state.link, index: state.index }, null, state.link + state.hash);
+            });
             var link = location.pathname.length > 1 ? location.pathname.replace(/\/$/, '') : location.pathname;
             var handler = this.findHandler(link);
             if (handler) {
                 _currentHandler = handler;
                 var widget = $('[data-require]:first', defaultTarget);
-                this._stack.add(new State(link, handler, widget), StateType.Replace);
+                this._stack.add(new State(link, handler, widget, location.hash), StateType.Replace);
                 this.loadModuleByHandler(handler, widget, this._stack.current);
                 this.showPortlet(handler, widget);
             }
@@ -256,6 +268,13 @@ define(["require", "exports", "jquery", "i18n!rabbitcms/nls/backend", "rabbitcms
             $('[data-require]', widget).each(function (i, e) {
                 _this.loadModule($(e));
             });
+            if (state.hash) {
+                $(state.hash + "[data-require-lazy]").each(function (index, widget) {
+                    var _widget = $(widget);
+                    _this.loadModule(_widget);
+                    _widget.removeAttr('data-require-lazy');
+                });
+            }
             this.updatePlugins(widget);
             this.execute(handler.module, handler.exec !== void 0 ? handler.exec : 'init', widget, state);
         };
@@ -277,7 +296,7 @@ define(["require", "exports", "jquery", "i18n!rabbitcms/nls/backend", "rabbitcms
             }
             widget.data('loaded', true);
             this.updatePlugins(widget);
-            var _module = widget.data('require');
+            var _module = widget.data('require') || widget.data('require-lazy');
             if (_module) {
                 var _tmp = _module.split(':');
                 this.execute(_tmp[0], _tmp.length > 1 ? _tmp[1] : 'init', widget);
@@ -360,6 +379,9 @@ define(["require", "exports", "jquery", "i18n!rabbitcms/nls/backend", "rabbitcms
                 }
             }
             widget.appendTo(defaultTarget);
+            if (location.hash) {
+                widget.find(".nav-tabs a[data-toggle=\"tab\"][href=\"" + location.hash + "\"]").tab('show');
+            }
             if (h.modal) {
                 console.log(widget);
                 widget.modal();
