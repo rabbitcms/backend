@@ -140,4 +140,16 @@ class User extends Eloquent
 
         return $this->mergedPermissions;
     }
+
+    /**
+     * @return string
+     */
+    public function getName(): string
+    {
+        if (trim($this->name) !== '') {
+            return $this->name;
+        }
+
+        return $this->email;
+    }
 }
