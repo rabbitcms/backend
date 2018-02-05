@@ -47,18 +47,12 @@ define(['jquery', 'bootbox', 'jquery.cookie'], function ($, bootbox) {
         });
 
         _Body.on('show.bs.modal', '.modal[data-require-lazy]', (e) => {
-            let modal = $(e.currentTarget);
-            _this.loadModule(modal);
-            modal.removeAttr('data-require-lazy');
+            _this.loadModule($(e.currentTarget), false);
         });
 
         _Body.on('show.bs.tab', '.nav-tabs a[data-toggle="tab"]', (e) => {
             let portlet = $(e.currentTarget.hash);
             _this.loadModule(portlet, false);
-            $('[data-require-lazy]', portlet).each(function () {
-                _this.loadModule($(this), false);
-                $(this).removeAttr('data-require-lazy');
-            });
 
             let link = `${location.pathname}${e.currentTarget.hash || ''}`;
             history.replaceState({link: location.pathname}, null, link);
@@ -100,7 +94,8 @@ define(['jquery', 'bootbox', 'jquery.cookie'], function ($, bootbox) {
     RabbitCMS.prototype.loadModule = function (portlet, recurse) {
         var _module = portlet.data('require') || portlet.data('require-lazy');
 
-        if (_module) {
+        if (_module && !portlet.data('loaded')) {
+            portlet.data('loaded',true);
             var _tmp = _module.split(':');
             require([_tmp[0]], function (_module) {
                 if (_tmp.length === 2)
