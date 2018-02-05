@@ -108,12 +108,24 @@ export class Form {
         }
         this.syncOriginal();
         if (this.options.ajax !== false) {
+            let data = this.data;
+            let tmpOptions = this.options.ajax;
+
+            if (this.form.attr('enctype') === 'multipart/form-data') {
+                data = new FormData(this.form[0]);
+
+                tmpOptions = $.extend(true, {
+                    processData: false,
+                    contentType: false,
+                }, this.options.ajax);
+            }
+
             let options = $.extend(true, {
                 warningTarget: this.form.find('.form-body:first'),
                 blockTarget: this.form,
                 url: this.form.attr('action'),
                 method: this.form.attr('method'),
-                data: this.data,
+                data: data,
                 success: (data) => {
                     if (!this.options.completeSubmit(data)) {
                         history.back();
@@ -139,7 +151,7 @@ export class Form {
                         RabbitCMS.customMessage('<ul class="list-unstyled"><li>' + jqXHR.responseJSON.message + '</li></ul>', 'danger', this.form.find('.form-body:first'));
                     }
                 }
-            }, this.options.ajax);
+            }, tmpOptions);
 
             RabbitCMS.ajax(options);
         } else {

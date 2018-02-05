@@ -89,12 +89,21 @@ define(["require", "exports", "jquery", "rabbitcms/backend", "i18n!rabbitcms/nls
             }
             this.syncOriginal();
             if (this.options.ajax !== false) {
+                var data = this.data;
+                var tmpOptions = this.options.ajax;
+                if (this.form.attr('enctype') === 'multipart/form-data') {
+                    data = new FormData(this.form[0]);
+                    tmpOptions = $.extend(true, {
+                        processData: false,
+                        contentType: false,
+                    }, this.options.ajax);
+                }
                 var options = $.extend(true, {
                     warningTarget: this.form.find('.form-body:first'),
                     blockTarget: this.form,
                     url: this.form.attr('action'),
                     method: this.form.attr('method'),
-                    data: this.data,
+                    data: data,
                     success: function (data) {
                         if (!_this.options.completeSubmit(data)) {
                             history.back();
@@ -118,7 +127,7 @@ define(["require", "exports", "jquery", "rabbitcms/backend", "i18n!rabbitcms/nls
                             backend_1.RabbitCMS.customMessage('<ul class="list-unstyled"><li>' + jqXHR.responseJSON.message + '</li></ul>', 'danger', _this.form.find('.form-body:first'));
                         }
                     }
-                }, this.options.ajax);
+                }, tmpOptions);
                 backend_1.RabbitCMS.ajax(options);
             }
             else {
