@@ -80,6 +80,7 @@ final class TabsFactory
     {
         return new HtmlString(self::module()->view('layouts.tabs', [
                 '_tabs' => $this->resolve($object),
+                'object' => $object
             ] + $data)->render());
     }
 
