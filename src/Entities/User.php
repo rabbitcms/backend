@@ -1,5 +1,6 @@
 <?php
-declare(strict_types = 1);
+declare(strict_types=1);
+
 namespace RabbitCMS\Backend\Entities;
 
 use Illuminate\Auth\Authenticatable;
@@ -17,10 +18,10 @@ use RabbitCMS\Backend\Contracts\HasAccessEntity;
 /**
  * Class User
  *
- * @property-read int $id
- * @property string $email
- * @property boolean $active
- * @property string $name
+ * @property-read int     $id
+ * @property string       $email
+ * @property boolean      $active
+ * @property string       $name
  * @property-write string $password
  *
  * @property-read Group[] $groups
@@ -95,7 +96,7 @@ class User extends Eloquent implements
      * "all" flag is set to false.
      *
      * @param  string|array $permissions
-     * @param  bool $all
+     * @param  bool         $all
      *
      * @return bool
      */
@@ -105,6 +106,10 @@ class User extends Eloquent implements
 
         if (!is_array($permissions)) {
             $permissions = [$permissions];
+        }
+
+        if (\count($permissions) === 0) {
+            return true;
         }
 
         $match = false;

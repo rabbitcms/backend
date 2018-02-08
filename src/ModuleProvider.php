@@ -10,12 +10,16 @@ use Illuminate\Foundation\AliasLoader;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Routing\Router;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\View\Compilers\BladeCompiler;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 use RabbitCMS\Backend\Console\Commands\MakeConfigCommand;
+use RabbitCMS\Backend\Entities\User;
 use RabbitCMS\Backend\Entities\User as UserEntity;
 use RabbitCMS\Backend\Facades\Backend as BackendFacade;
+use RabbitCMS\Backend\Factory\TabsFactory;
 use RabbitCMS\Backend\Http\Controllers\Backend\Auth as AuthController;
 use RabbitCMS\Backend\Http\Controllers\Backend\Main;
 use RabbitCMS\Backend\Http\Middleware\Authenticate;
@@ -46,7 +50,6 @@ class ModuleProvider extends ServiceProvider
      *
      * @param ConfigRepository $config
      * @param Router           $router
-     * @param Modules          $modules
      */
     public function boot(ConfigRepository $config, Router $router)
     {
@@ -98,6 +101,12 @@ class ModuleProvider extends ServiceProvider
      */
     public function register()
     {
+        $this->app->singleton('backend.tabs', function () {
+            $user = Auth::user();
+            return new TabsFactory($user instanceof User ? $user : null);
+        });
+        $this->app->alias('backend.tabs', TabsFactory::class);
+
         $this->app->singleton(Backend::class, function () {
             return new Backend($this->app);
         });
@@ -120,5 +129,15 @@ class ModuleProvider extends ServiceProvider
         $this->app->make('router')->aliasMiddleware('backend.auth.base', AuthenticateWithBasicAuth::class);
 
         AliasLoader::getInstance(['Backend' => BackendFacade::class]);
+        $this->registerViewsDirectives();
+    }
+
+    protected function registerViewsDirectives(): void
+    {
+        $this->app->afterResolving('blade.compiler', function (BladeCompiler $compiler) {
+            $compiler->directive('tabs', function ($expression) {
+                return "<?php echo \RabbitCMS\Backend\Facades\Tabs::show({$expression}, array_except(get_defined_vars(), array('__data', '__path'))); ?>";
+            });
+        });
     }
 }
