@@ -30,6 +30,11 @@ class Tab
     protected $exec;
 
     /**
+     * @var array|\Closure
+     */
+    protected $data = [];
+
+    /**
      * @var array
      */
     protected $permissions = [];
@@ -244,5 +249,29 @@ class Tab
     public function getExec(): ?string
     {
         return $this->exec;
+    }
+
+    /**
+     * @param array|\Closure $data
+     *
+     * @return Tab
+     */
+    public function setData($data)
+    {
+        $this->data = $data;
+        return $this;
+    }
+
+    /**
+     * @param $object
+     *
+     * @return array
+     */
+    public function getData($object): array
+    {
+        if (\is_callable($this->data)) {
+            return call_user_func($this->data, $object, $this);
+        }
+        return $this->data;
     }
 }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 use RabbitCMS\Backend\Support\Tab;
 
 /* @var Tab[] $_tabs */
+/* @var object $object */
 ?>
 @if(\count($_tabs) === 1)
     <div @if($_tabs[0]->getExec()) data-require="{{$_tabs[0]->getExec()}}" @endif>
@@ -22,7 +23,7 @@ use RabbitCMS\Backend\Support\Tab;
             @foreach($_tabs as $index => $tab)
                 <div class="tab-pane @if($index === 0) active @endif" id="tab_{{$tab->getName()}}"
                      @if($tab->getExec()) data-require{{$index ? '-lazy' : ''}}="{{$tab->getExec()}}" @endif>
-                    @include($tab->getView())
+                    @include($tab->getView(),$data + $tab->getData($object))
                 </div>
             @endforeach
         </div>

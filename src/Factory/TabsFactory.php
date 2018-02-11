@@ -79,9 +79,10 @@ final class TabsFactory
     public function show($object, array $data = []): HtmlString
     {
         return new HtmlString(self::module()->view('layouts.tabs', [
-                '_tabs' => $this->resolve($object),
-                'object' => $object
-            ] + $data)->render());
+            '_tabs' => $this->resolve($object),
+            'object' => $object,
+            'data' => $data
+        ])->render());
     }
 
     /**
