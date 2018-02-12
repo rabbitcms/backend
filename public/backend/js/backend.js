@@ -166,7 +166,7 @@ define(["require", "exports", "jquery", "i18n!rabbitcms/nls/backend", "rabbitcms
             _super.ready.call(this);
             $body = $('body');
             $body.on('click', '[rel="back"]', function (event) {
-                if (history.state !== null) {
+                if (history.state.index > 0 && history.state !== null) {
                     history.back();
                 }
                 else {

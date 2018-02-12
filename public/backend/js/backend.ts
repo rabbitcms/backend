@@ -197,7 +197,7 @@ export class RabbitCMS extends Metronic {
         $body = $('body');
 
         $body.on('click', '[rel="back"]', (event:JQueryEventObject) => {
-            if (history.state !== null) {
+            if (history.state.index > 0 && history.state !== null) {
                 history.back();
             } else {
                 let a:HTMLAnchorElement = <HTMLAnchorElement>event.currentTarget;

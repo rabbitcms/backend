@@ -128,7 +128,13 @@ export class Form {
                 data: data,
                 success: (data) => {
                     if (!this.options.completeSubmit(data)) {
-                        history.back();
+                        let btn = this.form.closest('.portlet').find('a[rel="back"]');
+
+                        if (btn.length === 0) {
+                            location.reload();
+                        } else {
+                            btn.trigger('click');
+                        }
                     }
                 },
                 error: (jqXHR: JQueryXHR) => {

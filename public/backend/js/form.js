@@ -106,7 +106,13 @@ define(["require", "exports", "jquery", "rabbitcms/backend", "i18n!rabbitcms/nls
                     data: data,
                     success: function (data) {
                         if (!_this.options.completeSubmit(data)) {
-                            history.back();
+                            var btn = _this.form.closest('.portlet').find('a[rel="back"]');
+                            if (btn.length === 0) {
+                                location.reload();
+                            }
+                            else {
+                                btn.trigger('click');
+                            }
                         }
                     },
                     error: function (jqXHR) {
