@@ -19,6 +19,7 @@ use RabbitCMS\Backend\Console\Commands\MakeConfigCommand;
 use RabbitCMS\Backend\Entities\User;
 use RabbitCMS\Backend\Entities\User as UserEntity;
 use RabbitCMS\Backend\Facades\Backend as BackendFacade;
+use RabbitCMS\Backend\Factory\ActionsFactory;
 use RabbitCMS\Backend\Factory\TabsFactory;
 use RabbitCMS\Backend\Http\Controllers\Backend\Auth as AuthController;
 use RabbitCMS\Backend\Http\Controllers\Backend\Main;
@@ -101,6 +102,12 @@ class ModuleProvider extends ServiceProvider
      */
     public function register()
     {
+        $this->app->singleton('backend.actions', function () {
+            $user = Auth::user();
+            return new ActionsFactory($user instanceof User ? $user : null);
+        });
+        $this->app->alias('backend.actions', ActionsFactory::class);
+
         $this->app->singleton('backend.tabs', function () {
             $user = Auth::user();
             return new TabsFactory($user instanceof User ? $user : null);
@@ -137,6 +144,9 @@ class ModuleProvider extends ServiceProvider
         $this->app->afterResolving('blade.compiler', function (BladeCompiler $compiler) {
             $compiler->directive('tabs', function ($expression) {
                 return "<?php echo \RabbitCMS\Backend\Facades\Tabs::show({$expression}, array_except(get_defined_vars(), array('__data', '__path'))); ?>";
+            });
+            $compiler->directive('actions', function ($expression) {
+                return "<?php echo \RabbitCMS\Backend\Facades\Actions::show({$expression}); ?>";
             });
         });
     }
