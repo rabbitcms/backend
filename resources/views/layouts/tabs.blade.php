@@ -8,7 +8,7 @@ use RabbitCMS\Backend\Support\Tab;
 ?>
 @if(\count($_tabs) === 1)
     <div @if($_tabs[0]->getExec()) data-require="{{$_tabs[0]->getExec()}}" @endif>
-        @include($_tabs[0]->getView())
+        @include($_tabs[0]->getView(), $data + $_tabs[0]->getData($object))
     </div>
 @else
     <div class="tabbable-custom">
@@ -23,7 +23,7 @@ use RabbitCMS\Backend\Support\Tab;
             @foreach($_tabs as $index => $tab)
                 <div class="tab-pane @if($index === 0) active @endif" id="tab_{{$tab->getName()}}"
                      @if($tab->getExec()) data-require{{$index ? '-lazy' : ''}}="{{$tab->getExec()}}" @endif>
-                    @include($tab->getView(),$data + $tab->getData($object))
+                    @include($tab->getView(), $data + $tab->getData($object))
                 </div>
             @endforeach
         </div>
