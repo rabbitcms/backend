@@ -62,6 +62,11 @@ define(['jquery'], function ($) {
                                     if (check($form, 'back') && history.state !== null) {
                                         history.back();
                                     }
+                                    if (check($form, 'redirect')) {
+                                        setTimeout(() => {
+                                            RabbitCMS.navigate(data.location);
+                                        }, 300);
+                                    }
                                     callback(null, data);
                                 },
                                 error: function (response) {
