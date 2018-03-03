@@ -11,9 +11,7 @@ $actions_action_link = function (Action $action, $object) use ($__env)
     $attributes = [
         'class="btn btn-default btn-sm"'
     ];
-    foreach ($action->getData($object) as $key => $value) {
-        $attributes[] = 'data-' . $key . '="' . htmlentities($value) . '"';
-    }
+    $data = $action->getData($object);
     $exec = $action->getExec($object);
     $a = explode(':', $exec, 2);
     switch ($a[0]) {
@@ -26,7 +24,13 @@ $actions_action_link = function (Action $action, $object) use ($__env)
             $attributes[] = "href=\"#{$a[1]}\"";
             break;
         case 'exec':
-            $attributes[] = "href=\"#{$a[1]}\"";
+            foreach ($data as $key => $value) {
+                $attributes[] = 'data-' . $key . '="' . htmlentities($value) . '"';
+            }
+            $attributes[] = 'rel="exec"';
+            $attributes[] = "data-exec=\"{$a[1]}\"";
+            $attributes[] = 'href="#"';
+
             break;
         case 'blank':
             $attributes[] = 'target="_blank"';
@@ -39,7 +43,7 @@ $actions_action_link = function (Action $action, $object) use ($__env)
     echo "<a {$attributes}>";
     if ($icon = $action->getIcon($object)) echo "<i class=\"fa fa-{$icon}\"></i> ";
     echo "{$action->getLabel()}</a>";
-    ?>@push('modal')@includeIf($action->getView($object))@endpush<?php
+    ?>@push('modal')@includeIf($action->getView($object), $data)@endpush<?php
 }?>
 <div class="actions">
     @if (\count($_actions) === 1)

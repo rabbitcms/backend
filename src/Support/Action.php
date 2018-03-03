@@ -270,6 +270,10 @@ class Action
             $this->setView($options['view']);
         }
 
+        if (\array_key_exists('data', $options)) {
+            $this->setData($options['data']);
+        }
+
         return $this;
     }
 

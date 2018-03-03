@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace RabbitCMS\Backend\Facades;
 
 use Illuminate\Support\Facades\Facade;
+use Illuminate\Support\HtmlString;
 use RabbitCMS\Backend\Entities\User;
 use RabbitCMS\Backend\Factory\TabsFactory;
 use RabbitCMS\Backend\Support\Tab;
