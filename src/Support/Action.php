@@ -100,11 +100,13 @@ class Action
     }
 
     /**
+     * @param object $object
+     *
      * @return string|null
      */
-    public function getView(): ?string
+    public function getView($object): ?string
     {
-        return $this->view;
+        return $this->value($this->view, $object);
     }
 
     /**
@@ -120,16 +122,13 @@ class Action
     }
 
     /**
-     * @param null $object
+     * @param object $object
      *
      * @return bool
      */
-    public function isEnabled($object = null): bool
+    public function isEnabled($object): bool
     {
-        if (is_callable($this->enabled)) {
-            return call_user_func($this->enabled, $object, $this);
-        }
-        return $this->enabled;
+        return $this->value($this->enabled, $object);
     }
 
     /**
@@ -201,30 +200,43 @@ class Action
      */
     public function getData($object): array
     {
-        if (\is_callable($this->data)) {
-            return call_user_func($this->data, $object, $this);
-        }
-        return $this->data;
+        return $this->value($this->data, $object);
     }
 
 
     /**
-     * @param null|string $exec
+     * @param \Closure|string|null $exec
      *
      * @return static
      */
-    public function setExec(?string $exec): self
+    public function setExec($exec): self
     {
         $this->exec = $exec;
         return $this;
     }
 
     /**
+     * @param object $object
+     *
      * @return null|string
      */
-    public function getExec(): ?string
+    public function getExec($object): ?string
     {
-        return $this->exec;
+        return $this->value($this->exec, $object);
+    }
+
+    /**
+     * @param $value
+     * @param $object
+     *
+     * @return mixed
+     */
+    protected function value($value, $object)
+    {
+        if (\is_callable($value)) {
+            return call_user_func($value, $object, $this);
+        }
+        return $value;
     }
 
     /**
@@ -273,10 +285,12 @@ class Action
     }
 
     /**
+     * @param object $object
+     *
      * @return null|string
      */
-    public function getIcon(): ?string
+    public function getIcon($object): ?string
     {
-        return $this->icon;
+        return $this->value($this->icon, $object);
     }
 }

@@ -14,7 +14,8 @@ $actions_action_link = function (Action $action, $object) use ($__env)
     foreach ($action->getData($object) as $key => $value) {
         $attributes[] = 'data-' . $key . '="' . htmlentities($value) . '"';
     }
-    $a = explode(':', $action->getExec(), 2);
+    $exec = $action->getExec($object);
+    $a = explode(':', $exec, 2);
     switch ($a[0]) {
         case 'modal':
             $attributes[] = 'data-toggle="modal"';
@@ -24,14 +25,21 @@ $actions_action_link = function (Action $action, $object) use ($__env)
             $attributes[] = 'rel="ajax-portlet"';
             $attributes[] = "href=\"#{$a[1]}\"";
             break;
+        case 'exec':
+            $attributes[] = "href=\"#{$a[1]}\"";
+            break;
+        case 'blank':
+            $attributes[] = 'target="_blank"';
+            $attributes[] = "href=\"{$a[1]}\"";
+            break;
         default:
-            $attributes[] = "href=\"#{$action->getExec()}\"";
+            $attributes[] = "href=\"{$exec}\"";
     }
     $attributes = implode(' ', $attributes);
     echo "<a {$attributes}>";
-    if ($action->getIcon()) echo "<i class=\"fa fa-{$action->getIcon()}\"></i> ";
+    if ($icon = $action->getIcon($object)) echo "<i class=\"fa fa-{$icon}\"></i> ";
     echo "{$action->getLabel()}</a>";
-    ?>@push('modal')@includeIf($action->getView())@endpush<?php
+    ?>@push('modal')@includeIf($action->getView($object))@endpush<?php
 }?>
 <div class="actions">
     @if (\count($_actions) === 1)
