@@ -46,6 +46,11 @@ define(['jquery', 'bootbox', 'jquery.cookie'], function ($, bootbox) {
             return false;
         });
 
+        _Body.on('click', '[rel="exec"]',  (event) => {
+            event.preventDefault();
+            this.exec($(event.currentTarget).data('exec'));
+        });
+
         _Body.on('show.bs.modal', '.modal[data-require-lazy]', (e) => {
             _this.loadModule($(e.currentTarget), false);
         });
@@ -90,23 +95,26 @@ define(['jquery', 'bootbox', 'jquery.cookie'], function ($, bootbox) {
 
     RabbitCMS.prototype._visiblePortlet = $();
 
+    RabbitCMS.prototype.exec = function exec(module, ...args) {
+        let tmp = module.split(':');
+        require([tmp[0]],  (module) =>{
+            if (tmp.length === 2)
+                module[tmp[1]](...args);
+            else
+                module(...args);
+        });
+    };
     /* Portlets and Modals */
     RabbitCMS.prototype.loadModule = function (portlet, recurse) {
-        var _module = portlet.data('require') || portlet.data('require-lazy');
+        let _module = portlet.data('require') || portlet.data('require-lazy');
 
         if (_module && !portlet.data('loaded')) {
             portlet.data('loaded',true);
-            var _tmp = _module.split(':');
-            require([_tmp[0]], function (_module) {
-                if (_tmp.length === 2)
-                    _module[_tmp[1]](portlet);
-                else
-                    _module(portlet);
-            });
+            this.exec(_module, portlet);
         }
 
         if (recurse !== false) {
-            var self = this;
+            let self = this;
             $('[data-require]', portlet).each(function () {
                 self.loadModule($(this), false);
             });

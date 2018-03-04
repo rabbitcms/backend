@@ -9,7 +9,7 @@ $_action = $_actions[0];
 $actions_action_link = function (Action $action, $object) use ($__env)
 {
     $attributes = [
-        'class="btn btn-default btn-sm"'
+       // 'class="btn btn-default btn-sm"'
     ];
     $data = $action->getData($object);
     $exec = $action->getExec($object);
@@ -29,7 +29,7 @@ $actions_action_link = function (Action $action, $object) use ($__env)
             }
             $attributes[] = 'rel="exec"';
             $attributes[] = "data-exec=\"{$a[1]}\"";
-            $attributes[] = 'href="#"';
+            $attributes[] = 'href="javascript:void()"';
 
             break;
         case 'blank':
