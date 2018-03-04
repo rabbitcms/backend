@@ -46,9 +46,10 @@ define(['jquery', 'bootbox', 'jquery.cookie'], function ($, bootbox) {
             return false;
         });
 
-        _Body.on('click', '[rel="exec"]',  (event) => {
+        _Body.on('click', '[rel="exec"]', (event) => {
             event.preventDefault();
-            this.exec($(event.currentTarget).data('exec'));
+            let self = $(event.currentTarget);
+            this.exec(self.data('exec'), self);
         });
 
         _Body.on('show.bs.modal', '.modal[data-require-lazy]', (e) => {
@@ -97,7 +98,7 @@ define(['jquery', 'bootbox', 'jquery.cookie'], function ($, bootbox) {
 
     RabbitCMS.prototype.exec = function exec(module, ...args) {
         let tmp = module.split(':');
-        require([tmp[0]],  (module) =>{
+        require([tmp[0]], (module) => {
             if (tmp.length === 2)
                 module[tmp[1]](...args);
             else
@@ -109,7 +110,7 @@ define(['jquery', 'bootbox', 'jquery.cookie'], function ($, bootbox) {
         let _module = portlet.data('require') || portlet.data('require-lazy');
 
         if (_module && !portlet.data('loaded')) {
-            portlet.data('loaded',true);
+            portlet.data('loaded', true);
             this.exec(_module, portlet);
         }
 
