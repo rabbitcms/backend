@@ -201,7 +201,7 @@ export class RabbitCMS extends Metronic {
                 history.back();
             } else {
                 let a:HTMLAnchorElement = <HTMLAnchorElement>event.currentTarget;
-                this.navigate(a.pathname, StateType.NoPush);
+                this.navigate(a.pathname, StateType.Push);
             }
             return false;
         });

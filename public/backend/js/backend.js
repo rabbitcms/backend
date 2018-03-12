@@ -171,7 +171,7 @@ define(["require", "exports", "jquery", "i18n!rabbitcms/nls/backend", "rabbitcms
                 }
                 else {
                     var a = event.currentTarget;
-                    _this.navigate(a.pathname, StateType.NoPush);
+                    _this.navigate(a.pathname, StateType.Push);
                 }
                 return false;
             });
