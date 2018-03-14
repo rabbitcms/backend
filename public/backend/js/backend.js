@@ -114,8 +114,9 @@ define(["require", "exports", "jquery", "i18n!rabbitcms/nls/backend", "rabbitcms
             if (s && s.link == link) {
                 var previous_1 = this._previous;
                 this._previous = this._position;
-                RabbitCMS.navigateByHandler(s.handler, s.link, StateType.NoPush, replay).then(function () {
+                RabbitCMS.navigateByHandler(s.handler, s.link, StateType.NoPush, replay).then(function (widget) {
                     _this._position = index;
+                    s.widget = widget;
                 }, function () {
                     _this._previous = previous_1;
                     if (index > _this._position) {
@@ -312,16 +313,16 @@ define(["require", "exports", "jquery", "i18n!rabbitcms/nls/backend", "rabbitcms
                 var current = _this._stack.current || new State(null, null, null);
                 if (h.widget instanceof jQuery) {
                     if (current.widget === h.widget) {
-                        resolve(false);
+                        resolve(h.widget);
                         return;
                     }
                     current.check(replay).then(function () {
                         if (pushState !== StateType.NoPush) {
                             _this._stack.add(new State(link, h, h.widget), h.pushState || pushState);
-                            resolve(true);
+                            resolve(h.widget);
                         }
                         else {
-                            resolve(false);
+                            resolve(h.widget);
                         }
                         _this.showPortlet(h, h.widget);
                     }, function () {
@@ -337,7 +338,7 @@ define(["require", "exports", "jquery", "i18n!rabbitcms/nls/backend", "rabbitcms
                                 _this._stack.add(state, h.pushState || pushState);
                                 _this.loadModuleByHandler(h, widget, state);
                                 _this.showPortlet(h, widget);
-                                resolve(true);
+                                resolve(widget);
                             }
                         });
                     }, function () {

@@ -131,9 +131,11 @@ class Stack {
         if (s && s.link == link) {
             let previous = this._previous;
             this._previous = this._position;
-            RabbitCMS.navigateByHandler(s.handler, s.link, StateType.NoPush, replay).then(()=> {
+            RabbitCMS.navigateByHandler(s.handler, s.link, StateType.NoPush, replay).then((widget)=> {
                 this._position = index;
-            }, ()=> {
+
+                s.widget = widget;
+            }, () => {
                 this._previous = previous;
                 if (index > this._position) {
                     history.back();
@@ -358,23 +360,23 @@ export class RabbitCMS extends Metronic {
         }
     }
 
-    static navigateByHandler(h:Handler, link:string, pushState:StateType = StateType.Push, replay:ReplayFunc):Promise<boolean> {
+    static navigateByHandler(h:Handler, link:string, pushState:StateType = StateType.Push, replay:ReplayFunc):Promise<any> {
         if (!replay) {
             replay = ()=>this.navigateByHandler(h, link, pushState, replay);
         }
-        return new Promise<boolean>((resolve, reject)=> {
+        return new Promise<any>((resolve, reject)=> {
             let current = this._stack.current || new State(null, null, null);
             if (h.widget instanceof jQuery) {
                 if (current.widget === h.widget) {
-                    resolve(false);
+                    resolve(h.widget);
                     return;
                 }
                 current.check(replay).then(()=> {
                     if (pushState !== StateType.NoPush) {
                         this._stack.add(new State(link, h, h.widget), h.pushState || pushState);
-                        resolve(true);
+                        resolve(h.widget);
                     } else {
-                        resolve(false);
+                        resolve(h.widget);
                     }
                     this.showPortlet(h, h.widget);
                 }, ()=> {
@@ -389,7 +391,7 @@ export class RabbitCMS extends Metronic {
                             this._stack.add(state, h.pushState || pushState);
                             this.loadModuleByHandler(h, widget, state);
                             this.showPortlet(h, widget);
-                            resolve(true);
+                            resolve(widget);
                         }
                     });
                 }, ()=> {
