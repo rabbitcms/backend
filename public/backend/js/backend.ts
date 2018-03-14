@@ -560,7 +560,7 @@ export class RabbitCMS extends Metronic {
 
         let _container;
         if (!options.container) {
-            let tmp = this._stack.current.widget.find('.portlet-body');
+            let tmp = this._stack.current.widget.find('.portlet-body:visible:first');
 
             if (tmp.hasClass('form')) {
                 _container = tmp.find('.form-body').first();

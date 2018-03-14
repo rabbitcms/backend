@@ -489,7 +489,7 @@ define(["require", "exports", "jquery", "i18n!rabbitcms/nls/backend", "rabbitcms
             }
             var _container;
             if (!options.container) {
-                var tmp = this._stack.current.widget.find('.portlet-body');
+                var tmp = this._stack.current.widget.find('.portlet-body:visible:first');
                 if (tmp.hasClass('form')) {
                     _container = tmp.find('.form-body').first();
                 }
