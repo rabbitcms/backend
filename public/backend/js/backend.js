@@ -632,6 +632,7 @@ define(["require", "exports", "jquery", "i18n!rabbitcms/nls/backend", "rabbitcms
                             _this.dangerMessage(i18n.accessDenied, options.warningTarget);
                             break;
                         case 401:
+                        case 419:
                             location.reload(true);
                             break;
                         default:
