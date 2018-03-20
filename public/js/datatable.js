@@ -329,7 +329,7 @@ var Datatable = function () {
             }
 
             params['_token'] = _TOKEN;
-            $('.form-filter', table).each(function () {
+            $('.form-filter', tableContainer).each(function () {
                 var self = $(this);
                 params[self.attr('name')] = self.val();
             });

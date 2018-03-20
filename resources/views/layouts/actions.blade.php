@@ -6,11 +6,13 @@ use RabbitCMS\Backend\Support\Action;
 /* @var object $object */
 if (\count($_actions) === 0) return;
 $_action = $_actions[0];
-$actions_action_link = function (Action $action, $object) use ($__env)
+$actions_action_link = function (Action $action, $object, bool $single = false) use ($__env)
 {
-    $attributes = [
-       // 'class="btn btn-default btn-sm"'
-    ];
+    $attributes = [];
+    //add classes for button
+    if ($single) {
+        $attributes[] = 'class="btn btn-default btn-sm"';
+    }
     $data = $action->getData($object);
     $exec = $action->getExec($object);
     $a = explode(':', $exec, 2);
@@ -47,7 +49,7 @@ $actions_action_link = function (Action $action, $object) use ($__env)
 }?>
 <div class="actions">
     @if (\count($_actions) === 1)
-        <?php $actions_action_link($_action, $object);?>
+        <?php $actions_action_link($_action, $object, true);?>
     @else
         <div class="btn-group">
             <button class="btn btn-default btn-sm dropdown-toggle" type="button" data-toggle="dropdown"
