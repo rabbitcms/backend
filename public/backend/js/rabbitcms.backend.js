@@ -510,7 +510,7 @@ define(['jquery', 'bootbox', 'jquery.cookie'], function ($, bootbox) {
                             case 422:
                                 var result = '<ul class="list-unstyled">';
                                 try {
-                                    $.each(jqXHR.responseJSON, function (key, value) {
+                                    $.each(jqXHR.responseJSON.errors, function (key, value) {
                                         console.log(key, value);
                                         result += '<li>' + value + '</li>'
                                     });
