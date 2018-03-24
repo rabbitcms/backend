@@ -126,5 +126,24 @@ define(['jquery'], function ($) {
         update();
     };
 
+    forms.delete = (options) => new Promise((resolve, reject) => {
+        require('bootbox').dialog({
+            message: '<h4>Ви впевнені, що хочете видалити цей запис?</h4>',
+            closeButton: false,
+            buttons: {
+                yes: {
+                    label: 'Так',
+                    className: 'btn-sm green',
+                    callback: () => resolve(RabbitCMS._ajax(options))
+                },
+                no: {
+                    label: 'Ні',
+                    className: 'btn-sm red',
+                    callback: () => reject()
+                }
+            }
+        });
+    });
+
     return forms;
 });
