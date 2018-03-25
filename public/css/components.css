@@ -11427,3 +11427,12 @@ Transparent Button
   background: transparent;
   color: #888;
 }
+
+
+
+.tab-pane .form .form-actions {
+  margin: 0 -10px -10px;
+}
+.single-tab-pane {
+  margin: -10px;
+}

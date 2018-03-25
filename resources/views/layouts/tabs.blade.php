@@ -7,7 +7,7 @@ use RabbitCMS\Backend\Support\Tab;
 /* @var object $object */
 ?>
 @if(\count($_tabs) === 1)
-    <div @if($exec = $_tabs[0]->getExec($object)) data-require="{{$exec}}" @endif>
+    <div @if($exec = $_tabs[0]->getExec($object)) data-require="{{$exec}}" @endif class="single-tab-pane">
         @include($_tabs[0]->getView($object), $data + $_tabs[0]->getData($object))
     </div>
 @else
