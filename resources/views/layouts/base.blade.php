@@ -29,7 +29,7 @@ use Illuminate\Support\Facades\Lang;
     <link href="@masset('plugins/select2/select2.css')" rel="stylesheet" type="text/css">
     <link href="@masset('plugins/bootstrap-datepicker/css/datepicker.css')" rel="stylesheet" type="text/css">
     <link href="@masset('plugins/bootstrap-datepicker/css/datepicker3.css')" rel="stylesheet" type="text/css">
-    <link href="@masset('plugins/bootstrap-datetimepicker/css/datetimepicker.css')" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/smalot-bootstrap-datetimepicker/2.4.4/css/bootstrap-datetimepicker.min.css" integrity="sha256-ff4Vuur4aYrm0ZOAEC/me1LBOcid7PJ5oP9xxvJ0AKQ=" crossorigin="anonymous" />
     <link href="@masset('plugins/bootstrap-timepicker/css/bootstrap-timepicker.css')" rel="stylesheet" type="text/css">
     <link href="@masset('plugins/datatables/media/css/jquery.dataTables.min.css')" rel="stylesheet" type="text/css">
     <link href="@masset('plugins/datatables/plugins/bootstrap/dataTables.bootstrap.css')" rel="stylesheet"
@@ -66,8 +66,7 @@ use Illuminate\Support\Facades\Lang;
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.7.1/js/bootstrap-datepicker.min.js"
             integrity="sha256-TueWqYu0G+lYIimeIcMI8x1m14QH/DQVt4s9m/uuhPw=" crossorigin="anonymous"></script>
 
-    <script src="@masset('plugins/bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js')"
-            type="text/javascript"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/smalot-bootstrap-datetimepicker/2.4.4/js/bootstrap-datetimepicker.min.js" integrity="sha256-KWLvsoTXFF8o3o9zKOjUsYC/NPKjgYmUXbrxNk90F8k=" crossorigin="anonymous"></script>
     <script src="@masset('plugins/bootstrap-timepicker/js/bootstrap-timepicker.js')" type="text/javascript"></script>
     <script src="@masset('plugins/datatables/media/js/jquery.dataTables.min.js')" type="text/javascript"></script>
     <script src="@masset('plugins/datatables/plugins/bootstrap/dataTables.bootstrap.js')"
@@ -87,6 +86,8 @@ use Illuminate\Support\Facades\Lang;
     <script src="@masset('plugins/jquery.maskMoney.js')" type="text/javascript"></script>
 
     @if(app()->getLocale() === 'ru')
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/smalot-bootstrap-datetimepicker/2.4.4/js/locales/bootstrap-datetimepicker.ru.js" integrity="sha256-+78H4SxBNFRT9ucry9wmMZwlAubvrFzmQAn4BqxH/uc=" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/i18n/ru.js" integrity="sha256-YOIol4UzD2BGvz28zaarwdUDawpKTmEpIcvkwakmAHQ=" crossorigin="anonymous"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.17.0/localization/messages_ru.min.js"
                 integrity="sha256-pW/I4s3iAUclf7Y7eM20ZSAyHq8yehOG8GRUvXcVnF8=" crossorigin="anonymous"></script>
         <script
@@ -96,6 +97,8 @@ use Illuminate\Support\Facades\Lang;
                 $.fn.datepicker.defaults.language = 'ru';
             });</script>
     @else
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/smalot-bootstrap-datetimepicker/2.4.4/js/locales/bootstrap-datetimepicker.uk.js" integrity="sha256-aRWJeT44tz3ih3mZYrvu/dx8w6/vpsfWdepO91GN7ko=" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/i18n/uk.js" integrity="sha256-LsPBQ5q5xisqXxgdV4Yf8CU8FO7mhnYRUxm7tJXNl4E=" crossorigin="anonymous"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.17.0/localization/messages_uk.min.js"
                 integrity="sha256-HL/bvGBevAn+B2oTm4MJzK3EjlChK4Sl7Jc2XOWmu0U=" crossorigin="anonymous"></script>
         <script
