@@ -194,7 +194,7 @@ define(['jquery', 'bootbox', 'jquery.cookie'], function ($, bootbox) {
     RabbitCMS.prototype.loadModalWindow = function (link, callback) {
         _this.ajax(link, function (data) {
             var modal = $(data);
-
+            _this.loadModule(modal);
             $('.page-content').append(modal);
 
             _this.showModal(modal);
