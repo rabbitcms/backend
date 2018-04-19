@@ -20,6 +20,10 @@ define(['jquery'], function ($) {
         return data && data.split(/\s+/).includes(check);
     }
 
+    function find(object, str, def) {
+        return object && object.hasOwnProperty(str) ? object[str] : def
+    }
+
     function forms($form, ajax, callback) {
         callback = callback || (() => undefined);
         if (ajax instanceof Function) {
@@ -144,6 +148,32 @@ define(['jquery'], function ($) {
             }
         });
     });
+
+    forms.fill = (form, data) => {
+        form.find('input[name],textarea[name],select[name]').each((idx, el) => {
+            let $el = $(el),
+                matches = $el.attr('name').match(/(.*)(\[(.*)\])?/),
+                val = find(data, matches[1]);
+            if (matches[3]) {
+                val = find(val, matches[3]);
+            }
+            switch ($el.attr('type')) {
+                case 'checkbox':
+                    $el.prop('checked', !!val);
+                    break;
+                case 'radio':
+                    if ($el.attr('value') == val)
+                        $el.prop('checked', true);
+                    break;
+                default:
+                    if (typeof(val) === typeof(true)) {
+                        $el.val(val ? '1' : '0');
+                    } else {
+                        $el.val(val);
+                    }
+            }
+        });
+    };
 
     return forms;
 });
