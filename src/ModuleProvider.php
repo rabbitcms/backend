@@ -123,7 +123,10 @@ class ModuleProvider extends ServiceProvider
         // Register the middleware with the container using the container's singleton method.
         $this->app->singleton(StartSession::class);
 
-        $this->app->make('router')->middlewareGroup('backend', [
+        $router = $this->app->make('router');
+        array_map(function (string $middleware) use ($router) {
+            $router->pushMiddlewareToGroup('backend', $middleware);
+        }, [
             SetBackendGuard::class,
             EncryptCookies::class,
             AddQueuedCookiesToResponse::class,
