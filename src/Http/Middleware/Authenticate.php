@@ -68,48 +68,47 @@ class Authenticate
         if (!($user instanceof HasAccessEntity) || count($user->getPermissions()) === 0) {
             throw new AccessDeniedHttpException();
         }
-        $routeResolver = $request->getRouteResolver();
-        /* @var Route $route */
-        $route = $routeResolver();
-        $action = $route->getAction();
-        if (is_string($action['uses'])) {
-            [$class] = $segments = explode('@', $action['uses']);
-            $method = count($segments) === 2 ? $segments[1] : '__invoke';
-            $reader = new AnnotationReader();
-            $class = new ReflectionClass($class);
-            $this->checkAnnotation(
-                $request,
-                $user,
-                $reader->getClassAnnotation($class, PermissionAnnotation::class)
-            );
-            $this->checkAnnotation(
-                $request,
-                $user,
-                $reader->getMethodAnnotation($class->getMethod($method), PermissionAnnotation::class)
+        try {
+            $routeResolver = $request->getRouteResolver();
+            /* @var Route $route */
+            $route = $routeResolver();
+            $action = $route->getAction();
+            if (is_string($action['uses'])) {
+                [$class] = $segments = explode('@', $action['uses']);
+                $method = count($segments) === 2 ? $segments[1] : '__invoke';
+                $reader = new AnnotationReader();
+                $class = new ReflectionClass($class);
+                /** @var PermissionAnnotation $annotation */
+                $annotation = $reader->getClassAnnotation($class, PermissionAnnotation::class);
+                $this->checkAnnotation($user, $annotation);
+                $annotation = $reader->getMethodAnnotation($class->getMethod($method), PermissionAnnotation::class);
+                $this->checkAnnotation($user, $annotation);
+            }
+
+            return $next($request);
+        } catch (AccessDeniedHttpException $exception) {
+            if ($request->ajax()) {
+                throw new HttpResponseException(new JsonResponse([], Response::HTTP_FORBIDDEN));
+            }
+            throw new HttpResponseException(
+                new Response(View::make(self::module()->viewName('deny'))->render(), Response::HTTP_FORBIDDEN)
             );
         }
-
-        return $next($request);
     }
 
     /**
-     * @param Request                   $request
      * @param HasAccessEntity           $user
      * @param PermissionAnnotation|null $annotation
      *
      * @return void
-     * @throws HttpResponseException
+     * @throws AccessDeniedHttpException
      */
     protected function checkAnnotation(
-        Request $request,
         HasAccessEntity $user,
         PermissionAnnotation $annotation = null
     ): void {
         if ($annotation !== null && !$user->hasAccess($annotation->permissions, $annotation->all)) {
-            if ($request->ajax()) {
-                throw new HttpResponseException(new JsonResponse([], Response::HTTP_FORBIDDEN));
-            }
-            throw new HttpResponseException(new Response(self::module()->view('deny'), Response::HTTP_FORBIDDEN));
+            throw new AccessDeniedHttpException();
         }
     }
 }
