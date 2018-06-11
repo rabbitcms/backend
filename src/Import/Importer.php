@@ -147,6 +147,6 @@ final class Importer implements ImporterInterface
      */
     public function log(string $format, ...$args): void
     {
-        $this->log[] = "{$this->line}: " . sprintf($format, ...$args);
+        $this->log[] = "{$this->line};" . sprintf($format, ...$args);
     }
 }
