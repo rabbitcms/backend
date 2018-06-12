@@ -3,12 +3,18 @@ declare(strict_types=1);
 
 namespace RabbitCMS\Backend\Import;
 
+use Psr\Log\LoggerTrait;
+use RabbitCMS\Modules\Concerns\BelongsToModule;
+
 /**
  * Class Importer
  * @package DtKt\Dealers\Support
  */
 final class Importer implements ImporterInterface
 {
+    use BelongsToModule;
+    use LoggerTrait;
+
     /**
      * @var \SplFileInfo
      */
@@ -35,6 +41,10 @@ final class Importer implements ImporterInterface
     private $head = null;
 
     private $log = [];
+    /**
+     * @var \Closure|null
+     */
+    private $translator = null;
 
     /**
      * @var null|array
@@ -142,11 +152,38 @@ final class Importer implements ImporterInterface
     }
 
     /**
+     * @param mixed  $level
+     * @param string $message
+     * @param array  $context
+     */
+    public function log($level, $message, array $context = array()): void
+    {
+        $this->log[] = [
+            'level' => $level,
+            'line' => $this->line,
+            'message' => $this->translate($message),
+            'context' => $context
+        ];
+    }
+
+    /**
      * @param string $format
      * @param mixed  ...$args
      */
-    public function log(string $format, ...$args): void
+    public function log2(string $format, ...$args): void
     {
+
         $this->log[] = "{$this->line};" . sprintf($format, ...$args);
+    }
+
+    private function translate(string $key): string
+    {
+        return $this->translator ? ($this->translator)($key) : $key;
+    }
+
+    public function setTranslator(\Closure $closure): ImporterInterface
+    {
+        $this->translator = $closure;
+        return $this;
     }
 }

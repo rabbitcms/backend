@@ -4,10 +4,14 @@ declare(strict_types=1);
 namespace RabbitCMS\Backend\Import;
 
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Mail\Mailer;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Mail\Message;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\HtmlString;
 use RabbitCMS\Backend\Entities\User;
+use RabbitCMS\Modules\Concerns\BelongsToModule;
 
 /**
  * Class ImportJob
@@ -18,6 +22,7 @@ class ImportJob implements ShouldQueue
     use Queueable;
     use SerializesModels;
     use Dispatchable;
+    use BelongsToModule;
 
     /**
      * @var string
@@ -74,12 +79,32 @@ class ImportJob implements ShouldQueue
         $this->options = $options;
     }
 
-    public function handle(): array
+    /**
+     * @param Mailer $mailer
+     *
+     * @return array
+     */
+    public function handle(Mailer $mailer): array
     {
-        $log = (new Importer(new \SplFileInfo($this->path), $this->encoding, $this->delimiter))
+        $file = new \SplFileInfo($this->path);
+        $log = (new Importer($file, $this->encoding, $this->delimiter))
             ->handle(new $this->importClass($this->options));
+        //@unlink($file->getPathname());
+        $class = class_basename($this->importClass);
         if ($this->user) {
-            //todo send log.
+            $mailer->send(self::module()->viewName('mails.import'), [
+                'class' => $class
+            ], function (Message $message) use ($class, $log) {
+                $message->to($this->user->email, $this->user->name);
+                $message->subject("Import report: {$class}");
+                $message->attachData(implode("\n", array_map(function (array $log) {
+                    $level = strtoupper($log['level']);
+                    $message = str_replace('"', '""', $log['message']);
+                    $context = empty($context) ? str_replace('"', '""',
+                        json_encode($log['context'], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)) : '';
+                    return "\"{$log['line']}\";\"{$level}\";\"{$message}\";\"{$context}\"";
+                }, $log)), 'report.csv');
+            });
         }
         return $log;
     }

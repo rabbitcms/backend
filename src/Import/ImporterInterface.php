@@ -3,11 +3,13 @@ declare(strict_types=1);
 
 namespace RabbitCMS\Backend\Import;
 
+use Psr\Log\LoggerInterface;
+
 /**
  * Interface ImporterInterface
  * @package DtKt\Dealers\Support
  */
-interface ImporterInterface
+interface ImporterInterface extends LoggerInterface
 {
     /**
      * Get next row.
@@ -28,9 +30,9 @@ interface ImporterInterface
     public function probe(\Closure $condition):bool;
 
     /**
-     * Log message like format of printf
-     * @param string $format
-     * @param mixed  ...$args
+     * @param \Closure $closure
+     *
+     * @return ImporterInterface
      */
-    public function log(string $format, ...$args): void;
+    public function setTranslator(\Closure $closure): ImporterInterface;
 }
