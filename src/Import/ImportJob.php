@@ -77,6 +77,7 @@ class ImportJob implements ShouldQueue
         $this->encoding = $encoding;
         $this->delimiter = $delimiter;
         $this->options = $options;
+        $this->queue = 'import';
     }
 
     /**
@@ -89,12 +90,11 @@ class ImportJob implements ShouldQueue
         $file = new \SplFileInfo($this->path);
         $log = (new Importer($file, $this->encoding, $this->delimiter))
             ->handle(new $this->importClass($this->options));
-        //@unlink($file->getPathname());
         $class = class_basename($this->importClass);
         if ($this->user) {
             $mailer->send(self::module()->viewName('mails.import'), [
                 'class' => $class
-            ], function (Message $message) use ($class, $log) {
+            ], function (Message $message) use ($file, $class, $log) {
                 $message->to($this->user->email, $this->user->name);
                 $message->subject("Import report: {$class}");
                 $message->attachData(implode("\n", array_map(function (array $log) {
@@ -104,8 +104,10 @@ class ImportJob implements ShouldQueue
                         json_encode($log['context'], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)) : '';
                     return "\"{$log['line']}\";\"{$level}\";\"{$message}\";\"{$context}\"";
                 }, $log)), 'report.csv');
+                $message->attach($file->getPathname(), ['as' => 'source.csv']);
             });
         }
+        @unlink($file->getPathname());
         return $log;
     }
 
