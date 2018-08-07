@@ -19,7 +19,7 @@ class AclToGateProvider extends LaravelServiceProvider
      */
     public function register()
     {
-        $this->app->afterResolving(Gate::class, function (Gate $gate, Application $app) {
+        $this->app->resolving(Gate::class, function (Gate $gate, Application $app) {
             foreach ($app->make(Backend::class)->getAllAcl() as $acl => $label) {
                 $gate->define($acl, function ($user) use ($acl) {
                     return $user instanceof User ? $user->hasAccess($acl) : false;

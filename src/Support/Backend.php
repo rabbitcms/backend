@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 namespace RabbitCMS\Backend\Support;
 
 use Illuminate\Contracts\Container\Container;
@@ -82,7 +83,12 @@ class Backend
      */
     public function addAclResolver($callback)
     {
-        $this->aclResolvers[] = $callback;
+        if ($this->acl === null) {
+            $this->aclResolvers[] = $callback;
+        } else {
+            $this->callAll([$callback]);
+        }
+
     }
 
     /**
@@ -143,6 +149,7 @@ class Backend
 
     /**
      * Call all callbacks.
+     *
      * @param array $callbacks
      */
     protected function callAll(array $callbacks)
@@ -179,11 +186,14 @@ class Backend
      * Add menu resolver.
      *
      * @param callable|string $callback
-     * @param int $priority
+     * @param int             $priority
      */
     public function addMenuResolver($callback, $priority = self::MENU_PRIORITY_ITEMS)
     {
         $priority = (int)$priority;
+        //rebuild the menu
+        $this->menu = null;
+
         if (!array_key_exists($priority, $this->menuResolvers)) {
             $this->menuResolvers[$priority] = [];
         }
@@ -194,12 +204,12 @@ class Backend
      * Define backend item.
      *
      * @param string|null $parent
-     * @param string $name
-     * @param string $caption
-     * @param string $url
-     * @param array|null $permissions
+     * @param string      $name
+     * @param string      $caption
+     * @param string      $url
+     * @param array|null  $permissions
      * @param string|null $icon
-     * @param int $position
+     * @param int         $position
      */
     public function addMenu($parent, $name, $caption, $url, $icon = null, array $permissions = null, $position = 0)
     {
@@ -249,7 +259,7 @@ class Backend
     /**
      * Check items permissions.
      *
-     * @param User $user
+     * @param User  $user
      * @param array $items
      *
      * @return array
@@ -329,6 +339,7 @@ class Backend
 
     /**
      * Set active path.
+     *
      * @param string[] ...$path
      */
     public function setActiveMenu(string ...$path)
@@ -350,7 +361,9 @@ class Backend
 
     /**
      * Get active items.
+     *
      * @param array $prepend
+     *
      * @return array
      */
     public function getActiveMenuItems(array $prepend = [])
