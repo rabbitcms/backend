@@ -125,7 +125,7 @@ final class Importer implements ImporterInterface
         if (\is_array($this->current)) {
             $current = $this->current;
             $this->current = null;
-
+            $this->line++;
             return $current;
         }
         if ($this->file->eof()) {
@@ -144,7 +144,9 @@ final class Importer implements ImporterInterface
      */
     public function probe(\Closure $condition): bool
     {
+        $line = $this->line;
         $this->current = $this->next();
+        $this->line = $line;
         if ($this->current === null) {
             return false;
         }
@@ -172,8 +174,15 @@ final class Importer implements ImporterInterface
      */
     public function log2(string $format, ...$args): void
     {
-
         $this->log[] = "{$this->line};" . sprintf($format, ...$args);
+    }
+
+    /**
+     * @return array
+     */
+    public function getLog(): array
+    {
+        return $this->log;
     }
 
     private function translate(string $key): string

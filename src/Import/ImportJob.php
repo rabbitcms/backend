@@ -88,8 +88,12 @@ class ImportJob implements ShouldQueue
     public function handle(Mailer $mailer): array
     {
         $file = new \SplFileInfo($this->path);
-        $log = (new Importer($file, $this->encoding, $this->delimiter))
-            ->handle(new $this->importClass($this->options));
+        $importer = (new Importer($file, $this->encoding, $this->delimiter));
+        try {
+            $log = $importer->handle(new $this->importClass($this->options));
+        } catch (\Exception $exception) {
+            $log = $importer->getLog();
+        }
         $class = class_basename($this->importClass);
         if ($this->user) {
             $mailer->send(self::module()->viewName('mails.import'), [
@@ -107,7 +111,11 @@ class ImportJob implements ShouldQueue
                 $message->attach($file->getPathname(), ['as' => 'source.csv']);
             });
         }
+        if (isset($exception)) {
+            throw $exception;
+        }
         @unlink($file->getPathname());
+
         return $log;
     }
 
