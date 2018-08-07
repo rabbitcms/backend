@@ -1,7 +1,7 @@
 define(["require", "exports", "jquery", "rabbitcms/backend", "i18n!rabbitcms/nls/backend"], function (require, exports, $, backend_1, i18n) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    var Form = (function () {
+    var Form = /** @class */ (function () {
         function Form(form, options) {
             var _this = this;
             this.match = false;

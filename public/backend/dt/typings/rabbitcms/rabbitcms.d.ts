@@ -43,6 +43,8 @@ declare module 'rabbitcms/metronic' {
 
         static maskMoney(target: JQuery, options: any);
 
+        static numeric(target: JQuery, options?: any);
+
         static TouchSpin(target: JQuery, options: TouchSpinOptions);
 
         static handlePortletTools()

@@ -6,7 +6,7 @@ define(["require", "exports", "jquery", "i18n!rabbitcms/nls/backend", "rabbitcms
     var _token = '';
     var _currentHandler;
     var defaultTarget = '.page-content';
-    var State = (function () {
+    var State = /** @class */ (function () {
         function State(link, handler, widget, hash) {
             if (hash === void 0) { hash = ''; }
             this.checkers = [];
@@ -31,7 +31,7 @@ define(["require", "exports", "jquery", "i18n!rabbitcms/nls/backend", "rabbitcms
         StateType[StateType["Push"] = 2] = "Push";
         StateType[StateType["Replace"] = 3] = "Replace";
     })(StateType = exports.StateType || (exports.StateType = {}));
-    var Stack = (function () {
+    var Stack = /** @class */ (function () {
         function Stack() {
             var _this = this;
             this._position = -1;
@@ -140,7 +140,7 @@ define(["require", "exports", "jquery", "i18n!rabbitcms/nls/backend", "rabbitcms
         };
         return Stack;
     }());
-    var RabbitCMS = (function (_super) {
+    var RabbitCMS = /** @class */ (function (_super) {
         __extends(RabbitCMS, _super);
         function RabbitCMS() {
             return _super !== null && _super.apply(this, arguments) || this;
@@ -658,15 +658,15 @@ define(["require", "exports", "jquery", "i18n!rabbitcms/nls/backend", "rabbitcms
             this.blockUI(options.blockTarget, options.blockOptions);
             return $.ajax(options);
         };
+        RabbitCMS._stack = new Stack();
+        RabbitCMS.menu = '';
+        RabbitCMS._locale = 'en';
+        RabbitCMS._handlers = [];
+        RabbitCMS.prefix = 'admin';
         return RabbitCMS;
     }(metronic_1.Metronic));
-    RabbitCMS._stack = new Stack();
-    RabbitCMS.menu = '';
-    RabbitCMS._locale = 'en';
-    RabbitCMS._handlers = [];
-    RabbitCMS.prefix = 'admin';
     exports.RabbitCMS = RabbitCMS;
-    var Dialogs = (function () {
+    var Dialogs = /** @class */ (function () {
         function Dialogs() {
         }
         Dialogs.confirm = function (message, options, extend) {
@@ -698,7 +698,7 @@ define(["require", "exports", "jquery", "i18n!rabbitcms/nls/backend", "rabbitcms
         return Dialogs;
     }());
     exports.Dialogs = Dialogs;
-    var Tools = (function () {
+    var Tools = /** @class */ (function () {
         function Tools() {
         }
         Tools.transliterate = function (string, spase) {
@@ -740,7 +740,7 @@ define(["require", "exports", "jquery", "i18n!rabbitcms/nls/backend", "rabbitcms
     }());
     exports.Tools = Tools;
     /* --- --- --- */
-    var MicroEvent = (function () {
+    var MicroEvent = /** @class */ (function () {
         function MicroEvent(object) {
             var _this = this;
             this._events = {};

@@ -160,6 +160,7 @@ return [
             'jquery.backstretch' => 'plugins/backstretch/jquery.backstretch.min',
             'jquery.blockui' => 'plugins/jquery.blockui.min',
             'jquery.maskMoney' => 'plugins/jquery.maskMoney.min',
+            'jquery.numeric' => 'plugins/jquery.numeric',
             'datatables.net' => [
                 'path' => 'plugins/datatables/jquery.dataTables',
                 'css' => 'plugins/datatables/css/jquery.dataTables.css'

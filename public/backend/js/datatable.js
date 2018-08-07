@@ -6,7 +6,7 @@ define(["require", "exports", "jquery", "jszip", "rabbitcms/backend", "i18n!rabb
     /***
      Wrapper/Helper Class for datagrid based on jQuery Datatable Plugin
      ***/
-    var DataTable = (function () {
+    var DataTable = /** @class */ (function () {
         //main function to initiate the module
         function DataTable(options) {
             var _this = this;
@@ -101,7 +101,7 @@ define(["require", "exports", "jquery", "jszip", "rabbitcms/backend", "i18n!rabb
                         });
                     },
                     drawCallback: function () {
-                        if (_this.tableInitialized === false) {
+                        if (_this.tableInitialized === false) { // check if table has been initialized
                             _this.tableInitialized = true; // set table initialized
                             _this.table.show(); // display table
                         }
@@ -231,7 +231,7 @@ define(["require", "exports", "jquery", "jszip", "rabbitcms/backend", "i18n!rabb
                 this.ajaxParams[name] = [];
             }
             var skip = false;
-            for (var i = 0; i < (this.ajaxParams[name]).length; i++) {
+            for (var i = 0; i < (this.ajaxParams[name]).length; i++) { // check for duplicates
                 if (this.ajaxParams[name][i] === value) {
                     skip = true;
                 }

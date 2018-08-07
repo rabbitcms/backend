@@ -9,19 +9,19 @@ define(["require", "exports", "jquery"], function (require, exports, $) {
         ResponsiveBreakpointSize[ResponsiveBreakpointSize["md"] = 992] = "md";
         ResponsiveBreakpointSize[ResponsiveBreakpointSize["lg"] = 1200] = "lg";
     })(ResponsiveBreakpointSize = exports.ResponsiveBreakpointSize || (exports.ResponsiveBreakpointSize = {}));
-    var BrandColors = (function () {
+    var BrandColors = /** @class */ (function () {
         function BrandColors() {
         }
+        BrandColors.blue = '#89C4F4';
+        BrandColors.red = '#F3565D';
+        BrandColors.green = '#1bbc9b';
+        BrandColors.purple = '#9b59b6';
+        BrandColors.grey = '#95a5a6';
+        BrandColors.yellow = '#F8CB00';
         return BrandColors;
     }());
-    BrandColors.blue = '#89C4F4';
-    BrandColors.red = '#F3565D';
-    BrandColors.green = '#1bbc9b';
-    BrandColors.purple = '#9b59b6';
-    BrandColors.grey = '#95a5a6';
-    BrandColors.yellow = '#F8CB00';
     exports.BrandColors = BrandColors;
-    var Metronic = (function () {
+    var Metronic = /** @class */ (function () {
         function Metronic() {
         }
         Metronic._handleOnResize = function () {
@@ -160,7 +160,7 @@ define(["require", "exports", "jquery"], function (require, exports, $) {
             require(['slimScroll'], function () {
                 el.each(function (index, elem) {
                     var $elem = $(elem);
-                    if ($elem.attr("data-initialized") === "1") {
+                    if ($elem.attr("data-initialized") === "1") { // destroy existing instance before updating the height
                         $elem.removeAttr("data-initialized");
                         $elem.removeAttr("style");
                         var attrList = {};
@@ -238,6 +238,18 @@ define(["require", "exports", "jquery"], function (require, exports, $) {
         Metronic.maskMoney = function (target, options) {
             require(['jquery.maskMoney'], function () {
                 target.maskMoney(options);
+            });
+        };
+        Metronic.numeric = function (target, options) {
+            if (options === void 0) { options = {}; }
+            require(['jquery.numeric'], function () {
+                target.numeric($.extend(true, {
+                    decimal: '.',
+                    negative: false
+                }, options), function () {
+                    $(this).val('')
+                        .trigger('change');
+                }).trigger('keyup');
             });
         };
         Metronic.TouchSpin = function (target, options) {
@@ -560,7 +572,7 @@ define(["require", "exports", "jquery"], function (require, exports, $) {
                 else {
                     html = '<div class="loading-message ' + (options.boxed ? 'loading-message-boxed' : '') + '"><img src="' + _this.getAssetsPath() + '/img/loading-spinner-grey.gif" align=""><span>&nbsp;&nbsp;' + (options.message ? options.message : 'LOADING...') + '</span></div>';
                 }
-                if (target) {
+                if (target) { // element blocking
                     var el = $(target);
                     if (el.height() <= ($(window).height())) {
                         options.cenrerY = true;
@@ -582,7 +594,7 @@ define(["require", "exports", "jquery"], function (require, exports, $) {
                         }
                     });
                 }
-                else {
+                else { // page blocking
                     $.blockUI({
                         message: html,
                         baseZ: options.zIndex ? options.zIndex : 1000,
@@ -776,11 +788,11 @@ define(["require", "exports", "jquery"], function (require, exports, $) {
             return sidebarHeight;
         };
         ;
+        Metronic._isRTL = false;
+        Metronic.resizeHandlers = [];
+        Metronic.assetsPath = '../assets/';
         return Metronic;
     }());
-    Metronic._isRTL = false;
-    Metronic.resizeHandlers = [];
-    Metronic.assetsPath = '../assets/';
     exports.Metronic = Metronic;
 });
 // function A() {
@@ -793,5 +805,5 @@ define(["require", "exports", "jquery"], function (require, exports, $) {
 //         });
 //     };
 // }
-// Handles Bootstrap Popovers 
+// Handles Bootstrap Popovers
 //# sourceMappingURL=metronic.js.map

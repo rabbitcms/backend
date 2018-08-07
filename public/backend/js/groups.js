@@ -1,6 +1,6 @@
 define(["require", "exports", "jquery", "rabbitcms/backend", "rabbitcms/datatable", "rabbitcms/form"], function (require, exports, $, backend_1, datatable_1, form_1) {
     "use strict";
-    var Groups = (function (_super) {
+    var Groups = /** @class */ (function (_super) {
         __extends(Groups, _super);
         function Groups() {
             return _super !== null && _super.apply(this, arguments) || this;

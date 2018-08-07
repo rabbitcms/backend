@@ -294,6 +294,18 @@ export class Metronic {
         });
     }
 
+    static numeric(target: JQuery, options = {}) {
+        require(['jquery.numeric'], () => {
+            target.numeric($.extend(true, {
+                decimal: '.',
+                negative: false
+            }, options), function () {
+                $(this).val('')
+                    .trigger('change');
+            }).trigger('keyup');
+        });
+    }
+
     static TouchSpin(target: JQuery, options: any) {
         require(['bootstrap-touchspin'], () => {
             target.TouchSpin(options);
