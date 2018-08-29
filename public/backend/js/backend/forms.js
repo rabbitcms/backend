@@ -78,20 +78,22 @@ define(['jquery'], function ($) {
                                     RabbitCMS.unblockUI($form);
                                     if (response.status === 422) {
                                         let rawErrors = response.responseJSON.errors;
-                                        validator.showErrors(Object.keys(rawErrors).reduce(function (errors, key) {
-                                            errors[key.split('.').map(function (value, index) {
-                                                return index === 0 ? value : '[' + value + ']';
-                                            }).join('')] = rawErrors[key][0];
-                                            return errors;
-                                        }, {}));
+                                        try {
+                                            validator.showErrors(Object.keys(rawErrors).reduce(function (errors, key) {
+                                                errors[key.split('.').map(function (value, index) {
+                                                    return index === 0 ? value : '[' + value + ']';
+                                                }).join('')] = rawErrors[key][0];
+                                                return errors;
+                                            }, {}));
+                                        } catch (e) {
+                                        }
                                     } else if (response.status === 418) {
                                         RabbitCMS.message({
                                             type: response.responseJSON.type,
                                             message: response.responseJSON.message
                                         });
-                                    } else {
-                                        callback(response.responseJSON);
                                     }
+                                    callback(response.responseJSON);
                                 }
                             }, $form.attr('enctype') === 'multipart/form-data'
                                 ? {
@@ -127,7 +129,7 @@ define(['jquery'], function ($) {
             };
 
         $depend.on('change', update);
-        update();
+        $depend && update();
     };
 
     forms.delete = (options) => new Promise((resolve, reject) => {
