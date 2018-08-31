@@ -154,7 +154,7 @@ define(['jquery'], function ($) {
     forms.fill = (form, data) => {
         form.find('input[name],textarea[name],select[name]').each((idx, el) => {
             let $el = $(el),
-                matches = $el.attr('name').match(/(.*)(\[(.*)\])?/),
+                matches = $el.attr('name').match(/^(.*?)(\[(.*)\])?$/),
                 val = find(data, matches[1]);
             if (matches[3]) {
                 val = find(val, matches[3]);
