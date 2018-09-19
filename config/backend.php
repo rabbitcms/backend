@@ -156,6 +156,7 @@ return [
             'i18n' => 'plugins/i18n',
             'jquery' => 'plugins/jquery.min',
             'bootbox' => 'plugins/bootbox',
+            'clipboard' => 'plugins/clipboard',
             'jquery.cookie' => 'plugins/jquery.cokie.min',
             'jquery.backstretch' => 'plugins/backstretch/jquery.backstretch.min',
             'jquery.blockui' => 'plugins/jquery.blockui.min',
