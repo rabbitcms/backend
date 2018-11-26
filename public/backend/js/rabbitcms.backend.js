@@ -470,14 +470,27 @@ define(['jquery', 'bootbox', 'jquery.cookie'], function ($, bootbox) {
         _this._ajax(options, _callback);
     };
 
+    /**
+     * @deprecated
+     * @param link
+     * @param callback
+     * @return {*}
+     */
     RabbitCMS.prototype.ajax = function (link, callback) {
-        this._ajax({url: link}, callback);
+        return this._ajax({url: link}, callback);
     };
 
+    /**
+     * @deprecated
+     * @param link
+     * @param data
+     * @param callback
+     * @return {*}
+     */
     RabbitCMS.prototype.ajaxPost = function (link, data, callback) {
         var options = {url: link, method: 'POST', data: data};
 
-        this._ajax(options, callback);
+        return this._ajax(options, callback);
     };
 
     RabbitCMS.prototype._ajax = function (options, callback, token) {

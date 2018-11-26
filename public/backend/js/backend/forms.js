@@ -115,21 +115,23 @@ define(['jquery'], function ($) {
     }
 
     forms.depend = function depend(select) {
-        let $select = $(select),
-            $depend = $($select.data('depends')),
-            options = $('[data-depends-id]', $select),
-            update = function () {
-                let value = $depend.val();
-                options.detach().each(function (idx, option) {
-                    let $option = $(option);
-                    if ($option.data('dependsId') == value) {
-                        $select.append($option);
-                    }
-                });
-            };
+        $(select).each(function (i,el) {
+            let $select = $(el),
+                $depend = $($select.data('depends')),
+                options = $('[data-depends-id]', $select),
+                update = function () {
+                    let value = $depend.val();
+                    options.detach().each(function (idx, option) {
+                        let $option = $(option);
+                        if ($option.data('dependsId') == value) {
+                            $select.append($option);
+                        }
+                    });
+                };
 
-        $depend.on('change', update);
-        $depend && update();
+            $depend.on('change', update);
+            $depend && update();
+        });
     };
 
     forms.delete = (options) => new Promise((resolve, reject) => {
