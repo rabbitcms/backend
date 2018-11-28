@@ -1,5 +1,6 @@
 <?php
-declare(strict_types = 1);
+declare(strict_types=1);
+
 namespace RabbitCMS\Backend\Providers;
 
 use Illuminate\Contracts\Auth\Access\Gate;
@@ -19,12 +20,15 @@ class AclToGateProvider extends LaravelServiceProvider
      */
     public function register()
     {
-        $this->app->resolving(Gate::class, function (Gate $gate, Application $app) {
-            foreach ($app->make(Backend::class)->getAllAcl() as $acl => $label) {
-                $gate->define($acl, function ($user) use ($acl) {
-                    return $user instanceof User ? $user->hasAccess($acl) : false;
-                });
-            }
+        $this->app->booted(function () {
+            $this->app->extend(Gate::class, function (Gate $gate, Application $app) {
+                foreach ($app->make(Backend::class)->getAllAcl() as $acl => $label) {
+                    $gate->define($acl, function ($user) use ($acl) {
+                        return $user instanceof User ? $user->hasAccess($acl) : false;
+                    });
+                }
+                return $gate;
+            });
         });
     }
 }
