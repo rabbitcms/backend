@@ -1,0 +1,24 @@
+{
+    "compilerOptions": {
+        "sourceMap": false,
+        "noImplicitAny": false,
+        "module": "amd",
+        "target": "es6",
+        "importHelpers": true,
+        "moduleResolution": "classic",
+        "lib": [
+            "dom",
+            "es5",
+            "es2015.promise"
+        ],
+        "baseUrl": ".",
+        "paths": {
+            "tslib": [
+                "node_modules/tslib/tslib.d.ts"
+            ]
+        }
+    },
+    "exclude": [
+        "node_modules"
+    ]
+}

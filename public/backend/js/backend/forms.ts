@@ -1,33 +1,42 @@
-define("rabbitcms/backend/forms", ["require", "exports", "jquery", "jquery.validation"], function (require, exports, $) {
-    "use strict";
-    //Ukrainian phone number.
-    $.validator.addMethod("phoneUA", function (a, b) {
-        a = a.replace(/(?!^\+)\D/g, "");
-        return this.optional(b) || a.length > 8 && a.match(/^(\+?380|0)?[345679]\d\d{3}\d{2}\d{2}$/);
-    });
-    let language = $('html').prop('lang');
-    $.extend($.validator.messages, {
-        'phoneUA': language === 'ru'
-            ? 'Пожалуйста, введите правильный номер телефона.'
-            : 'Будь ласка, введіть правильний номер телефону.',
-        'notEqualTo': language === 'ru'
-            ? 'Пожалуйста, введите другое значение.'
-            : 'Будь ласка, введіть інше значення.'
-    });
-    function check($form, check) {
-        let data = $form.data('form');
-        return data && data.split(/\s+/).includes(check);
+/// <amd-module name="rabbitcms/backend/forms" />
+import * as $ from 'jquery';
+import "jquery.validation";
+
+//Ukrainian phone number.
+$.validator.addMethod("phoneUA", function (a, b) {
+    a = a.replace(/(?!^\+)\D/g, "");
+    return this.optional(b) || a.length > 8 && a.match(/^(\+?380|0)?[345679]\d\d{3}\d{2}\d{2}$/)
+});
+
+let language = $('html').prop('lang');
+$.extend($.validator.messages, {
+    'phoneUA': language === 'ru'
+        ? 'Пожалуйста, введите правильный номер телефона.'
+        : 'Будь ласка, введіть правильний номер телефону.',
+    'notEqualTo': language === 'ru'
+        ? 'Пожалуйста, введите другое значение.'
+        : 'Будь ласка, введіть інше значення.'
+});
+
+function check($form, check) {
+    let data = $form.data('form');
+    return data && data.split(/\s+/).includes(check);
+}
+
+function find(object: Object, str: string, def: any = null) {
+    return object && object.hasOwnProperty(str) ? object[str] : def
+}
+
+function forms($form, ajax, callback) {
+    callback = callback || (() => undefined);
+
+    if (ajax instanceof Function) {
+        callback = ajax;
+        ajax = false;
     }
-    function find(object, str, def = null) {
-        return object && object.hasOwnProperty(str) ? object[str] : def;
-    }
-    function forms($form, ajax, callback) {
-        callback = callback || (() => undefined);
-        if (ajax instanceof Function) {
-            callback = ajax;
-            ajax = false;
-        }
-        let lock = false, validator = $form.validate({
+
+    let lock = false,
+        validator = $form.validate({
             ignore: '',
             highlight: (element) => {
                 $(element).closest('.form-group').addClass('has-error');
@@ -40,8 +49,7 @@ define("rabbitcms/backend/forms", ["require", "exports", "jquery", "jquery.valid
                 error.insertAfter(group.length ? group : element);
             },
             submitHandler: function (form) {
-                if (lock)
-                    return;
+                if (lock) return;
                 try {
                     if (check($form, 'ajax') || ajax !== false) {
                         $.ajax($.extend(true, {
@@ -82,11 +90,9 @@ define("rabbitcms/backend/forms", ["require", "exports", "jquery", "jquery.valid
                                             }).join('')] = rawErrors[key][0];
                                             return errors;
                                         }, {}));
+                                    } catch (e) {
                                     }
-                                    catch (e) {
-                                    }
-                                }
-                                else if (response.status === 418) {
+                                } else if (response.status === 418) {
                                     RabbitCMS.message({
                                         type: response.responseJSON.type,
                                         message: response.responseJSON.message
@@ -103,71 +109,77 @@ define("rabbitcms/backend/forms", ["require", "exports", "jquery", "jquery.valid
                             : {
                                 data: $form.serialize()
                             }));
-                    }
-                    else {
+                    } else {
                         form.submit();
                     }
-                }
-                catch (e) {
+                } catch (e) {
                     console.log(e);
                 }
             }
         });
-    }
-    forms.depend = function depend(select) {
-        $(select).each(function (i, el) {
-            let $select = $(el), $depend = $($select.data('depends')), options = $('[data-depends-id]', $select), update = function () {
+}
+
+forms.depend = function depend(select) {
+    $(select).each(function (i, el) {
+        let $select = $(el),
+            $depend = $($select.data('depends')),
+            options = $('[data-depends-id]', $select),
+            update = function () {
                 let value = $depend.val();
                 options.each(function (idx, option) {
                     let $option = $(option);
                     $option.toggle(option.getA$option.attrdata('dependsId') == value);
                 });
             };
-            $depend.on('change', update);
-            $depend && update();
-        });
-    };
-    forms.delete = (options) => new Promise((resolve, reject) => {
-        require('bootbox').dialog({
-            message: '<h4>Ви впевнені, що хочете видалити цей запис?</h4>',
-            closeButton: false,
-            buttons: {
-                yes: {
-                    label: 'Так',
-                    className: 'btn-sm green',
-                    callback: () => resolve(RabbitCMS._ajax(options))
-                },
-                no: {
-                    label: 'Ні',
-                    className: 'btn-sm red',
-                    callback: () => reject()
-                }
-            }
-        });
+
+        $depend.on('change', update);
+        $depend && update();
     });
-    forms.fill = (form, data) => {
-        form.find('input[name],textarea[name],select[name]').each((idx, el) => {
-            let $el = $(el), matches = $el.attr('name').match(/^(.*?)(\[(.*)\])?$/), val = find(data, matches[1]);
-            if (matches[3]) {
-                val = find(val, matches[3]);
+};
+
+forms.delete = (options) => new Promise((resolve, reject) => {
+    require('bootbox').dialog({
+        message: '<h4>Ви впевнені, що хочете видалити цей запис?</h4>',
+        closeButton: false,
+        buttons: {
+            yes: {
+                label: 'Так',
+                className: 'btn-sm green',
+                callback: () => resolve(RabbitCMS._ajax(options))
+            },
+            no: {
+                label: 'Ні',
+                className: 'btn-sm red',
+                callback: () => reject()
             }
-            switch ($el.attr('type')) {
-                case 'checkbox':
-                    $el.prop('checked', !!val);
-                    break;
-                case 'radio':
-                    if ($el.attr('value') == val)
-                        $el.prop('checked', true);
-                    break;
-                default:
-                    if (typeof (val) === typeof (true)) {
-                        $el.val(val ? '1' : '0');
-                    }
-                    else {
-                        $el.val(val);
-                    }
-            }
-        });
-    };
-    return forms;
+        }
+    });
 });
+
+forms.fill = (form, data) => {
+    form.find('input[name],textarea[name],select[name]').each((idx, el) => {
+        let $el = $(el),
+            matches = $el.attr('name').match(/^(.*?)(\[(.*)\])?$/),
+            val = find(data, matches[1]);
+        if (matches[3]) {
+            val = find(val, matches[3]);
+        }
+        switch ($el.attr('type')) {
+            case 'checkbox':
+                $el.prop('checked', !!val);
+                break;
+            case 'radio':
+                if ($el.attr('value') == val)
+                    $el.prop('checked', true);
+                break;
+            default:
+                if (typeof (val) === typeof (true)) {
+                    $el.val(val ? '1' : '0');
+                } else {
+                    $el.val(val);
+                }
+        }
+    });
+};
+
+export = forms;

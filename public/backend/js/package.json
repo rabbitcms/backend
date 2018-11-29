@@ -1,0 +1,14 @@
+{
+  "devDependencies": {
+    "@types/jquery": "^3.3.1",
+    "@types/promise": "^7.1.30",
+    "tslib": "^1.9.0",
+    "@types/systemjs": "^0.20.6",
+    "@types/jquery-mask-plugin": "^1.14.3"
+  },
+  "dependencies": {
+    "@types/bootbox": "^4.4.36",
+    "@types/jquery.validation": "^1.16.5",
+    "@types/node": "^10.12.10"
+  }
+}
