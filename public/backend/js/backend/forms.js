@@ -1,4 +1,4 @@
-define("rabbitcms/backend/forms", ["require", "exports", "jquery", "jquery.validation"], function (require, exports, $) {
+define("rabbitcms/backend/forms", ["require", "exports", "jquery"], function (require, exports, $) {
     "use strict";
     //Ukrainian phone number.
     $.validator.addMethod("phoneUA", function (a, b) {

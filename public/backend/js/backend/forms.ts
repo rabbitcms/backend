@@ -1,6 +1,5 @@
 /// <amd-module name="rabbitcms/backend/forms" />
 import * as $ from 'jquery';
-import "jquery.validation";
 
 //Ukrainian phone number.
 $.validator.addMethod("phoneUA", function (a, b) {
