@@ -125,9 +125,8 @@ forms.depend = function depend(select) {
             options = $('[data-depends-id]', $select),
             update = function () {
                 let value = $depend.val();
-                options.each(function (idx, option) {
-                    let $option = $(option);
-                    $option.toggle(option.getA$option.attrdata('dependsId') == value);
+                options.each((idx, option: HTMLOptionElement) => {
+                    $(option).toggle(option.getAttribute('data-depends-id') == value);
                 });
             };
 

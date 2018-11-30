@@ -118,9 +118,8 @@ define("rabbitcms/backend/forms", ["require", "exports", "jquery"], function (re
         $(select).each(function (i, el) {
             let $select = $(el), $depend = $($select.data('depends')), options = $('[data-depends-id]', $select), update = function () {
                 let value = $depend.val();
-                options.each(function (idx, option) {
-                    let $option = $(option);
-                    $option.toggle(option.getA$option.attrdata('dependsId') == value);
+                options.each((idx, option) => {
+                    $(option).toggle(option.getAttribute('data-depends-id') == value);
                 });
             };
             $depend.on('change', update);
