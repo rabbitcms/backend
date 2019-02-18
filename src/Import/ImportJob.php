@@ -124,7 +124,7 @@ class ImportJob implements ShouldQueue
      *
      * @return ImportJob
      */
-    public function setUser(User $user): ImportJob
+    public function setUser($user): ImportJob
     {
         $this->user = $user;
         return $this;
