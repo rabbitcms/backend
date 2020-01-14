@@ -146,7 +146,7 @@ class ModuleProvider extends ServiceProvider
     {
         $this->app->afterResolving('blade.compiler', function (BladeCompiler $compiler) {
             $compiler->directive('tabs', function ($expression) {
-                return "<?php echo \RabbitCMS\Backend\Facades\Tabs::show({$expression}, array_except(get_defined_vars(), array('__data', '__path'))); ?>";
+                return "<?php echo \RabbitCMS\Backend\Facades\Tabs::show({$expression}, \Illuminate\Support\Arr::except(get_defined_vars(), array('__data', '__path'))); ?>";
             });
             $compiler->directive('actions', function ($expression) {
                 return "<?php echo \RabbitCMS\Backend\Facades\Actions::show({$expression}); ?>";
