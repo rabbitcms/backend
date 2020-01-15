@@ -114,13 +114,16 @@ define("rabbitcms/backend/forms", ["require", "exports", "jquery"], function (re
             }
         });
     }
-    forms.depend = function depend(select) {
+    forms.depend = function depend(select, restore = true) {
         $(select).each(function (i, el) {
-            let $select = $(el), $depend = $($select.data('depends')), options = $('[data-depends-id]', $select), update = function () {
-                let value = $depend.val();
+            let $select = $(el), cache = {}, $depend = $($select.data('depends')), options = $('[data-depends-id]', $select), value = $depend.val(), update = function () {
+                cache[value] = $select.val();
+                value = $depend.val();
                 options.each((idx, option) => {
-                    $(option).toggle(option.getAttribute('data-depends-id') == value);
+                    const depends = option.getAttribute('data-depends-id') || '';
+                    $(option).toggle(depends.split(',').indexOf(value) >= 0);
                 });
+                $select.val(restore ? cache[value] : undefined).trigger('change');
             };
             $depend.on('change', update);
             $depend && update();
