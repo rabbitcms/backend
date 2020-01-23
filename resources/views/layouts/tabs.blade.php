@@ -15,14 +15,15 @@ use RabbitCMS\Backend\Support\Tab;
         <ul class="nav nav-tabs">
             @foreach($_tabs as $index => $tab)
                 <li @if($index === 0)class="active"@endif>
-                    <a href="#tab_{{$tab->getName()}}" data-toggle="tab">{{$tab->getLabel()}}</a>
+                    <a href="#tab_{{$tab->getName()}}" data-toggle="tab">@if($icon = $tab->getIcon($object))<i
+                            class="fa {{$icon}}"></i> @endif{{$tab->getLabel()}}</a>
                 </li>
             @endforeach
         </ul>
         <div class="tab-content">
             @foreach($_tabs as $index => $tab)
                 <div class="tab-pane @if($index === 0) active @endif" id="tab_{{$tab->getName()}}"
-                     @if($exec = $tab->getExec($object)) data-require{{$index ? '-lazy' : ''}}="{{$exec}}" @endif>
+                    @if($exec = $tab->getExec($object)) data-require{{$index ? '-lazy' : ''}}="{{$exec}}" @endif>
                     @include($tab->getView($object), $data + $tab->getData($object))
                 </div>
             @endforeach

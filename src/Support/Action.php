@@ -278,11 +278,11 @@ class Action
     }
 
     /**
-     * @param null|string $icon
+     * @param null|string|\Closure $icon
      *
      * @return static
      */
-    public function setIcon(?string $icon): self
+    public function setIcon($icon): self
     {
         $this->icon = $icon;
         return $this;
