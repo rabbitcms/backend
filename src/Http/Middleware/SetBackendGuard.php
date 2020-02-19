@@ -32,6 +32,11 @@ class SetBackendGuard
     public function __construct(Repository $config)
     {
         $this->config = $config;
+
+        $this->config->set('auth.defaults.guard', 'backend');
+        $this->config->set('session.cookie', 'rbc_backend');
+        $this->config->set('session.path', '/' . ltrim(self::module()->config('path'), '/'));
+        $this->config->set('session.domain', self::module()->config('domain'));
     }
 
     /**
@@ -44,10 +49,6 @@ class SetBackendGuard
      */
     public function handle(Request $request, Closure $next)
     {
-        $this->config->set('auth.defaults.guard', 'backend');
-        $this->config->set('session.cookie', 'rbc_backend');
-        $this->config->set('session.path', '/' . ltrim(self::module()->config('path'), '/'));
-        $this->config->set('session.domain', self::module()->config('domain'));
         return $next($request);
     }
 }

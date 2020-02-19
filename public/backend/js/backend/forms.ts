@@ -118,7 +118,10 @@ function forms($form, ajax, callback) {
     });
 }
 
-forms.depend = function depend(select, restore = true) {
+type onUpdateDepend = (e: any, count: Number) => void
+
+forms.depend = function depend(select, restore = true, onUpdate: onUpdateDepend = () => {
+}) {
   $(select).each(function (i, el) {
     let $select = $(el),
       cache = {},
@@ -129,11 +132,16 @@ forms.depend = function depend(select, restore = true) {
         cache[value] = $select.val()
         value = $depend.val();
 
+        let count = 0;
         options.each((idx, option: HTMLOptionElement) => {
           const depends = option.getAttribute('data-depends-id') || '';
-          $(option).toggle(depends.split(',').indexOf(value) >= 0);
+          const visible = depends.split(',').indexOf(value) >= 0
+          $(option).toggle(visible);
+          if (visible) count++;
         });
         $select.val(restore ? cache[value] : undefined).trigger('change')
+
+        onUpdate($select, count)
       };
 
     $depend.on('change', update);

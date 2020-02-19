@@ -46,7 +46,7 @@ return [
         ],
         'rabbitcms.backend.users' => 'js/rabbitcms.backend.users',
         'rabbitcms.backend.users.groups' => 'js/rabbitcms.backend.users.groups',
-        'jquery.mask' => 'https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.11/jquery.mask.min',
+        'jquery.mask' => 'https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min',
         'jquery.cookie' => 'https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie',
         'tslib'=>'https://cdnjs.cloudflare.com/ajax/libs/tslib/1.9.3/tslib.min'
     ],
