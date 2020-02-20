@@ -1,7 +1,10 @@
 <?php
+
 declare(strict_types=1);
 
 namespace RabbitCMS\Backend\Support;
+
+use Closure;
 
 /**
  * Class Action
@@ -55,22 +58,42 @@ class Action
     protected $view;
 
     /**
+     * @var \Closure
+     */
+    protected $mapper;
+
+    /**
      * View constructor.
      *
-     * @param string $label
-     * @param array  $options
+     * @param  string  $label
+     * @param  array  $options
      */
     public function __construct(string $label, array $options = [])
     {
         $this
             ->setLabel($label)
             ->setOptions($options);
+
+        $this->withMapper(function ($object) {
+            return $object;
+        });
     }
 
     /**
-     * @param string $label
+     * @param  \Closure  $mapper
+     * @return $this
+     */
+    public function withMapper(Closure $mapper): self
+    {
+        $this->mapper = $mapper;
+
+        return $this;
+    }
+
+    /**
+     * @param  string  $label
      *
-     * @return static
+     * @return $this
      */
     public function setLabel(string $label): self
     {
@@ -88,9 +111,9 @@ class Action
     }
 
     /**
-     * @param string $view
+     * @param  string  $view
      *
-     * @return self
+     * @return $this
      */
     public function setView(string $view): self
     {
@@ -100,7 +123,7 @@ class Action
     }
 
     /**
-     * @param object $object
+     * @param  object  $object
      *
      * @return string|null
      */
@@ -110,9 +133,9 @@ class Action
     }
 
     /**
-     * @param bool|\Closure $enabled
+     * @param  bool|\Closure  $enabled
      *
-     * @return static
+     * @return $this
      */
     public function setEnabled($enabled): self
     {
@@ -122,7 +145,7 @@ class Action
     }
 
     /**
-     * @param object $object
+     * @param  object  $object
      *
      * @return bool
      */
@@ -132,9 +155,9 @@ class Action
     }
 
     /**
-     * @param int $priority
+     * @param  int  $priority
      *
-     * @return static
+     * @return $this
      */
     public function setPriority(int $priority): self
     {
@@ -152,11 +175,11 @@ class Action
     }
 
     /**
-     * @param array $permissions
+     * @param  array  $permissions
      *
-     * @param bool  $all
+     * @param  bool  $all
      *
-     * @return static
+     * @return $this
      */
     public function setPermissions(array $permissions, bool $all = true): self
     {
@@ -183,18 +206,19 @@ class Action
     }
 
     /**
-     * @param array|\Closure $data
+     * @param  array|\Closure  $data
      *
-     * @return static
+     * @return $this
      */
     public function setData($data): self
     {
         $this->data = $data;
+
         return $this;
     }
 
     /**
-     * @param object $object
+     * @param  object  $object
      *
      * @return array
      */
@@ -205,18 +229,19 @@ class Action
 
 
     /**
-     * @param \Closure|string|null $exec
+     * @param  \Closure|string|null  $exec
      *
-     * @return static
+     * @return $this
      */
     public function setExec($exec): self
     {
         $this->exec = $exec;
+
         return $this;
     }
 
     /**
-     * @param object $object
+     * @param  object  $object
      *
      * @return null|string
      */
@@ -233,16 +258,19 @@ class Action
      */
     protected function value($value, $object)
     {
+        $object = ($this->mapper)($object);
+
         if (\is_callable($value)) {
             return call_user_func($value, $object, $this);
         }
+
         return $value;
     }
 
     /**
-     * @param array $options
+     * @param  array  $options
      *
-     * @return self
+     * @return $this
      */
     public function setOptions(array $options): self
     {
@@ -278,18 +306,19 @@ class Action
     }
 
     /**
-     * @param null|string|\Closure $icon
+     * @param  null|string|\Closure  $icon
      *
      * @return static
      */
     public function setIcon($icon): self
     {
         $this->icon = $icon;
+
         return $this;
     }
 
     /**
-     * @param object $object
+     * @param  object  $object
      *
      * @return null|string
      */

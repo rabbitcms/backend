@@ -25,6 +25,7 @@ class Tab extends Action
     public function __construct(string $name, string $label, string $view, array $options = [])
     {
         parent::__construct($label, $options);
+
         $this->setName($name)
             ->setView($view);
     }
