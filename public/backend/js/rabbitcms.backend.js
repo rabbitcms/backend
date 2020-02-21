@@ -126,30 +126,34 @@ define(['jquery', 'bootbox', 'jquery.cookie'], function ($, bootbox) {
         onNavigate.push(cb);
     };
 
-    RabbitCMS.prototype.navigate = function (link, pushState, prefix, force) {
-        if (prefix) {
-            link = ('/' + this.prefix + '/' + link).replace(/\/{2,}/, '/');
-        }
-        link = link.length > 1 ? link.replace(/\/$/, '') : link;
-        pushState = (pushState === undefined) ? true : pushState;
+  RabbitCMS.prototype.navigate = function (link, pushState, prefix, force) {
+    return new Promise((resolve, reject) => {
+      if (prefix) {
+        link = ('/' + this.prefix + '/' + link).replace(/\/{2,}/, '/')
+      }
+      link = link.length > 1 ? link.replace(/\/$/, '') : link
+      pushState = (pushState === undefined) ? true : pushState
 
-        if (!force && _this._cache[link] !== undefined) {
-            var portlet = _this._cache[link];
+      if (!force && _this._cache[link] !== undefined) {
+        var portlet = _this._cache[link]
 
-            _this.cachePortlet(link, portlet, pushState);
-            _this.showPortlet(portlet);
-        } else {
-            _this.ajax(link, function (data) {
-                var portlet = $(data);
-                _this.loadModule(portlet);
+        _this.cachePortlet(link, portlet, pushState)
+        _this.showPortlet(portlet)
+        resolve(portlet)
+      } else {
+        _this.ajax(link, function (data) {
+          var portlet = $(data)
+          _this.loadModule(portlet)
 
-                $('.page-content').append(portlet);
+          $('.page-content').append(portlet)
 
-                _this.cachePortlet(link, portlet, pushState);
-                _this.showPortlet(portlet, force);
-            });
-        }
-    };
+          _this.cachePortlet(link, portlet, pushState)
+          _this.showPortlet(portlet, force)
+          resolve(portlet)
+        })
+      }
+    })
+  }
 
 
     RabbitCMS.prototype.cachePortlet = function (link, portlet, pushState) {
