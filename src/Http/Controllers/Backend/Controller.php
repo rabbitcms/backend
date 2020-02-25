@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace RabbitCMS\Backend\Http\Controllers\Backend;
@@ -7,6 +8,7 @@ use Illuminate\Auth\AuthManager;
 use Illuminate\Contracts\Auth\StatefulGuard;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\App;
 use RabbitCMS\Backend\Entities\User;
 use RabbitCMS\Modules\Concerns\BelongsToModule;
@@ -20,6 +22,17 @@ abstract class Controller extends IlluminateController
     use BelongsToModule;
 
     protected $denyView = 'backend::deny';
+
+    protected $title = 'Адміністрування';
+
+    public function __construct()
+    {
+        \Illuminate\Support\Facades\View::composer('*', function (View $view) {
+            $view->with([
+                'title' => $this->title,
+            ]);
+        });
+    }
 
     /**
      * @return StatefulGuard
@@ -42,9 +55,9 @@ abstract class Controller extends IlluminateController
     /**
      * Return message response.
      *
-     * @param string $message
-     * @param string $type
-     * @param int    $code
+     * @param  string  $message
+     * @param  string  $type
+     * @param  int  $code
      *
      * @throws \Illuminate\Http\Exceptions\HttpResponseException
      */
@@ -59,7 +72,7 @@ abstract class Controller extends IlluminateController
     }
 
     /**
-     * @param string $message
+     * @param  string  $message
      *
      * @throws \Illuminate\Http\Exceptions\HttpResponseException
      */
@@ -69,7 +82,7 @@ abstract class Controller extends IlluminateController
     }
 
     /**
-     * @param string $message
+     * @param  string  $message
      *
      * @throws \Illuminate\Http\Exceptions\HttpResponseException
      */
@@ -81,7 +94,7 @@ abstract class Controller extends IlluminateController
     /**
      * Execute an action on the controller.
      *
-     * @param  string $method
+     * @param  string  $method
      * @param  array  $parameters
      *
      * @return \Symfony\Component\HttpFoundation\Response
@@ -96,11 +109,14 @@ abstract class Controller extends IlluminateController
             App::call([$this, 'before'], ['method' => $method]);
         }
 
-        return parent::callAction($method, $parameters);
+        $response = Router::toResponse(request(), parent::callAction($method, $parameters));
+        $response->headers->set('X-Title', rawurlencode($this->title));
+
+        return $response;
     }
 
     /**
-     * @param string $path
+     * @param  string  $path
      *
      * @return string
      */
@@ -110,9 +126,9 @@ abstract class Controller extends IlluminateController
     }
 
     /**
-     * @param string $key
-     * @param array  $parameters
-     * @param null   $locale
+     * @param  string  $key
+     * @param  array  $parameters
+     * @param  null  $locale
      *
      * @return array|null|string
      */
@@ -122,8 +138,8 @@ abstract class Controller extends IlluminateController
     }
 
     /**
-     * @param string $view
-     * @param array  $data
+     * @param  string  $view
+     * @param  array  $data
      *
      * @return View
      */
@@ -135,7 +151,7 @@ abstract class Controller extends IlluminateController
     /**
      * Get module view name.
      *
-     * @param string $view
+     * @param  string  $view
      *
      * @return string
      */

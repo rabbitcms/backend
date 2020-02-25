@@ -4,7 +4,7 @@
     <div class="page-header navbar navbar-fixed-top">
         <div class="page-header-inner">
             <div class="page-logo">
-                <a href="{{relative_route('backend.index')}}" rel="ajax-portlet">
+                <a href="{{route('backend.index', [], false)}}" rel="ajax-portlet">
                     <img src="@masset('img/logo.png')" alt="logo" class="logo-default"></a>
                 <div class="menu-toggler sidebar-toggler"></div>
             </div>
