@@ -2,7 +2,7 @@
     "name": "rabbitcms/backend",
     "description": "Backend for RabbitCMS",
     "require": {
-        "rabbitcms/carrot": "^0.3.3",
+        "rabbitcms/carrot": "^0.3.3 | ^0.4",
         "doctrine/annotations": "1.*",
         "rabbitcms/modules": "^2.0"
     },
