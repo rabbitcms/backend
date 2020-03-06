@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace RabbitCMS\Backend\Http\Middleware;
@@ -27,7 +28,7 @@ class SetBackendGuard
     /**
      * Create a new filter instance.
      *
-     * @param  Repository $config
+     * @param  Repository  $config
      */
     public function __construct(Repository $config)
     {
@@ -35,15 +36,15 @@ class SetBackendGuard
 
         $this->config->set('auth.defaults.guard', 'backend');
         $this->config->set('session.cookie', 'rbc_backend');
-        $this->config->set('session.path', '/' . ltrim(self::module()->config('path'), '/'));
+        $this->config->set('session.path', '/'.ltrim(self::module()->config('path') ?? '', '/'));
         $this->config->set('session.domain', self::module()->config('domain'));
     }
 
     /**
      * Handle an incoming request.
      *
-     * @param  Request $request
-     * @param  Closure $next
+     * @param  Request  $request
+     * @param  Closure  $next
      *
      * @return mixed
      */
