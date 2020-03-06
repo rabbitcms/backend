@@ -1,5 +1,7 @@
 <?php
-declare(strict_types = 1);
+
+declare(strict_types=1);
+
 use Illuminate\Routing\Router;
 use RabbitCMS\Backend\Http\Controllers\MediaController;
 
@@ -17,6 +19,6 @@ $router->group([
         'ext' => 'jpg|png|pdf|doc|docx|xls|xlsx|rtf|zip',
     ],
 ], function (Router $router) {
-    $router->get('{h}/{h2}/{id}-{hash}.{ext}', 'MediaController@image');
-    $router->get('{h}/{h2}/{id}-{hash}_{type}{width}x{height}.{ext}', 'MediaController@resize');
+    $router->get('{h}/{h2}/{id}-{hash}.{ext}', 'MediaController@image')->name('media');
+    $router->get('{h}/{h2}/{id}-{hash}_{type}{width}x{height}.{ext}', 'MediaController@resize')->name('sized_media');
 });

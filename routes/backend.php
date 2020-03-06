@@ -1,33 +1,35 @@
 <?php
+
 declare(strict_types=1);
+
 use Illuminate\Routing\Router;
 
 /* @var Router $router */
 $router->group(['prefix' => 'users', 'as' => 'users.'], function (Router $router) {
-    $router->get('', ['uses' => 'Users@getIndex']);
-    $router->post('', ['as' => 'list', 'uses' => 'Users@postIndex']);
+    $router->get('', 'Users@getIndex')->name('index');
+    $router->post('', 'Users@postIndex')->name('list');
 
-    $router->get('create', ['as' => 'create', 'uses' => 'Users@getCreate']);
-    $router->post('create', ['as' => 'store', 'uses' => 'Users@postCreate']);
+    $router->get('create', 'Users@getCreate')->name('create');
+    $router->post('create', 'Users@postCreate')->name('store');
 
-    $router->get('edit/{id}', ['as' => 'edit', 'uses' => 'Users@getEdit']);
-    $router->post('edit/{id}', ['as' => 'update', 'uses' => 'Users@postEdit']);
+    $router->get('edit/{id}', 'Users@getEdit')->name('edit');
+    $router->post('edit/{id}', 'Users@postEdit')->name('update');
 
-    $router->any('delete/{id}', ['as' => 'destroy', 'uses' => 'Users@anyDelete']);
+    $router->any('delete/{id}', 'Users@anyDelete')->name('destroy');
 });
 
 $router->group(['prefix' => 'groups', 'as' => 'groups.'], function (Router $router) {
-    $router->get('', ['uses' => 'Groups@getIndex']);
-    $router->post('', ['as' => 'list', 'uses' => 'Groups@postIndex']);
+    $router->get('', 'Groups@getIndex')->name('index');
+    $router->post('', 'Groups@postIndex')->name('list');
 
-    $router->get('create', ['as' => 'create', 'uses' => 'Groups@getCreate']);
-    $router->post('create', ['as' => 'store', 'uses' => 'Groups@postCreate']);
+    $router->get('create', 'Groups@getCreate')->name('create');
+    $router->post('create', 'Groups@postCreate')->name('store');
 
-    $router->get('edit/{id}', ['as' => 'edit', 'uses' => 'Groups@getEdit']);
-    $router->post('edit/{id}', ['as' => 'update', 'uses' => 'Groups@postEdit']);
+    $router->get('edit/{id}', 'Groups@getEdit')->name('edit');
+    $router->post('edit/{id}', 'Groups@postEdit')->name('update');
 
-    $router->any('delete/{id}', ['as' => 'destroy', 'uses' => 'Groups@anyDelete']);
+    $router->any('delete/{id}', 'Groups@anyDelete')->name('destroy');
 
-    $router->post('users/{group_id}/destroy/{user_id}', ['as' => 'dissociate', 'uses' => 'Groups@destroyUser']);
-    $router->post('users/{id}', ['as' => 'users', 'uses' => 'Groups@getUsers']);
+    $router->post('users/{group_id}/destroy/{user_id}', 'Groups@destroyUser')->name('dissociate');
+    $router->post('users/{id}', 'Groups@getUsers')->name('users');
 });

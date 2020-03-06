@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 use RabbitCMS\Backend\Support\Backend;
@@ -21,7 +22,7 @@ return [
                 'system',
                 'users',
                 trans('backend::menu.users'),
-                relative_route('backend.backend.users.'),
+                route('backend.backend.users.index', [], false),
                 'fa-angle-double-right',
                 ['system.users.read'],
                 10
@@ -30,7 +31,7 @@ return [
                 'system',
                 'groups',
                 trans('backend::menu.groups'),
-                relative_route('backend.backend.groups.'),
+                route('backend.backend.groups.index', [], false),
                 'fa-angle-double-right',
                 ['system.groups.read'],
                 20
@@ -42,15 +43,15 @@ return [
         'rabbitcms.backend' => 'js/rabbitcms.backend',
         'rabbitcms.backend.login' => [
             'path' => 'js/rabbitcms.backend.login',
-            'deps' => 'rabbitcms.backend'
+            'deps' => 'rabbitcms.backend',
         ],
         'rabbitcms.backend.users' => 'js/rabbitcms.backend.users',
         'rabbitcms.backend.users.groups' => 'js/rabbitcms.backend.users.groups',
         'jquery.mask' => 'https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min',
         'jquery.cookie' => 'https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie',
-        'tslib'=>'https://cdnjs.cloudflare.com/ajax/libs/tslib/1.9.3/tslib.min'
+        'tslib' => 'https://cdnjs.cloudflare.com/ajax/libs/tslib/1.9.3/tslib.min',
     ],
     'handlers' => [
-        '.*' => true
-    ]
+        '.*' => true,
+    ],
 ];
