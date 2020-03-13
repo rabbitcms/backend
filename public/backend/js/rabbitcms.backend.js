@@ -158,9 +158,8 @@ define(['jquery', 'bootbox', 'jquery.cookie'], function ($, bootbox) {
     })
   }
 
-
   RabbitCMS.prototype.cachePortlet = function (link, portlet, pushState, title) {
-    _this._cache[link] = {portlet, title: title || 'Адміністрування'}
+    this._cache[link] = {portlet, title: title || 'Адміністрування'}
 
     onNavigate.forEach(function (cb) {
       cb(link)
@@ -171,12 +170,12 @@ define(['jquery', 'bootbox', 'jquery.cookie'], function ($, bootbox) {
   }
 
   RabbitCMS.prototype.showPortlet = function (portlet, force, title) {
-    if (_this._visiblePortlet === portlet)
+    if (this._visiblePortlet === portlet)
       return false
 
     document.title = title || 'Адміністрування'
 
-    _this._visiblePortlet.data('scroll', window.scrollY)
+    this._visiblePortlet.data('scroll', window.scrollY)
 
     $('.ajax-portlet:visible').removeClass('show')
 
@@ -188,16 +187,18 @@ define(['jquery', 'bootbox', 'jquery.cookie'], function ($, bootbox) {
       this.dangerMessage('Помилка. RabbitCMS.prototype.showPortlet')
 
     var _toRemove = _this._visiblePortlet
-    $.map(_this._cache, function (data, link) {
+    $.map(this._cache, (data, link) => {
       if ((force || data.portlet == _toRemove) && data.portlet.data('permanent') === undefined) {
         _toRemove.remove()
-        delete _this._cache[link]
+        if (data.portlet === _toRemove) {
+          delete this._cache[link]
+        }
       }
     })
 
-    _this._visiblePortlet = portlet
-    _this.canSubmit.init()
-    _this.scrollTo(void 0, portlet.data('scroll') || 0)
+    this._visiblePortlet = portlet
+    this.canSubmit.init()
+    this.scrollTo(void 0, portlet.data('scroll') || 0)
   }
 
   RabbitCMS.prototype.loadModalWindow = function (link, callback) {
