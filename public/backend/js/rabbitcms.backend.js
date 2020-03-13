@@ -14,7 +14,7 @@ define(['jquery', 'bootbox', 'jquery.cookie'], function ($, bootbox) {
       prefix: '/',
     }, options)
 
-    this.prefix = options.prefix
+    this.prefix = options.prefix || ''
 
     _this = this
 
@@ -89,7 +89,7 @@ define(['jquery', 'bootbox', 'jquery.cookie'], function ($, bootbox) {
   }
 
   RabbitCMS.prototype.getPrefix = function () {
-    return _this.prefix
+    return this.prefix
   }
 
   RabbitCMS.prototype._cache = {}
