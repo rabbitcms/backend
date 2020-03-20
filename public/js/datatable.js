@@ -35,7 +35,7 @@ var Datatable = function () {
 
             // default settings
             options = $.extend(true, {
-                src: "", // actual table  
+                src: "", // actual table
                 filterApplyAction: "filter",
                 filterCancelAction: "filter_cancel",
                 resetGroupActionInputOnSuccess: true,
@@ -320,7 +320,7 @@ var Datatable = function () {
             dataTable.ajax.reload();
         },
 
-        exportHandler: function (link, params, ajax) {
+        exportHandler: function (link, params, ajax, method) {
             params = params || {};
 
             var eventData = the.trigger('beforeSubmitFilter');
@@ -336,7 +336,7 @@ var Datatable = function () {
 
 
             if (ajax) {
-                RabbitCMS._ajax({url: link, method: 'POST', data: params}, function (data) {
+                RabbitCMS._ajax({url: link, method: method || 'POST', data: params}, function (data) {
                     if (ajax instanceof Function) {
                         ajax(data);
                     }
