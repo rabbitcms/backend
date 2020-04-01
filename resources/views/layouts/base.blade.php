@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Lang;
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
+    <meta name="user" content="{{\Illuminate\Support\Facades\Auth::guard('backend')->id()}}">
 
     <!-- Styles -->
     <link href="//fonts.googleapis.com/css?family=Open+Sans:400,300,600,700&subset=all" rel="stylesheet"
@@ -124,7 +125,7 @@ use Illuminate\Support\Facades\Lang;
     define('Cookies', [], () => Cookies);
     require(["jquery", "rabbitcms.backend"], function ($, RabbitCMS) {
         window.RabbitCMS = new RabbitCMS({
-            prefix: {!! json_encode(config('module.backend.path')) !!}
+            prefix: @json(config('module.backend.path'))
         });
 
         window.RabbitCMS.onNavigate(function (link) {
