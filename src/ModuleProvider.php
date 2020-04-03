@@ -132,7 +132,7 @@ class ModuleProvider extends ServiceProvider
             AddQueuedCookiesToResponse::class,
             StartSession::class,
             ShareErrorsFromSession::class,
-            VerifyCsrfToken::class
+//            VerifyCsrfToken::class
         ]);
 
         $this->app->make('router')->aliasMiddleware('backend.auth', Authenticate::class);
