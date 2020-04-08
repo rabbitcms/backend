@@ -5,13 +5,13 @@
             <div class="caption">
                 {{$model->exists ? trans('backend::common.edit_group') : trans('backend::common.create_group')}}</div>
             <div class="actions">
-                <a class="btn btn-default btn-sm" rel="back" href="{{relative_route('backend.backend.groups.')}}">
+                <a class="btn btn-default btn-sm" rel="back" href="{{route('backend.backend.groups.index',[],false)}}">
                     <i class="fa fa-arrow-left"></i> {{trans('backend::common.buttons.back')}}</a>
             </div>
         </div>
 
         <div class="portlet-body">
-            <form method="post" class="form" data-type="{{$model->exists ? 'update' : 'create'}}" action="{{$model->exists ? relative_route('backend.backend.groups.update', ['id' => $model->id]) : relative_route('backend.backend.groups.store')}}">
+            <form method="post" class="form" data-type="{{$model->exists ? 'update' : 'create'}}" action="{{$model->exists ? route('backend.backend.groups.update', ['id' => $model->id], false) : route('backend.backend.groups.store', [], false)}}">
                 <input type="hidden" name="_token" value="{{csrf_token()}}">
 
                 <div class="tabbable-custom">
@@ -69,7 +69,7 @@
                             <div class="tab-pane" id="tab_2">
                                 <div class="form-body">
                                     <div class="table-container">
-                                        <table class="table table-striped table-bordered table-hover data-table" data-link="{{relative_route('backend.backend.groups.users', ['id' => $model->id])}}">
+                                        <table class="table table-striped table-bordered table-hover data-table" data-link="{{route('backend.backend.groups.users', ['id' => $model->id], false)}}">
                                             <thead>
                                             <tr role="row" class="heading">
                                                 <th style="width: 100px;">{{trans('backend::common.table.id')}}</th>
@@ -88,7 +88,7 @@
 
                 <div class="form-actions">
                     <div class="pull-right">
-                        <a class="btn red" rel="back" href="{{relative_route('backend.backend.groups.')}}">
+                        <a class="btn red" rel="back" href="{{route('backend.backend.groups.index',[],false)}}">
                             <i class="fa fa-close"></i> {{trans('backend::common.buttons.cancel')}}</a>
                         <button type="submit" class="btn green"><i class="fa fa-check"></i> {{trans('backend::common.buttons.save')}}</button>
                     </div>
