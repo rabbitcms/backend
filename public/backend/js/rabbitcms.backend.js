@@ -181,10 +181,6 @@ define(['jquery', 'bootbox', 'jquery.cookie'], function ($, bootbox) {
 
     if (portlet.length)
       portlet.addClass('show')
-    if (location.hash) {
-      portlet.find(`.nav-tabs a[data-toggle="tab"][href="${location.hash}"]`).tab('show')
-    } else
-      this.dangerMessage('Помилка. RabbitCMS.prototype.showPortlet')
 
     var _toRemove = _this._visiblePortlet
     $.map(this._cache, (data, link) => {
@@ -195,6 +191,11 @@ define(['jquery', 'bootbox', 'jquery.cookie'], function ($, bootbox) {
         }
       }
     })
+
+    if (location.hash) {
+      portlet.find(`.nav-tabs a[data-toggle="tab"][href="${location.hash}"]`).tab('show')
+    } else
+      this.dangerMessage('Помилка. RabbitCMS.prototype.showPortlet')
 
     this._visiblePortlet = portlet
     this.canSubmit.init()
