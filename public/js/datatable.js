@@ -370,8 +370,11 @@ var Datatable = function () {
         },
 
         resetFilter: function () {
-            $('textarea.form-filter, select.form-filter, input.form-filter', tableContainer).each(function () {
+            $('textarea.form-filter,  input.form-filter', tableContainer).each(function () {
                 $(this).val("");
+            });
+            $('select.form-filter', tableContainer).each(function () {
+              $(this).val($('option[selected]',this).val());
             });
             $('input.form-filter[type="checkbox"]', tableContainer).each(function () {
                 $(this).attr("checked", false);
