@@ -164,7 +164,7 @@ class Users extends Controller
                 return new JsonResponse(['result' => $result]);
             }
 
-            return Redirect::route('backend.backend.users.');
+            return Redirect::route('backend.backend.users.index');
         });
     }
 
