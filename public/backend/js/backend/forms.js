@@ -1,4 +1,4 @@
-define("rabbitcms/backend/forms", ["require", "exports", "jquery"], function (require, exports, $) {
+define(["require", "exports", "jquery"], function (require, exports, $) {
     "use strict";
     //Ukrainian phone number.
     $.validator.addMethod("phoneUA", function (a, b) {
@@ -21,7 +21,7 @@ define("rabbitcms/backend/forms", ["require", "exports", "jquery"], function (re
     function find(object, str, def = null) {
         return object && object.hasOwnProperty(str) ? object[str] : def;
     }
-    function forms($form, ajax, callback) {
+    function forms($form, ajax, callback, check = () => true) {
         callback = callback || (() => undefined);
         if (ajax instanceof Function) {
             callback = ajax;
@@ -29,29 +29,32 @@ define("rabbitcms/backend/forms", ["require", "exports", "jquery"], function (re
         }
         let lock = false, validator = $form.validate({
             ignore: '',
-            highlight: (element) => {
+            highlight(element) {
                 $(element).closest('.form-group').addClass('has-error');
             },
-            unhighlight: (element) => {
+            unhighlight(element) {
                 $(element).closest('.form-group').removeClass('has-error');
             },
-            errorPlacement: (error, element) => {
+            errorPlacement(error, element) {
                 let group = element.closest('.input-group');
                 error.insertAfter(group.length ? group : element);
             },
-            submitHandler: function (form) {
+            submitHandler(form) {
                 if (lock)
                     return;
+                if (!check(form)) {
+                    return;
+                }
                 try {
                     if (check($form, 'ajax') || ajax !== false) {
                         $.ajax($.extend(true, {
                             method: $form.attr('method'),
                             url: $form.attr('action'),
-                            beforeSend: function () {
+                            beforeSend() {
                                 lock = true;
                                 RabbitCMS.blockUI($form);
                             },
-                            success: function (data) {
+                            success(data) {
                                 lock = false;
                                 RabbitCMS.unblockUI($form);
                                 if (check($form, 'hide')) {
@@ -70,18 +73,14 @@ define("rabbitcms/backend/forms", ["require", "exports", "jquery"], function (re
                                 }
                                 callback(null, data);
                             },
-                            error: function (response) {
+                            error(response) {
                                 lock = false;
                                 RabbitCMS.unblockUI($form);
                                 if (response.status === 422) {
                                     let rawErrors = response.responseJSON.errors;
                                     try {
-                                        validator.showErrors(Object.keys(rawErrors).reduce(function (errors, key) {
-                                            errors[key.split('.').map(function (value, index) {
-                                                return index === 0 ? value : '[' + value + ']';
-                                            }).join('')] = rawErrors[key][0];
-                                            return errors;
-                                        }, {}));
+                                        validator.showErrors(Object.keys(rawErrors)
+                                            .reduce((errors, key) => (Object.assign(Object.assign({}, errors), { [key.split('.').map((v, i) => i === 0 ? v : `[${v}]`).join('')]: rawErrors[key][0] })), {}));
                                     }
                                     catch (e) {
                                     }
