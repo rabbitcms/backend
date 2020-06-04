@@ -26,7 +26,7 @@ function find(object: Object, str: string, def: any = null) {
   return object && object.hasOwnProperty(str) ? object[str] : def
 }
 
-function forms($form: JQuery<HTMLFormElement>, ajax, callback, check: (form: HTMLFormElement) => boolean = () => true) {
+function forms($form: JQuery<HTMLFormElement>, ajax, callback, checkSend: (form: HTMLFormElement) => boolean = () => true) {
   callback = callback || (() => undefined);
 
   if (ajax instanceof Function) {
@@ -49,7 +49,7 @@ function forms($form: JQuery<HTMLFormElement>, ajax, callback, check: (form: HTM
       },
       submitHandler(form) {
         if (lock) return;
-        if (!check(form)) {
+        if (!checkSend(form)) {
           return;
         }
         try {

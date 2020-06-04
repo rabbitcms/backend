@@ -21,7 +21,7 @@ define(["require", "exports", "jquery"], function (require, exports, $) {
     function find(object, str, def = null) {
         return object && object.hasOwnProperty(str) ? object[str] : def;
     }
-    function forms($form, ajax, callback, check = () => true) {
+    function forms($form, ajax, callback, checkSend = () => true) {
         callback = callback || (() => undefined);
         if (ajax instanceof Function) {
             callback = ajax;
@@ -42,7 +42,7 @@ define(["require", "exports", "jquery"], function (require, exports, $) {
             submitHandler(form) {
                 if (lock)
                     return;
-                if (!check(form)) {
+                if (!checkSend(form)) {
                     return;
                 }
                 try {
