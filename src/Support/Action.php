@@ -251,17 +251,17 @@ class Action
     }
 
     /**
-     * @param $value
-     * @param $object
+     * @param Closure|mixed $value
+     * @param object $origin
      *
      * @return mixed
      */
-    protected function value($value, $object)
+    protected function value($value, $origin)
     {
-        $object = ($this->mapper)($object);
+        $object = ($this->mapper)($origin);
 
         if (\is_callable($value)) {
-            return call_user_func($value, $object, $this);
+            return call_user_func($value, $object, $this, $origin);
         }
 
         return $value;
