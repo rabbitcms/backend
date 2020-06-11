@@ -11,6 +11,7 @@ use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\View\Compilers\BladeCompiler;
@@ -93,6 +94,8 @@ class ModuleProvider extends ServiceProvider
                 });
             });
         }
+
+        Gate::before(fn (User $user, $ability) => $user instanceof User ? $user->hasAccess($ability) : null);
     }
 
     /**

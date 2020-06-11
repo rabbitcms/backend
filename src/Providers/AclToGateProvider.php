@@ -11,7 +11,7 @@ use RabbitCMS\Backend\Support\Backend;
 
 /**
  * Class AclToGateProvider.
- * @package RabbitCMS\Backend
+ * @deprecated 
  */
 class AclToGateProvider extends LaravelServiceProvider
 {
