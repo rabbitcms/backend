@@ -15,6 +15,7 @@ use Illuminate\Routing\Route;
 use Illuminate\Support\Facades\View;
 use RabbitCMS\Backend\Annotation\Permissions as PermissionAnnotation;
 use RabbitCMS\Backend\Contracts\HasAccessEntity;
+use RabbitCMS\Backend\Facades\Backend;
 use RabbitCMS\Modules\Concerns\BelongsToModule;
 use ReflectionClass;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
@@ -85,6 +86,8 @@ class Authenticate
                 $this->checkAnnotation($user, $annotation);
             }
 
+            Backend::getFacadeRoot();
+            
             return $next($request);
         } catch (AccessDeniedHttpException $exception) {
             if ($request->ajax()) {
