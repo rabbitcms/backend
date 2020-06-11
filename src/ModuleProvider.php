@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace RabbitCMS\Backend;
@@ -50,8 +51,8 @@ class ModuleProvider extends ServiceProvider
     /**
      * Boot the application events.
      *
-     * @param ConfigRepository $config
-     * @param Router           $router
+     * @param  ConfigRepository  $config
+     * @param  Router  $router
      */
     public function boot(ConfigRepository $config, Router $router)
     {
@@ -65,23 +66,25 @@ class ModuleProvider extends ServiceProvider
             'model' => UserEntity::class,
         ]);
 
-        array_map(function (Module $module) use ($router) {
-            $path = $module->getPath('config/backend.php');
-            if (file_exists($path)) {
-                $value = require_once($path);
-                if (is_callable($value)) {
-                    $this->app->call($value, ['module' => $module]);
-                } elseif (is_array($value) && array_key_exists('boot', $value) && is_callable($value['boot'])) {
-                    $this->app->call($value['boot'], ['module' => $module]);
+        $this->app->afterResolving(Backend::class, function (Backend $backend) use ($router) {
+            array_map(function (Module $module) use ($router) {
+                $path = $module->getPath('config/backend.php');
+                if (file_exists($path)) {
+                    $value = require_once($path);
+                    if (is_callable($value)) {
+                        $this->app->call($value, ['module' => $module]);
+                    } elseif (is_array($value) && array_key_exists('boot', $value) && is_callable($value['boot'])) {
+                        $this->app->call($value['boot'], ['module' => $module]);
+                    }
                 }
-            }
-        }, Modules::enabled());
+            }, Modules::enabled());
+        });
 
-        if (!$this->app->routesAreCached()) {
+        if (! $this->app->routesAreCached()) {
             Route::group([
                 'prefix' => static::module()->config('path'),
                 'domain' => static::module()->config('domain'),
-                'middleware' => ['backend']
+                'middleware' => ['backend'],
             ], function (Router $router) {
                 $auth = AuthController::class;
                 $router->get('auth/login', ['uses' => "{$auth}@getLogin", 'as' => 'backend.auth']);
@@ -90,12 +93,12 @@ class ModuleProvider extends ServiceProvider
 
                 $router->group(['middleware' => ['backend.auth']], function (Router $router) {
                     Modules::loadRoutes('backend');
-                    $router->get('', ['uses' => Main::class . '@index', 'as' => 'backend.index']);
+                    $router->get('', ['uses' => Main::class.'@index', 'as' => 'backend.index']);
                 });
             });
         }
 
-        Gate::before(fn (User $user, $ability) => $user instanceof User ? $user->hasAccess($ability) : null);
+        Gate::before(fn($user, $ability) => $user instanceof User ? $user->hasAccess($ability) : null);
     }
 
     /**
@@ -107,12 +110,14 @@ class ModuleProvider extends ServiceProvider
     {
         $this->app->singleton('backend.actions', function () {
             $user = Auth::user();
+
             return new ActionsFactory($user instanceof User ? $user : null);
         });
         $this->app->alias('backend.actions', ActionsFactory::class);
 
         $this->app->singleton('backend.tabs', function () {
             $user = Auth::user();
+
             return new TabsFactory($user instanceof User ? $user : null);
         });
         $this->app->alias('backend.tabs', TabsFactory::class);
@@ -135,7 +140,7 @@ class ModuleProvider extends ServiceProvider
             AddQueuedCookiesToResponse::class,
             StartSession::class,
             ShareErrorsFromSession::class,
-//            VerifyCsrfToken::class
+            //            VerifyCsrfToken::class
         ]);
 
         $this->app->make('router')->aliasMiddleware('backend.auth', Authenticate::class);

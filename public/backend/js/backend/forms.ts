@@ -98,6 +98,11 @@ function forms($form: JQuery<HTMLFormElement>, ajax, callback, checkSend: (form:
                     type: response.responseJSON.type,
                     message: response.responseJSON.message
                   });
+                } else if(response.responseJSON && response.responseJSON.message) {
+                  RabbitCMS.message({
+                    type: 'danger',
+                    message: response.responseJSON.message
+                  });
                 }
                 callback(response.responseJSON);
               }
