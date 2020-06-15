@@ -167,6 +167,8 @@ define(['jquery', 'bootbox', 'jquery.cookie'], function ($, bootbox) {
 
     if (pushState === undefined || pushState === true)
       history.pushState({link: link, title: title}, null, link)
+    else
+      history.replaceState({link: link, title: title}, null, link)
   }
 
   RabbitCMS.prototype.showPortlet = function (portlet, force, title) {
