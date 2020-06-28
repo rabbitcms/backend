@@ -292,7 +292,7 @@ var Datatable = function () {
             });
         },
 
-        submitFilter: function () {
+        submitFilter: async function () {
             the.setAjaxParam("action", tableOptions.filterApplyAction);
 
             // get all typeable inputs
@@ -312,7 +312,7 @@ var Datatable = function () {
 
             var eventData = the.trigger('beforeSubmitFilter');
             if (eventData) {
-                the.setAjaxParam("qBuilder", eventData.filters);
+                the.setAjaxParam("qBuilder", await eventData.filters);
             } else {
                 the.setAjaxParam("qBuilder", {});
             }
