@@ -320,7 +320,7 @@ var Datatable = function () {
             dataTable.ajax.reload();
         },
 
-        exportHandler: function (link, params, ajax, method) {
+        exportHandler: async function (link, params, ajax, method) {
             params = params || {};
 
             var eventData = the.trigger('beforeSubmitFilter');
