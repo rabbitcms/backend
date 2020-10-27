@@ -345,8 +345,10 @@ var Datatable = function () {
                 var form = $('<form/>')
                     .attr('action', link)
                     .attr('target', '_blank')
-                    .attr('method', method)
-                    .css({'display': 'none'});
+                    .attr('method', method || 'post')
+                    .css({
+                      display: 'none'
+                    });
                 $.each(params, function (name, value) {
                     form.append(
                         $('<input/>').attr('type', 'hidden')
