@@ -319,22 +319,25 @@ var Datatable = function () {
 
             dataTable.ajax.reload();
         },
+      
+        populateParams: async function (params) {
+          params = params || {};
+          var eventData = the.trigger('beforeSubmitFilter');
+          if (eventData) {
+            params['qBuilder'] = await eventData.filters;
+          }
+          params['_token'] = _TOKEN;
+          $('.form-filter', tableContainer).each(function () {
+            var self = $(this);
+            params[self.attr('name')] = self.val();
+          });
+          
+          return params
+        },
 
         exportHandler: async function (link, params, ajax, method) {
-            params = params || {};
-
-            var eventData = the.trigger('beforeSubmitFilter');
-            if (eventData) {
-                params['qBuilder'] = await eventData.filters;
-            }
-
-            params['_token'] = _TOKEN;
-            $('.form-filter', tableContainer).each(function () {
-                var self = $(this);
-                params[self.attr('name')] = self.val();
-            });
-
-
+            params = await this.populateParams(params)
+          
             if (ajax) {
                 RabbitCMS._ajax({url: link, method: method || 'POST', data: params}, function (data) {
                     if (ajax instanceof Function) {
