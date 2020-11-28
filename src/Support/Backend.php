@@ -329,7 +329,7 @@ class Backend
     protected function sortMenu(array &$items)
     {
         uasort($items, function (array $left, array $right) {
-            return $left['position'] > $right['position'];
+            return $left['position'] - $right['position'];
         });
 
         array_walk($items, function (&$item) {
