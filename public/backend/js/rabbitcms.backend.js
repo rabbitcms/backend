@@ -79,7 +79,7 @@ define(['jquery', 'bootbox', 'jquery.cookie'], function ($, bootbox) {
     var link = _pathname
     var portlet = $('.ajax-portlet:first')
 
-    _this.cachePortlet(link, portlet, false, document.title)
+    _this.cachePortlet(link, portlet, false, document.title, location.hash)
     _this.showPortlet(portlet, false, document.title)
 
     _this.loadModule(portlet)
@@ -158,17 +158,18 @@ define(['jquery', 'bootbox', 'jquery.cookie'], function ($, bootbox) {
     })
   }
 
-  RabbitCMS.prototype.cachePortlet = function (link, portlet, pushState, title) {
+  RabbitCMS.prototype.cachePortlet = function (link, portlet, pushState, title, hash) {
     this._cache[link] = {portlet, title: title || 'Адміністрування'}
 
     onNavigate.forEach(function (cb) {
       cb(link)
     })
 
-    if (pushState === undefined || pushState === true)
-      history.pushState({link: link, title: title}, null, link)
+    if (pushState === false)
+      history.replaceState({link: link, title: title}, null, `${link}${hash || ''}`)
     else
-      history.replaceState({link: link, title: title}, null, link)
+      history.pushState({link: link, title: title}, null, `${link}${hash || ''}`)
+
   }
 
   RabbitCMS.prototype.showPortlet = function (portlet, force, title) {
