@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace RabbitCMS\Backend\Http\Controllers\Backend;
@@ -25,8 +26,8 @@ class Users extends Controller
     /**
      * Controller init.
      *
-     * @param Backend     $backend
-     * @param ViewFactory $view
+     * @param  Backend  $backend
+     * @param  ViewFactory  $view
      */
     public function init(Backend $backend, ViewFactory $view)
     {
@@ -46,7 +47,7 @@ class Users extends Controller
     }
 
     /**
-     * @param Request $request
+     * @param  Request  $request
      *
      * @return JsonResponse
      */
@@ -58,13 +59,13 @@ class Users extends Controller
         $recordsTotal = $query->count();
 
         $filters = $request->input('filter', []);
-        if (!empty($filters['id'])) {
+        if (! empty($filters['id'])) {
             $query->where('id', '=', $filters['id']);
         }
         if (array_key_exists('active', $filters) && $filters['active'] !== '') {
             $query->where('active', '=', $filters['active']);
         }
-        if (!empty($filters['email'])) {
+        if (! empty($filters['email'])) {
             (strpos($filters['email'], '%') !== false)
                 ? $query->where('email', 'like', $filters['email'])
                 : $query->where('email', '=', strtolower($filters['email']));
@@ -80,15 +81,15 @@ class Users extends Controller
 
         $result = [];
         foreach ($collection as $item) {
-            $edit_link = relative_route('backend.backend.users.edit', ['id' => $item->id]);
+            $edit_link = route('backend.backend.users.edit', ['id' => $item->id], false);
             $edit_link_html = html_link($edit_link, '<i class="fa fa-pencil"></i>', [
                 'rel' => 'ajax-portlet',
                 'class' => 'btn btn-sm green',
-                'title' => trans('backend::common.buttons.edit')
+                'title' => trans('backend::common.buttons.edit'),
             ]);
 
             $destroy_link = html_link(
-                relative_route('backend.backend.users.destroy', ['id' => $item->id]),
+                route('backend.backend.users.destroy', ['id' => $item->id], false),
                 '<i class="fa fa-trash-o"></i>',
                 ['rel' => 'destroy', 'class' => 'btn btn-sm red', 'title' => trans('backend::common.buttons.destroy')]
             );
@@ -98,7 +99,7 @@ class Users extends Controller
                 $item->name,
                 $item->email,
                 array_key_exists($item->active, $status) ? $status[$item->active] : $item->active,
-                $edit_link_html . $destroy_link
+                $edit_link_html.$destroy_link,
             ];
         }
 
@@ -106,7 +107,7 @@ class Users extends Controller
             'data' => $result,
             'recordsTotal' => $recordsTotal,
             'recordsFiltered' => $recordsFiltered,
-            'draw' => $request->input('draw')
+            'draw' => $request->input('draw'),
         ];
 
         return new JsonResponse($data, 200, [], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
@@ -119,12 +120,12 @@ class Users extends Controller
     public function getCreate(): View
     {
         return $this->view('users.form', [
-            'model' => new UserModel
+            'model' => new UserModel,
         ]);
     }
 
     /**
-     * @param UsersRequest $request
+     * @param  UsersRequest  $request
      *
      * @return Response
      * @Permissions("system.users.write")
@@ -138,8 +139,8 @@ class Users extends Controller
     }
 
     /**
-     * @param UserModel    $model
-     * @param UsersRequest $request
+     * @param  UserModel  $model
+     * @param  UsersRequest  $request
      *
      * @return Response
      * @throws \Exception|\Throwable
@@ -177,13 +178,13 @@ class Users extends Controller
     public function getEdit($id): View
     {
         return $this->view('users.form', [
-            'model' => UserModel::query()->findOrFail($id)
+            'model' => UserModel::query()->findOrFail($id),
         ]);
     }
 
     /**
      * @param              $id
-     * @param UsersRequest $request
+     * @param  UsersRequest  $request
      *
      * @return Response
      * @Permissions("system.users.write")

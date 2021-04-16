@@ -467,21 +467,24 @@ define(['jquery', 'bootbox', 'jquery.cookie'], function ($, bootbox) {
   }
 
   /* all ajax methods */
-  RabbitCMS.prototype.submitForm = function (form, callback) {
+  RabbitCMS.prototype.submitForm = function (form, callback, method) {
     form = (form instanceof jQuery) ? form : $(form)
-    var link = form.attr('action')
-    var data = new FormData(form[0])
-    var _callback = function (data) {
+    let data = new FormData(form[0])
+    method && data.append('_method', method)
+
+    _this._ajax({
+      url: form.attr('action'),
+      method: 'POST',
+      processData: false,
+      contentType: false,
+      data,
+    }, function (data) {
       _this.canSubmit._match = true
       $('[rel="back"]:first', _this._visiblePortlet).trigger('click')
 
       if ($.isFunction(callback))
         callback(data)
-    }
-
-    var options = {url: link, method: 'POST', processData: false, contentType: false, data: data}
-
-    _this._ajax(options, _callback)
+    })
   }
 
   /**
@@ -594,7 +597,7 @@ define(['jquery', 'bootbox', 'jquery.cookie'], function ($, bootbox) {
 
   /* Dialogs */
   RabbitCMS.prototype.Dialogs = {
-    onDelete: function (link, callback) {
+    onDelete: function (link, callback, method) {
       bootbox.dialog({
         message: '<h4>Ви впевнені, що хочете видалити цей запис?</h4>',
         closeButton: false,
@@ -603,7 +606,7 @@ define(['jquery', 'bootbox', 'jquery.cookie'], function ($, bootbox) {
             label: 'Так',
             className: 'btn-sm btn-success',
             callback: function () {
-              _this.ajaxPost(link, {_token: _TOKEN}, function () {
+              _this._ajax({url: link, method: method ?? 'POST'}, function () {
                 if ($.isFunction(callback))
                   callback()
               })
