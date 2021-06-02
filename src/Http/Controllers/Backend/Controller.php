@@ -61,10 +61,10 @@ abstract class Controller extends IlluminateController
      *
      * @throws \Illuminate\Http\Exceptions\HttpResponseException
      */
-    protected function message(string $message, string $type = 'danger', int $code = 418)
+    protected function message(string $message, string $type = 'danger', int $code = 418, int $timeout = null)
     {
         (new JsonResponse(
-            ['message' => $message, 'type' => $type],
+            ['message' => $message, 'type' => $type, 'timeout' => $timeout ?? 10],
             $code,
             [],
             JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT
@@ -76,9 +76,9 @@ abstract class Controller extends IlluminateController
      *
      * @throws \Illuminate\Http\Exceptions\HttpResponseException
      */
-    protected function success(string $message)
+    protected function success(string $message, int $timeout = null)
     {
-        $this->message($message, 'success', 202);
+        $this->message($message, 'success', 202, $timeout);
     }
 
     /**
@@ -86,9 +86,9 @@ abstract class Controller extends IlluminateController
      *
      * @throws \Illuminate\Http\Exceptions\HttpResponseException
      */
-    protected function error(string $message)
+    protected function error(string $message, int $timeout = null)
     {
-        $this->message($message, 'danger', 418);
+        $this->message($message, 'danger', 418, $timeout);
     }
 
     /**

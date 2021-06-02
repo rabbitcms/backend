@@ -526,7 +526,7 @@ define(['jquery', 'bootbox', 'jquery.cookie'], function ($, bootbox) {
             switch (jqXHR.status) {
               case 202:
               case 418:
-                _this.message({type: jqXHR.responseJSON.type, message: jqXHR.responseJSON.message})
+                _this.message(jqXHR.responseJSON)
                 break
               case 404:
                 _this.dangerMessage('Сторінку не знайдено')
