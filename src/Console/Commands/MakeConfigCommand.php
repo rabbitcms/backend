@@ -80,7 +80,7 @@ class MakeConfigCommand extends Command
         file_put_contents(
             public_path('backend/config.js'),
             /* @lang JavaScript */
-            "require.config(${config});\nrequire({$bootstraps}, function () {});"
+            "require.config({$config});\nrequire({$bootstraps}, function () {});"
         );
     }
 }
